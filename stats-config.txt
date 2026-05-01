@@ -11,6 +11,10 @@ stime
 comps
 swaps
 revs
+entry
+const
+recs
+recdp
 
 wmain
 waux
