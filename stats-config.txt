@@ -15,4 +15,3 @@ revs
 wmain
 waux
 auxlen
-segments
