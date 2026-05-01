@@ -1,7 +1,7 @@
-package sorts.esoteric;
+package io.github.arrayv.sorts.esoteric;
 
-import main.ArrayVisualizer;
-import sorts.templates.Sort;
+import io.github.arrayv.main.ArrayVisualizer;
+import io.github.arrayv.sorts.templates.Sort;
 
 public final class QuickCakeSort extends Sort {
 	public QuickCakeSort(ArrayVisualizer arrayVisualizer) {
@@ -11,7 +11,6 @@ public final class QuickCakeSort extends Sort {
 		this.setRunAllSortsName("QuickCake Sort");
 		this.setRunSortName("QuickCake Sort");
 		this.setCategory("Esoteric Sorts");
-		this.setComparisonBased(true);
 		this.setBucketSort(false);
 		this.setRadixSort(false);
 		this.setUnreasonablySlow(false);
