@@ -379,7 +379,7 @@ public final class SqrtSort extends Sort {
         for(leftIndex = len - 1; leftIndex >= 0; leftIndex--) Writes.write(arr, pos + leftIndex, arr[pos + leftIndex - regBlockLen], 1, true, auxwrite);
     }
 
-    private void sqrtCommonSort(int[] arr, int pos, int len, int[] extBuf, int extBufPos, int[] tags, boolean auxwrite) {
+    public void sqrtCommonSort(int[] arr, int pos, int len, int[] extBuf, int extBufPos, int[] tags, boolean auxwrite) {
         insertSorter = new InsertionSort(this.arrayVisualizer);
 
         if(len <= 16) {

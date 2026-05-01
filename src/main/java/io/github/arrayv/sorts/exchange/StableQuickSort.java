@@ -39,7 +39,7 @@ public final class StableQuickSort extends Sort {
         this.setSortListName("Stable Quick");
         this.setRunAllSortsName("Stable Quick Sort");
         this.setRunSortName("Stable Quicksort");
-        this.setCategory("Exchange Sorts");
+        this.setCategory("Quick Sorts");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

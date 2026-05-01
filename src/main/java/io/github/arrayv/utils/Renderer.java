@@ -1,8 +1,10 @@
 package io.github.arrayv.utils;
 
 import io.github.arrayv.main.ArrayVisualizer;
-import io.github.arrayv.visuals.VisualStyles;
+import io.github.arrayv.visuals.Visual;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /*
@@ -69,10 +71,17 @@ public final class Renderer {
     private int doth; //TODO: Change names
     private int dotw;
     private int dots; //TODO: Change name to dotDims/dotDimensions
+    
+    private static ArrayVisualizer ownArrayVisualizer;
+    private static ArrayList<? super Renderable> renderables;
+    private static volatile int[][] arraysLast = new int[0][];
+    private static volatile int countLast = 0;
 
     public Renderer(ArrayVisualizer arrayVisualizer) {
+    	ownArrayVisualizer = arrayVisualizer;
         arrayVisualizer.setWindowHeight();
         arrayVisualizer.setWindowWidth();
+        renderables = new ArrayList<>();
     }
 
     public double getXScale() {
@@ -111,6 +120,51 @@ public final class Renderer {
     public int getLineY() {
         return this.linkedpixdrawy;
     }
+    public static boolean visualSupportsRenderables() {
+    	return ownArrayVisualizer.getActiveVisual().isOverlayable();
+    }
+
+    public static void registerRenderable(Renderable r) {
+    	renderables.add(r);
+    }
+
+    public static void registerRenderables(Renderable... r) {
+    	renderables.addAll(Arrays.asList(r));
+    }
+
+    public static void unregisterRenderable(Renderable r) {
+    	while(renderables.remove(r));
+    }
+
+    public static void unregisterAllRenderables() {
+    	renderables.clear();
+    }
+
+    public static int[] renderedInstance(int index) {
+    	return index < 0 || index >= arraysLast.length ? null : arraysLast[index];
+    }
+
+    public int renderedInstances() {
+    	return countLast;
+    }
+    
+    public <T> int isWhichArray(T array) {
+    	if(ArrayVList.class.isInstance(array)) {
+    		int v = ownArrayVisualizer.getArrayVLists().indexOf((ArrayVList) array);
+    		return v < 0 ? v : v + ownArrayVisualizer.getArrays().size();
+    	}
+    	return ownArrayVisualizer.getArrays().indexOf((int[]) array);
+    }
+    
+    public <T> int[] renderedInstanceOf(T array) {
+    	int which = isWhichArray(array);
+    	return renderedInstance(which);
+    }
+    
+    public <T> int getArrayLengthFor(T array) {
+    	int which = isWhichArray(array);
+    	return which == 0 ? ownArrayVisualizer.getCurrentLength() : which < 0 ? 0 : renderedInstance(which).length;
+    }
 
     public void setOffset(int amount) {
         this.amt = amount;
@@ -126,6 +180,7 @@ public final class Renderer {
         arrayVisualizer.createVolatileImage();
         arrayVisualizer.setMainRender();
         arrayVisualizer.setExtraRender();
+        arrayVisualizer.updateRendersForActiveVisual();
     }
 
     public static void initializeVisuals(ArrayVisualizer arrayVisualizer) {
@@ -135,7 +190,7 @@ public final class Renderer {
 
     public static void updateGraphics(ArrayVisualizer arrayVisualizer) {
         Renderer.createRenders(arrayVisualizer);
-        arrayVisualizer.updateVisuals();
+        arrayVisualizer.updateRendersForActiveVisual();
     }
 
     private static WindowState checkWindowResizeAndReposition(ArrayVisualizer arrayVisualizer) {
@@ -186,9 +241,10 @@ public final class Renderer {
         this.yScale = (double) (this.vsize) / arrayVisualizer.getCurrentLength();
 
         this.dotw = (int) (2 * (arrayVisualizer.currentWidth()  / 640.0));
-
-        this.vsize = (arrayVisualizer.currentHeight() - 96) / (arrayVisualizer.externalArraysEnabled() ? Math.min(arrayVisualizer.getArrays().size(), 7) : 1);
-        this.yoffset.set(96);
+        
+        this.yoffset.set(64);
+        
+        this.vsize = (arrayVisualizer.currentHeight() - this.yoffset.get()) / (arrayVisualizer.externalArraysEnabled() ? Math.min(arrayVisualizer.getArrays().size() + arrayVisualizer.getArrayVLists().size(), arrayVisualizer.getActiveVisual().getMaximumAuxLists() + 1) : 1);
     }
 
     private void updateVisualsPerArray(ArrayVisualizer arrayVisualizer, int[] array, int length) {
@@ -211,20 +267,34 @@ public final class Renderer {
         arrayVisualizer.resetMainStroke();
     }
 
-    public void drawVisual(VisualStyles visualStyle, int[][] arrays, ArrayVisualizer arrayVisualizer, Highlights Highlights) {
+    public void drawVisual(Visual activeVisual, int[][] arrays, ArrayVisualizer arrayVisualizer, Highlights Highlights) {
+    	arraysLast = arrays;
+    	int vis_count = countLast = arrayVisualizer.externalArraysEnabled() ? Math.min(arrays.length - 1, activeVisual.getMaximumAuxLists()) : 0;
+    	int[] box;
         if (arrayVisualizer.externalArraysEnabled()) {
             this.auxActive = true;
-            for (int i = Math.min(arrays.length - 1, 6); i > 0; i--) {
+            for (int i = vis_count; i > 0; i--) {
                 if (arrays[i] != null) {
                     this.updateVisualsPerArray(arrayVisualizer, arrays[i], arrays[i].length);
-                    visualStyle.drawVisual(arrays[i], arrayVisualizer, this, Highlights);
-                    this.yoffset.addAndGet(this.vsize);
+                    box = activeVisual.getBoundingBox(arrays, vis_count - i, i, vis_count, arrayVisualizer, this);
+                    activeVisual.drawVisual(arrays[i], box, arrayVisualizer, this, Highlights);
+                    this.yoffset.addAndGet(this.vsize); // for compatibility
                 }
             }
             this.auxActive = false;
         }
         this.updateVisualsPerArray(arrayVisualizer, arrays[0], arrayVisualizer.getCurrentLength());
-        visualStyle.drawVisual(arrays[0], arrayVisualizer, this, Highlights);
+        box = activeVisual.getBoundingBox(arrays, vis_count, 0, vis_count, arrayVisualizer, this);
+        activeVisual.drawVisual(arrays[0], box, arrayVisualizer, this, Highlights);
+        if(visualSupportsRenderables()) {
+	        for(int i = 0; i < renderables.size(); i++) {
+	        	try {
+	        		((Renderable) renderables.get(i)).render(arrays[0], arrayVisualizer, this, Highlights);
+	        	} catch(Exception e) {
+	        		//System.out.println(e);
+	        	}
+	        }
+        }
     }
 
     public boolean isAuxActive() {

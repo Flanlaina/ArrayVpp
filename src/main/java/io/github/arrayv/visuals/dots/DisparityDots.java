@@ -1,11 +1,11 @@
 package io.github.arrayv.visuals.dots;
 
+import java.awt.Color;
+
 import io.github.arrayv.main.ArrayVisualizer;
 import io.github.arrayv.utils.Highlights;
 import io.github.arrayv.utils.Renderer;
 import io.github.arrayv.visuals.Visual;
-
-import java.awt.*;
 
 /*
  *
@@ -38,10 +38,33 @@ public final class DisparityDots extends Visual {
 
     public DisparityDots(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
+
+        this.setListName("Disparity Dots");
+        this.setCategory("Dot Visuals");
+        this.setOverlayable(true);
+    }
+
+    public int[] getTopPosFor(int[] array, double idx, int val, ArrayVisualizer ArrayVisualizer, Renderer Renderer) {
+    	int width  = ArrayVisualizer.windowWidth();
+        int height = ArrayVisualizer.windowHeight();
+        int n = ArrayVisualizer.getCurrentLength();
+        double r = Math.min(width, height)/2.75;
+        double disp = (1 + Math.cos((Math.PI * (val - idx)) / (ArrayVisualizer.getCurrentLength() * 0.5))) * 0.5;
+        int x =  width/2 + (int)(disp * r * Math.cos(Math.PI * (2d*idx / n - 0.5)));
+        int y = height/2 + (int)(disp * r * Math.sin(Math.PI * (2d*idx / n - 0.5)));
+        return new int[] {
+        	x, y
+        };
+    }
+    public int[] getBottomPosFor(int[] array, double idx, int val, ArrayVisualizer ArrayVisualizer, Renderer Renderer) {
+    	return new int[] {
+    		ArrayVisualizer.windowWidth()/2,
+    		ArrayVisualizer.windowHeight()/2
+    	};
     }
 
     @Override
-    public void drawVisual(int[] array, ArrayVisualizer arrayVisualizer, Renderer renderer, Highlights Highlights) {
+    public void drawVisual(int[] array, int[] boundingBox, ArrayVisualizer arrayVisualizer, Renderer renderer, Highlights Highlights) {
         if (renderer.isAuxActive()) return;
 
         int width  = arrayVisualizer.windowWidth();
@@ -52,9 +75,8 @@ public final class DisparityDots extends Visual {
 
         if (arrayVisualizer.linesEnabled()) {
             double disp = (1 + Math.cos((Math.PI * (array[n-1] - (n-1))) / (arrayVisualizer.getCurrentLength() * 0.5))) * 0.5;
-            double angle = Math.PI * (2d * (n - 1) / n - 0.5);
-            int lastX =  width/2 + (int)(disp * r * Math.cos(angle));
-            int lastY = height/2 + (int)(disp * r * Math.sin(angle));
+            int lastX =  width/2 + (int)(disp * r * Math.cos(Math.PI * (2d*(n-1) / n - 0.5)));
+            int lastY = height/2 + (int)(disp * r * Math.sin(Math.PI * (2d*(n-1) / n - 0.5)));
             this.mainRender.setStroke(arrayVisualizer.getCustomStroke(2));
 
             for (int i = 0; i < n; i++) {
@@ -66,8 +88,9 @@ public final class DisparityDots extends Visual {
                     this.mainRender.setStroke(arrayVisualizer.getCustomStroke(4));
                 } else if (arrayVisualizer.colorEnabled())
                     this.mainRender.setColor(getIntColor(array[i], arrayVisualizer.getCurrentLength()));
-
-                else this.mainRender.setColor(Color.WHITE);
+                else if (Highlights.hasColor(array, i)) {
+                    this.mainRender.setColor(Highlights.colorAt(array, i));
+                } else this.mainRender.setColor(Color.WHITE);
 
                 disp = (1 + Math.cos((Math.PI * (array[i] - i)) / (arrayVisualizer.getCurrentLength() * 0.5))) * 0.5;
                 int x =  width/2 + (int)(disp * r * Math.cos(Math.PI * (2d*i / n - 0.5)));

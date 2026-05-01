@@ -64,6 +64,9 @@ public final class Reads {
     public void addComparison() {
         this.comparisons.incrementAndGet();
     }
+    public void addComparisons(long count) {
+    	this.comparisons.addAndGet(count);
+    }
 
     public String getStats() {
         if (this.comparisons.get() < 0) {

@@ -21,14 +21,18 @@ public abstract class ShellSorting extends Sort {
     final protected int[] GonnetBaezaYatesGaps = {1861, 846, 384, 174, 79, 36, 16, 7, 3, 1};
     final protected int[] TokudaGaps           = {2660, 1182, 525, 233, 103, 46, 20, 9, 4, 1};
     final protected int[] CiuraGaps            = {1750, 701, 301, 132, 57, 23, 10, 4, 1};
-    final protected int[] ExtendedCiuraGaps    = {8861, 3938, 1750, 701, 301, 132, 57, 23, 10, 4, 1};
+    final protected int[] ExtendedCiuraGaps    = {1648086853, 733777756, 326699891, 145456602, 64761647, 28833830, 12837687, 5715724, 2544812, 1133027, 504458, 224600, 99999, 44523,
+                                                   19823, 8826, 3930, 1750, 701, 301, 132, 57, 23, 10, 4, 1};
+    final protected int[] MachootaCiuraGaps    = {1247501165, 561937462, 253124983, 114020263, 51360479, 23135351, 10528127, 4697153, 2131981, 973657, 443557, 197803, 89129, 40354,
+    											   18118, 8129, 3659, 1636, 701, 301, 132, 57, 23, 10, 4, 1};
+    final protected int[] C16D3P1              = {730725073, 137010951, 25689553, 4816791, 903148, 169340, 31751, 5953, 1116, 209, 39, 7, 1};
 
     protected ShellSorting(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
     }
 
     protected void shellSort(int[] array, int length) {
-        int incs[] = ExtendedCiuraGaps;
+        int incs[] = MachootaCiuraGaps;
 
         for (int k = 0; k < incs.length; k++) {
             if(incs == PowersOfThreeGaps) {

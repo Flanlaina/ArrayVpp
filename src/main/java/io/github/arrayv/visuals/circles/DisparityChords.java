@@ -1,11 +1,11 @@
 package io.github.arrayv.visuals.circles;
 
+import java.awt.Color;
+
 import io.github.arrayv.main.ArrayVisualizer;
 import io.github.arrayv.utils.Highlights;
 import io.github.arrayv.utils.Renderer;
 import io.github.arrayv.visuals.Visual;
-
-import java.awt.*;
 
 /*
  *
@@ -38,10 +38,46 @@ public final class DisparityChords extends Visual {
 
     public DisparityChords(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
+
+        this.setListName("Disparity Chords");
+        this.setCategory("Circle Visuals");
+        this.setColorable(stance.ALWAYS);
+        this.setOverlayable(true);
+    }
+
+    public int[] getTopPosFor(int[] array, double idx, int val, ArrayVisualizer ArrayVisualizer, Renderer Renderer) {
+    	int width  = ArrayVisualizer.windowWidth();
+        int height = ArrayVisualizer.windowHeight();
+        int n = ArrayVisualizer.getCurrentLength();
+        double r = Math.min(width, height)/2.5;
+        
+        int ax =  width/2 + (int)(r * Math.cos(Math.PI * (2d*idx / n - 0.5)));
+        int ay = height/2 + (int)(r * Math.sin(Math.PI * (2d*idx / n - 0.5)));
+        int bx =  width/2 + (int)(r * Math.cos(Math.PI * (2d*val / n - 0.5)));
+        int by = height/2 + (int)(r * Math.sin(Math.PI * (2d*val / n - 0.5)));
+        return new int[] {
+        		idx>val?ax:bx,
+        		idx>val?ay:by
+        };
+    }
+    public int[] getBottomPosFor(int[] array, double idx, int val, ArrayVisualizer ArrayVisualizer, Renderer Renderer) {
+    	int width  = ArrayVisualizer.windowWidth();
+        int height = ArrayVisualizer.windowHeight();
+        int n = ArrayVisualizer.getCurrentLength();
+        double r = Math.min(width, height)/2.5;
+        
+        int ax =  width/2 + (int)(r * Math.cos(Math.PI * (2d*idx / n - 0.5)));
+        int ay = height/2 + (int)(r * Math.sin(Math.PI * (2d*idx / n - 0.5)));
+        int bx =  width/2 + (int)(r * Math.cos(Math.PI * (2d*val / n - 0.5)));
+        int by = height/2 + (int)(r * Math.sin(Math.PI * (2d*val / n - 0.5)));
+        return new int[] {
+        		idx<val?ax:bx,
+        		idx<val?ay:by
+        };
     }
 
     @Override
-    public void drawVisual(int[] array, ArrayVisualizer arrayVisualizer, Renderer renderer, Highlights Highlights) {
+    public void drawVisual(int[] array, int[] boundingBox, ArrayVisualizer arrayVisualizer, Renderer renderer, Highlights Highlights) {
         if (renderer.isAuxActive()) return;
 
         int width  = arrayVisualizer.windowWidth();
@@ -50,7 +86,7 @@ public final class DisparityChords extends Visual {
         int n = arrayVisualizer.getCurrentLength();
         double r = Math.min(width, height)/2.5;
 
-        this.mainRender.setStroke(arrayVisualizer.getThinStroke());
+        this.mainRender.setStroke(arrayVisualizer.getDefaultStroke());
 
         for (int i = n-1; i >= 0; i--) {
             this.mainRender.setColor(getIntColor(array[i], arrayVisualizer.getCurrentLength()));
@@ -62,16 +98,14 @@ public final class DisparityChords extends Visual {
 
             this.mainRender.drawLine(ax, ay, bx, by);
         }
-        this.mainRender.setStroke(arrayVisualizer.getDefaultStroke());
+        this.mainRender.setStroke(arrayVisualizer.getThickStroke());
 
         for (int i = 0; i < n; i++) {
-            double x = r * Math.cos(Math.PI * (2d * i / n - 0.5));
-            double y = r * Math.sin(Math.PI * (2d * i / n - 0.5));
             if (Highlights.fancyFinishActive() && i < Highlights.getFancyFinishPosition()) {
                 this.mainRender.setColor(Color.GREEN);
 
-                int ax =  width/2 + (int)x;
-                int ay = height/2 + (int)y;
+                int ax =  width/2 + (int)(r * Math.cos(Math.PI * (2d*i / n - 0.5)));
+                int ay = height/2 + (int)(r * Math.sin(Math.PI * (2d*i / n - 0.5)));
                 int bx =  width/2 + (int)(r * Math.cos(Math.PI * (2d*array[i] / n - 0.5)));
                 int by = height/2 + (int)(r * Math.sin(Math.PI * (2d*array[i] / n - 0.5)));
 
@@ -80,8 +114,8 @@ public final class DisparityChords extends Visual {
                 if (arrayVisualizer.analysisEnabled()) this.mainRender.setColor(Color.LIGHT_GRAY);
                 else                                   this.mainRender.setColor(Color.WHITE);
 
-                int ax =  width/2 + (int)x;
-                int ay = height/2 + (int)y;
+                int ax =  width/2 + (int)(r * Math.cos(Math.PI * (2d*i / n - 0.5)));
+                int ay = height/2 + (int)(r * Math.sin(Math.PI * (2d*i / n - 0.5)));
                 int bx =  width/2 + (int)(r * Math.cos(Math.PI * (2d*array[i] / n - 0.5)));
                 int by = height/2 + (int)(r * Math.sin(Math.PI * (2d*array[i] / n - 0.5)));
 

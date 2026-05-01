@@ -169,7 +169,10 @@ public final class Sounds {
                     int playNoteCount = Math.max(noteCount, 1);
                     int currentLen = arrayVisualizer.getCurrentLength();
 
+                    int step = 0;
                     for (int i : Highlights.highlightList()) {
+                    	if (step >= Highlights.getMaxHighlight() || step >= channels.length) break;
+                    	step++;
                         try {
                             if (i != -1) {
                                 if (!ALLOW_PERCUSSION_SOUNDS && channel == 9) {

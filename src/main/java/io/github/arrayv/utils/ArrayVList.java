@@ -1,11 +1,23 @@
 package io.github.arrayv.utils;
 
-import io.github.arrayv.main.ArrayVisualizer;
-
-import java.util.*;
+import java.awt.Color;
+import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.RandomAccess;
+import java.util.Spliterator;
 import java.util.function.Consumer;
 
-public class ArrayVList extends AbstractList<Integer> implements RandomAccess, java.io.Serializable {
+import io.github.arrayv.main.ArrayVisualizer;
+
+public class ArrayVList extends AbstractList<Integer> implements RandomAccess, Cloneable, java.io.Serializable {
     private static final int DEFAULT_CAPACITY = 128;
     private static final double DEFAULT_GROW_FACTOR = 2;
 
@@ -18,6 +30,7 @@ public class ArrayVList extends AbstractList<Integer> implements RandomAccess, j
     int[] internal;
     double growFactor;
     int count, capacity;
+    boolean colorsEnabled = false;
 
     public ArrayVList() {
         this(DEFAULT_CAPACITY, DEFAULT_GROW_FACTOR);
@@ -34,7 +47,7 @@ public class ArrayVList extends AbstractList<Integer> implements RandomAccess, j
             Writes = arrayVisualizer.getWrites();
         }
         this.internal = new int[capacity];
-        arrayVisualizer.getArrays().add(internal);
+        show();
         this.count = 0;
         this.capacity = capacity;
         this.growFactor = growFactor;
@@ -42,7 +55,8 @@ public class ArrayVList extends AbstractList<Integer> implements RandomAccess, j
 
     public void delete() {
         Writes.changeAllocAmount(-count);
-        arrayVisualizer.getArrays().remove(internal);
+        hide();
+        disableColors();
         this.internal = null;
         this.count = 0;
         this.capacity = 0;
@@ -84,12 +98,45 @@ public class ArrayVList extends AbstractList<Integer> implements RandomAccess, j
         return (T[])toArray();
     }
 
+    public int[] toIntArray() {
+    	int[] icached = internal;
+    	int[] result = new int[count];
+    	for (int i = 0; i < count; i++) {
+            result[i] = Integer.valueOf(icached[i]);
+        }
+        return result;
+    }
+
+    public void enableColors() {
+        if (!colorsEnabled) {
+            colorsEnabled = true;
+            arrayVisualizer.getHighlights().registerColors(internal);
+        }
+    }
+    public void disableColors() {
+        if (colorsEnabled) {
+            colorsEnabled = false;
+            arrayVisualizer.getHighlights().unregisterColors(internal);
+        }
+    }
+    
+    public void show() {
+        ArrayList<ArrayVList> lst = arrayVisualizer.getArrayVLists();
+        if(!lst.contains(this)) lst.add(this);
+    }
+    public void hide() {
+        ArrayList<ArrayVList> lst = arrayVisualizer.getArrayVLists();
+        while(lst.contains(this)) lst.remove(this);
+    }
+
     protected void grow() {
         int newCapacity = (int)Math.ceil(capacity * growFactor);
         int[] newInternal = new int[newCapacity];
         System.arraycopy(internal, 0, newInternal, 0, count);
-        ArrayList<int[]> arrays = arrayVisualizer.getArrays();
-        arrays.set(arrays.indexOf(internal), newInternal);
+        if (colorsEnabled) {
+            arrayVisualizer.getHighlights().unregisterColors(internal);
+            arrayVisualizer.getHighlights().registerColors(newInternal);
+        }
         this.capacity = newCapacity;
         this.internal = newInternal;
     }
@@ -106,6 +153,39 @@ public class ArrayVList extends AbstractList<Integer> implements RandomAccess, j
     @Override
     public boolean add(Integer e) {
         return add(e, 0, false);
+    }
+
+    public void colorCode(int position, String alias) {
+        try {
+            if (!colorsEnabled) {
+                throw new Exception("ArrayVList.colorCode(): List can't be colorcoded!");
+            }
+            arrayVisualizer.getHighlights().colorCode(internal, position, alias);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void colorCode(String alias, int... positions) {
+        try {
+            if (!colorsEnabled) {
+                throw new Exception("ArrayVList.colorCode(): List can't be colorcoded!");
+            }
+            arrayVisualizer.getHighlights().colorCode(internal, alias, positions);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void rawColorCode(int position, Color color) {
+        try {
+            if (!colorsEnabled) {
+                throw new Exception("ArrayVList.rawColorCode(): List can't be colorcoded!");
+            }
+            arrayVisualizer.getHighlights().setRawColor(internal, position, color);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void fastRemove(int index) {

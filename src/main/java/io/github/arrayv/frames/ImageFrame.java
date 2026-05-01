@@ -25,12 +25,23 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import io.github.arrayv.visuals.image.CustomImage;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+
+import io.github.arrayv.visuals.templates.CustomImageBase;
 
 public class ImageFrame extends JFrame {
     private static ImageFrame defaultFrame;
@@ -39,17 +50,18 @@ public class ImageFrame extends JFrame {
      *
      */
     private static final long serialVersionUID = 1L;
+    private volatile JPanel contentPane;
 
-    private final JLabel lblNewLabel2;
+    private volatile JLabel lblNewLabel2;
 
     /**
      * Create the frame.
      */
-    public ImageFrame(CustomImage visual) {
+    public ImageFrame(CustomImageBase visual) {
         ImageFrame.defaultFrame = this;
 
         setBounds(100, 100, 450, 300);
-        JPanel contentPane = new JPanel();
+        contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         setContentPane(contentPane);
         GridBagLayout gblContentPane = new GridBagLayout();
@@ -86,7 +98,12 @@ public class ImageFrame extends JFrame {
         contentPane.add(this.lblNewLabel2, gbcLblNewLabel2);
 
         JButton btnNewButton = new JButton("Load default artwork");
-        btnNewButton.addActionListener(e -> visual.loadDefaultArtwork(ImageFrame.this));
+        btnNewButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                visual.loadDefaultArtwork(ImageFrame.this);
+            }
+        });
         GridBagConstraints gbcBtnNewButton = new GridBagConstraints();
         gbcBtnNewButton.fill = GridBagConstraints.VERTICAL;
         gbcBtnNewButton.gridheight = 2;
@@ -97,7 +114,12 @@ public class ImageFrame extends JFrame {
         contentPane.add(btnNewButton, gbcBtnNewButton);
 
         JButton btnNewButton1 = new JButton("Choose image...");
-        btnNewButton1.addActionListener(e -> visual.loadCustomImage(ImageFrame.this));
+        btnNewButton1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                visual.loadCustomImage(ImageFrame.this);
+            }
+        });
         GridBagConstraints gbcBtnNewButton1 = new GridBagConstraints();
         gbcBtnNewButton1.fill = GridBagConstraints.VERTICAL;
         gbcBtnNewButton1.gridheight = 2;
@@ -108,7 +130,7 @@ public class ImageFrame extends JFrame {
         contentPane.add(btnNewButton1, gbcBtnNewButton1);
     }
 
-    public void updatePreview(CustomImage visual) {
+    public void updatePreview(CustomImageBase visual) {
         BufferedImage img = visual.getImage();
         Image scaledImg = img.getScaledInstance((int) (this.lblNewLabel2.getWidth() * 0.75), this.lblNewLabel2.getHeight(), Image.SCALE_SMOOTH);
         ImageIcon imageIcon = new ImageIcon(scaledImg);

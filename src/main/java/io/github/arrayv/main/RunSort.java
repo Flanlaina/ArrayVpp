@@ -204,6 +204,7 @@ public final class RunSort {
 
                         arrayVisualizer.setHeading(sortInfo.getRunName());
                         arrayVisualizer.setCategory(sortInfo.getCategory());
+                        arrayVisualizer.setConstant(sortInfo.getConstant());
 
                         realTimer.enableRealTimer();
                         boolean antiq = arrayVisualizer.useAntiQSort();

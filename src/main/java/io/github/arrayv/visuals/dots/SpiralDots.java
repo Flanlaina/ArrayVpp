@@ -1,11 +1,13 @@
 package io.github.arrayv.visuals.dots;
 
+import java.awt.Color;
+
+import com.scrtwpns.Mixbox;
+
 import io.github.arrayv.main.ArrayVisualizer;
 import io.github.arrayv.utils.Highlights;
 import io.github.arrayv.utils.Renderer;
 import io.github.arrayv.visuals.Visual;
-
-import java.awt.*;
 
 /*
  *
@@ -38,10 +40,33 @@ public final class SpiralDots extends Visual {
 
     public SpiralDots(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
+
+        this.setListName("Spiral Dots");
+        this.setCategory("Dot Visuals");
+        this.setOverlayable(true);
+    }
+    
+    public int[] getTopPosFor(int[] array, double idx, int val, ArrayVisualizer ArrayVisualizer, Renderer Renderer) {
+    	int width  = ArrayVisualizer.windowWidth();
+        int height = ArrayVisualizer.windowHeight();
+        int n = ArrayVisualizer.getCurrentLength();
+        double r = Math.min(width, height)/2.75;
+        double mult = (double) val / n - 1;
+        mult = 1 - mult * mult;
+        return new int[] {
+        		width/2 + (int)(mult * r * Math.cos(Math.PI * (2d*idx / n - 0.5))),
+        		height/2 + (int)(mult * r * Math.sin(Math.PI * (2d*idx / n - 0.5)))
+        };
+    }
+    public int[] getBottomPosFor(int[] array, double idx, int val, ArrayVisualizer ArrayVisualizer, Renderer Renderer) {
+    	return new int[] {
+    		ArrayVisualizer.windowWidth()/2,
+    		ArrayVisualizer.windowHeight()/2
+    	};
     }
 
     @Override
-    public void drawVisual(int[] array, ArrayVisualizer arrayVisualizer, Renderer renderer, Highlights Highlights) {
+    public void drawVisual(int[] array, int[] boundingBox, ArrayVisualizer arrayVisualizer, Renderer renderer, Highlights Highlights) {
         if (renderer.isAuxActive()) return;
 
         int width  = arrayVisualizer.windowWidth();
@@ -52,9 +77,8 @@ public final class SpiralDots extends Visual {
 
         if (arrayVisualizer.linesEnabled()) {
             double mult = (double) array[n-1] / arrayVisualizer.getCurrentLength();
-            double angle = Math.PI * (2d * (n - 1) / n - 0.5);
-            int lastX =  width/2 + (int)(mult * r * Math.cos(angle));
-            int lastY = height/2 + (int)(mult * r * Math.sin(angle));
+            int lastX =  width/2 + (int)(mult * r * Math.cos(Math.PI * (2d*(n-1) / n - 0.5)));
+            int lastY = height/2 + (int)(mult * r * Math.sin(Math.PI * (2d*(n-1) / n - 0.5)));
             this.mainRender.setStroke(arrayVisualizer.getCustomStroke(2));
 
             for (int i = 0; i < n; i++) {
@@ -64,10 +88,17 @@ public final class SpiralDots extends Visual {
                 if (Highlights.containsPosition(i)) {
                     this.mainRender.setColor(arrayVisualizer.getHighlightColor());
                     this.mainRender.setStroke(arrayVisualizer.getCustomStroke(4));
-                } else if (arrayVisualizer.colorEnabled())
-                    this.mainRender.setColor(getIntColor(array[i], arrayVisualizer.getCurrentLength()));
-
-                else this.mainRender.setColor(Color.WHITE);
+                } else if (arrayVisualizer.colorEnabled()) {
+                	if (Highlights.hasColor(array, i))
+                		this.mainRender.setColor(new Color(Mixbox.lerp(
+                			getIntColor(array[i], arrayVisualizer.getCurrentLength()).getRGB(),
+    	                	Highlights.colorAt(array, i).getRGB(),
+    	                	0.5f
+    	                )));
+                	else this.mainRender.setColor(getIntColor(array[i], arrayVisualizer.getCurrentLength()));
+                } else if (Highlights.hasColor(array, i)) {
+                    this.mainRender.setColor(Highlights.colorAt(array, i));
+                } else  this.mainRender.setColor(Color.WHITE);
 
                 mult = (double) array[i] / arrayVisualizer.getCurrentLength();
                 int x =  width/2 + (int)(mult * r * Math.cos(Math.PI * (2d*i / n - 0.5)));
@@ -86,11 +117,17 @@ public final class SpiralDots extends Visual {
             for (int i = 0; i < n; i++) {
                 if (Highlights.fancyFinishActive() && i < Highlights.getFancyFinishPosition())
                     this.mainRender.setColor(Color.GREEN);
-
-                else if (arrayVisualizer.colorEnabled())
-                    this.mainRender.setColor(getIntColor(array[i], arrayVisualizer.getCurrentLength()));
-
-                else this.mainRender.setColor(Color.WHITE);
+                else if (arrayVisualizer.colorEnabled()) {
+                	if (Highlights.hasColor(array, i))
+                		this.mainRender.setColor(new Color(Mixbox.lerp(
+                			getIntColor(array[i], arrayVisualizer.getCurrentLength()).getRGB(),
+    	                	Highlights.colorAt(array, i).getRGB(),
+    	                	0.5f
+    	                )));
+                	else this.mainRender.setColor(getIntColor(array[i], arrayVisualizer.getCurrentLength()));
+                } else if (Highlights.hasColor(array, i)) {
+                    this.mainRender.setColor(Highlights.colorAt(array, i));
+                } else  this.mainRender.setColor(Color.WHITE);
 
                 double mult = (double) array[i] / arrayVisualizer.getCurrentLength();
                 int x =  width/2 + (int)(mult * r * Math.cos(Math.PI * (2d*i / n - 0.5)));

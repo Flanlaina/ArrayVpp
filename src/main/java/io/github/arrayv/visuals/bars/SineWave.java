@@ -1,11 +1,13 @@
 package io.github.arrayv.visuals.bars;
 
+import java.awt.Color;
+
+import com.scrtwpns.Mixbox;
+
 import io.github.arrayv.main.ArrayVisualizer;
 import io.github.arrayv.utils.Highlights;
 import io.github.arrayv.utils.Renderer;
 import io.github.arrayv.visuals.Visual;
-
-import java.awt.*;
 
 /*
  *
@@ -38,18 +40,45 @@ public final class SineWave extends Visual {
 
     public SineWave(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
+
+        this.setListName("Sine Wave");
+        this.setCategory("Bar Visuals");
+        this.setAuxable(true);
+        this.setOverlayable(true);
+    }
+
+    public int[] getTopPosFor(int[] array, double idx, int val, ArrayVisualizer ArrayVisualizer, Renderer Renderer) {
+        int y = (int) (((Renderer.getViewSize() - 20) / 2.5) * Math.sin((2 * Math.PI * ((double) val / Renderer.getArrayLength()))) + Renderer.halfViewSize() - 20);
+    	return new int[] {
+    		(int)(Renderer.getXScale()*(idx+0.5d))+20,
+    		(int)(Renderer.getYOffset()+y)
+    	};
+    }
+    public int[] getBottomPosFor(int[] array, double idx, int val, ArrayVisualizer ArrayVisualizer, Renderer Renderer) {
+        int y = (int) (((Renderer.getViewSize() - 20) / 2.5) * Math.sin((2 * Math.PI * ((double) val / Renderer.getArrayLength()))) + Renderer.halfViewSize() - 20);
+    	return new int[] {
+    		(int)(Renderer.getXScale()*(idx+0.5d))+20,
+    		(int)(Renderer.getYOffset() + y + 20)
+    	};
     }
 
     @Override
-    public void drawVisual(int[] array, ArrayVisualizer arrayVisualizer, Renderer renderer, Highlights Highlights) {
+    public void drawVisual(int[] array, int[] boundingBox, ArrayVisualizer arrayVisualizer, Renderer renderer, Highlights Highlights) {
         for (int i = 0, j = 0; i < renderer.getArrayLength(); i++) {
             if (Highlights.fancyFinishActive() && i < Highlights.getFancyFinishPosition())
                 this.mainRender.setColor(Color.GREEN);
 
-            else if (arrayVisualizer.colorEnabled())
-                this.mainRender.setColor(getIntColor(array[i], arrayVisualizer.getCurrentLength()));
-
-            else this.mainRender.setColor(Color.WHITE);
+            else if (arrayVisualizer.colorEnabled()) {
+            	if (Highlights.hasColor(array, i))
+            		this.mainRender.setColor(new Color(Mixbox.lerp(
+            			getIntColor(array[i], arrayVisualizer.getCurrentLength()).getRGB(),
+	                	Highlights.colorAt(array, i).getRGB(),
+	                	0.5f
+	                )));
+            	else this.mainRender.setColor(getIntColor(array[i], arrayVisualizer.getCurrentLength()));
+            } else if (Highlights.hasColor(array, i)) {
+                this.mainRender.setColor(Highlights.colorAt(array, i));
+            } else this.mainRender.setColor(Color.WHITE);
 
             int width = (int) (renderer.getXScale() * (i + 1)) - j;
 

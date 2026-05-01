@@ -1,11 +1,13 @@
 package io.github.arrayv.visuals.misc;
 
+import java.awt.Color;
+
+import com.scrtwpns.Mixbox;
+
 import io.github.arrayv.main.ArrayVisualizer;
 import io.github.arrayv.utils.Highlights;
 import io.github.arrayv.utils.Renderer;
 import io.github.arrayv.visuals.Visual;
-
-import java.awt.*;
 
 /*
  *
@@ -36,14 +38,48 @@ SOFTWARE.
 public final class HoopStack extends Visual {
     public HoopStack(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
+        
+        this.setListName("Hoop Stack");
+        this.setCategory("Miscellaneous Visuals");
+        this.setColorable(stance.ALWAYS);
     }
 
     private void drawEllipseFromCenter(int x, int y, int rx, int ry) {
         this.mainRender.drawOval(x - rx, y - ry, 2*rx, 2*ry);
     }
+    
+    public int[] getTopPosFor(int[] array, double idx, int val, ArrayVisualizer ArrayVisualizer, Renderer Renderer) {
+        int width = ArrayVisualizer.windowWidth();
+        int height = ArrayVisualizer.windowHeight();
+        int length = ArrayVisualizer.getCurrentLength();
+        int radiusY = height / 9;
+        
+    	int y = (int) ((height - radiusY * 4) * idx / (double) (length - 1));
+        double scale = (val + 1) / (double) (length + 1);
+        
+        return new int[] {
+        	width / 2,
+        	y + 2 * radiusY - (int)(scale * radiusY+0.5)
+        };
+    }
+    
+    public int[] getBottomPosFor(int[] array, double idx, int val, ArrayVisualizer ArrayVisualizer, Renderer Renderer) {
+        int width = ArrayVisualizer.windowWidth();
+        int height = ArrayVisualizer.windowHeight();
+        int length = ArrayVisualizer.getCurrentLength();
+        int radiusY = height / 9;
+        
+    	int y = (int) ((height - radiusY * 4) * idx / (double) (length - 1));
+        double scale = (val + 1) / (double) (length + 1);
+        
+        return new int[] {
+        	width / 2,
+        	y + 2 * radiusY + (int)(scale*radiusY+0.5)
+        };
+    }
 
     @Override
-    public void drawVisual(int[] array, ArrayVisualizer arrayVisualizer, Renderer renderer, Highlights Highlights) {
+    public void drawVisual(int[] array, int[] boundingBox, ArrayVisualizer arrayVisualizer, Renderer renderer, Highlights Highlights) {
         if (renderer.isAuxActive()) return;
 
         int width = arrayVisualizer.windowWidth();
@@ -62,12 +98,18 @@ public final class HoopStack extends Visual {
 
             if (Highlights.fancyFinishActive() && i < Highlights.getFancyFinishPosition())
                 this.mainRender.setColor(Color.GREEN);
-
+            
             else if (Highlights.containsPosition(i)) {
                 if (arrayVisualizer.analysisEnabled()) this.mainRender.setColor(Color.LIGHT_GRAY);
                 else                                   this.mainRender.setColor(Color.WHITE);
 
                 this.mainRender.setStroke(arrayVisualizer.getDefaultStroke());
+            } else if (Highlights.hasColor(array, i)) {
+        		this.mainRender.setColor(new Color(Mixbox.lerp(
+        			getIntColor(array[i], arrayVisualizer.getCurrentLength()).getRGB(),
+                	Highlights.colorAt(array, i).getRGB(),
+                	0.5f
+                )));
             } else this.mainRender.setColor(getIntColor(array[i], length));
 
             this.drawEllipseFromCenter(width / 2, y + radiusY * 2, (int) (scale * radiusX + 0.5), (int) (scale * radiusY + 0.5));

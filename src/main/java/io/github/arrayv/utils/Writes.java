@@ -44,6 +44,8 @@ public final class Writes {
     private final AtomicLong auxWrites;
     private final AtomicLong writes;
     private final AtomicLong allocAmount;
+	private final AtomicLong recCalls;
+	private final AtomicLong recDepth;
 
     private final DecimalFormat formatter;
 
@@ -58,6 +60,8 @@ public final class Writes {
         this.auxWrites = new AtomicLong();
         this.writes = new AtomicLong();
         this.allocAmount = new AtomicLong();
+        this.recCalls = new AtomicLong();
+        this.recDepth = new AtomicLong();
 
         this.arrayVisualizer = arrayVisualizer;
         this.Delays = arrayVisualizer.getDelays();
@@ -73,6 +77,16 @@ public final class Writes {
         this.auxWrites.set(0);
         this.writes.set(0);
         this.allocAmount.set(0);
+        this.recCalls.set(0);
+        this.recDepth.set(0);
+    }
+
+    public long getMainWriteCount() {
+        return this.writes.get();
+    }
+
+    public long getAuxWriteCount() {
+        return this.auxWrites.get();
     }
 
     public String getReversals() {
@@ -125,6 +139,25 @@ public final class Writes {
         }
     }
 
+	public String getRecursions() {
+	    if(this.recCalls.get() < 0) {
+	        this.recCalls.set(Long.MIN_VALUE);
+	        return "Over " + this.formatter.format(Long.MAX_VALUE) + " Tracked Calls";
+	    } else {
+	        if (recCalls.get() == 1) return this.recCalls + " Tracked Call";
+	        else                     return this.formatter.format(this.recCalls) + " Tracked Calls";
+	    }
+	}
+	
+	public String getRecursionDepth() {
+	    if(this.recDepth.get() < 0) {
+	        this.recDepth.set(Long.MIN_VALUE);
+	        return "WTF (Over " + this.formatter.format(Long.MAX_VALUE) + " depth)";
+	    } else {
+	        return this.formatter.format(this.recDepth) + " Max Call Depth";
+	    }
+	}
+
     public void changeAuxWrites(int value) {
         this.auxWrites.addAndGet(value);
     }
@@ -149,6 +182,19 @@ public final class Writes {
         this.swaps.incrementAndGet();
         if (auxwrite) this.auxWrites.addAndGet(2);
         else          this.writes.addAndGet(2);
+    }
+    
+    public void recursion(long calls) {
+    	recCalls.addAndGet(calls);
+    }
+    
+    public void recursion() {
+    	recCalls.addAndGet(1);
+    }
+    
+    public void recordDepth(long depth) {
+    	if(depth > recDepth.get())
+    		recDepth.set(depth);
     }
 
     private void markSwap(int a, int b) {
@@ -191,6 +237,25 @@ public final class Writes {
                 this.swap(array, i, i - 1, 0, mark, auxwrite);
                 Delays.sleep(sleep);
             }
+        }
+    }
+
+    public void insert(int[] array, int pos, int to, double sleep, boolean mark, boolean auxwrite) {
+        int temp = array[pos];
+        if (to - pos > 0) {
+            for (int i = pos; i < to; i++) {
+                this.write(array, i, array[i + 1], 0, mark, auxwrite);
+                Delays.sleep(sleep);
+            }
+        } else if (to - pos < 0) {
+            for (int i = pos; i > to; i--) {
+                this.write(array, i, array[i - 1], 0, mark, auxwrite);
+                Delays.sleep(sleep);
+            }
+        }
+        if (pos != to) {
+            this.write(array, to, temp, 0, mark, auxwrite);
+            Delays.sleep(sleep);
         }
     }
 
@@ -436,6 +501,14 @@ public final class Writes {
         List<int[]> visArrays = arrayVisualizer.getArrays();
         Arrays.stream(arrays).forEach(visArrays::remove);
         arrayVisualizer.updateNow();
+    }
+
+    public void deleteAllExternalArrays() {
+    	int[][] arrays = arrayVisualizer.getArrays().toArray(new int[0][]);
+    	for(int[] a : arrays) {
+    		if(a != arrayVisualizer.getArray())
+    			this.deleteExternalArray(a);
+    	}
     }
 
     public void arrayListAdd(List<Integer> aList, int value) {

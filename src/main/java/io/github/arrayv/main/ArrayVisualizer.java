@@ -9,26 +9,11 @@ import io.github.arrayv.groovyapi.ArrayVEventHandler;
 import io.github.arrayv.groovyapi.ScriptManager;
 import io.github.arrayv.panes.JErrorPane;
 import io.github.arrayv.sortdata.SortInfo;
+import io.github.arrayv.sortdata.VisualInfo;
 import io.github.arrayv.utils.Renderer;
 import io.github.arrayv.utils.Timer;
 import io.github.arrayv.utils.*;
 import io.github.arrayv.visuals.Visual;
-import io.github.arrayv.visuals.VisualStyles;
-import io.github.arrayv.visuals.bars.BarGraph;
-import io.github.arrayv.visuals.bars.DisparityBarGraph;
-import io.github.arrayv.visuals.bars.Rainbow;
-import io.github.arrayv.visuals.bars.SineWave;
-import io.github.arrayv.visuals.circles.ColorCircle;
-import io.github.arrayv.visuals.circles.DisparityChords;
-import io.github.arrayv.visuals.circles.DisparityCircle;
-import io.github.arrayv.visuals.circles.Spiral;
-import io.github.arrayv.visuals.dots.DisparityDots;
-import io.github.arrayv.visuals.dots.ScatterPlot;
-import io.github.arrayv.visuals.dots.SpiralDots;
-import io.github.arrayv.visuals.dots.WaveDots;
-import io.github.arrayv.visuals.image.CustomImage;
-import io.github.arrayv.visuals.misc.HoopStack;
-import io.github.arrayv.visuals.misc.PixelMesh;
 
 import javax.swing.*;
 import java.awt.*;
@@ -37,6 +22,8 @@ import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.*;
+import java.awt.font.TextLayout;
+import java.awt.geom.AffineTransform;
 import java.io.*;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -45,6 +32,7 @@ import java.text.NumberFormat;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.UnaryOperator;
 
 /*
  *
@@ -91,10 +79,14 @@ public final class ArrayVisualizer {
         COMPARISONS,
         SWAPS,
         REVERSALS,
+        AUX_STATS,
+        CONSTANT,
+        RECURSIONS,
+        RECDEPTH,
         MAIN_WRITE,
         AUX_WRITE,
-        AUX_ALLOC,
-        SEGMENTS;
+        AUX_ALLOC;
+        // SEGMENTS;
 
         // @checkstyle:off IndentationCheck - It doesn't like {{ syntax
         private static final Map<String, StatisticType> CONFIG_KEYS = Collections.unmodifiableMap(new HashMap<String, StatisticType>() {{
@@ -108,10 +100,14 @@ public final class ArrayVisualizer {
             put("comps",    COMPARISONS);
             put("swaps",    SWAPS);
             put("revs",     REVERSALS);
+            put("entry",    AUX_STATS);
+            put("const",    CONSTANT);
+            put("recs",     RECURSIONS);
+            put("recdp",    RECDEPTH);
             put("wmain",    MAIN_WRITE);
             put("waux",     AUX_WRITE);
             put("auxlen",   AUX_ALLOC);
-            put("segments", SEGMENTS);
+            // put("segments", SEGMENTS);
         }});
         // @checkstyle:on IndentationCheck
     }
@@ -128,7 +124,11 @@ public final class ArrayVisualizer {
     final int[] stabilityTable;
     final int[] indexTable;
     final ArrayList<int[]> arrays;
+    final ArrayList<ArrayVList> arrayVLists;
     private final StatisticType[] statsConfig;
+    
+    private UnaryOperator<Long> constant;
+    private ConstantBuilder constantBuilder;
 
     private SortInfo[] sorts;
     private String[] invalidSorts;
@@ -142,8 +142,6 @@ public final class ArrayVisualizer {
 
     private final UtilFrame utilFrame;
     private final ArrayFrame arrayFrame;
-
-    private Visual[] visualClasses;
 
     private Thread sortingThread;
     private final Thread visualsThread;
@@ -176,6 +174,8 @@ public final class ArrayVisualizer {
     private volatile boolean stabilityChecking;
     private volatile boolean visualizingNetworks;
     private volatile boolean reversedComparator;
+    
+    private volatile boolean seeded;
 
     private volatile boolean isCanceled;
 
@@ -198,12 +198,13 @@ public final class ArrayVisualizer {
     private final AntiQSort antiQSort;
     private final ScriptManager scriptManager;
 
-    private VisualStyles visualStyle;
+    private VisualInfo[] visuals;
+    private Visual runningVisual;
 
     private final AtomicInteger updateVisualsForced;
     private volatile boolean benchmarking;
 
-    private static int maxLengthPower = 15;
+    private static int maxLengthPower = 25;
 
     private volatile boolean hidden;
     private volatile boolean frameSkipped;
@@ -253,7 +254,8 @@ public final class ArrayVisualizer {
                         }
                     }
                     ArrayVisualizer.this.sortAnalyzer.sortSorts();
-                    ArrayVisualizer.this.refreshSorts();
+                    ArrayVisualizer.this.sortAnalyzer.sortVisuals();
+                    ArrayVisualizer.this.refreshTables();
                     if (success == 0) {
                         JErrorPane.invokeCustomErrorMessage("Failed to import all " + droppedFiles.size() + " sorts");
                     } else {
@@ -340,6 +342,7 @@ public final class ArrayVisualizer {
         this.sortLength = this.maxArrayVal;
 
         this.arrays = new ArrayList<>();
+        this.arrayVLists = new ArrayList<>();
         this.arrays.add(this.array);
 
         this.fontSelection = "Times New Roman";
@@ -409,11 +412,14 @@ public final class ArrayVisualizer {
                 StatisticType.COMPARISONS,
                 StatisticType.SWAPS,
                 StatisticType.REVERSALS,
+                StatisticType.AUX_STATS,
+                StatisticType.CONSTANT,
+                StatisticType.RECURSIONS,
+                StatisticType.RECDEPTH,
                     StatisticType.LINE_BREAK,
                 StatisticType.MAIN_WRITE,
                 StatisticType.AUX_WRITE,
-                StatisticType.AUX_ALLOC,
-                StatisticType.SEGMENTS
+                StatisticType.AUX_ALLOC
             };
             // @checkstyle:on IndentationCheck
         } else {
@@ -436,6 +442,10 @@ public final class ArrayVisualizer {
         this.Reads = new Reads(this);
         this.renderer = new Renderer(this);
         this.Writes = new Writes(this);
+
+        this.constant = n -> -1L;
+        this.constantBuilder = new ConstantBuilder(this);
+
         this.antiQSort = new AntiQSort(this);
         this.scriptManager = new ScriptManager();
 
@@ -448,7 +458,8 @@ public final class ArrayVisualizer {
         this.sortAnalyzer = new SortAnalyzer(this);
 
         this.sortAnalyzer.analyzeSorts();
-        this.refreshSorts();
+        this.sortAnalyzer.analyzeVisuals();
+        this.refreshTables();
 
         int[] stabilityTable, indexTable, validateArray;
         boolean disabledStabilityCheck;
@@ -532,24 +543,6 @@ public final class ArrayVisualizer {
                 background.setColor(Color.BLACK);
                 int coltmp = 255;
 
-                ArrayVisualizer.this.visualClasses = new Visual[15];
-
-                ArrayVisualizer.this.visualClasses[0]  = new          BarGraph(ArrayVisualizer.this);
-                ArrayVisualizer.this.visualClasses[1]  = new           Rainbow(ArrayVisualizer.this);
-                ArrayVisualizer.this.visualClasses[2]  = new DisparityBarGraph(ArrayVisualizer.this);
-                ArrayVisualizer.this.visualClasses[3]  = new       ColorCircle(ArrayVisualizer.this);
-                ArrayVisualizer.this.visualClasses[4]  = new   DisparityCircle(ArrayVisualizer.this);
-                ArrayVisualizer.this.visualClasses[5]  = new   DisparityChords(ArrayVisualizer.this);
-                ArrayVisualizer.this.visualClasses[6]  = new     DisparityDots(ArrayVisualizer.this);
-                ArrayVisualizer.this.visualClasses[7]  = new       ScatterPlot(ArrayVisualizer.this);
-                ArrayVisualizer.this.visualClasses[8]  = new          WaveDots(ArrayVisualizer.this);
-                ArrayVisualizer.this.visualClasses[9]  = new       CustomImage(ArrayVisualizer.this);
-                ArrayVisualizer.this.visualClasses[10] = new          SineWave(ArrayVisualizer.this);
-                ArrayVisualizer.this.visualClasses[11] = new         HoopStack(ArrayVisualizer.this);
-                ArrayVisualizer.this.visualClasses[12] = new         PixelMesh(ArrayVisualizer.this);
-                ArrayVisualizer.this.visualClasses[13] = new            Spiral(ArrayVisualizer.this);
-                ArrayVisualizer.this.visualClasses[14] = new        SpiralDots(ArrayVisualizer.this);
-
                 while (ArrayVisualizer.this.visualsEnabled) {
                     if (ArrayVisualizer.this.updateVisualsForced.get() == 0) {
                         try {
@@ -565,8 +558,17 @@ public final class ArrayVisualizer {
                         if (ArrayVisualizer.this.updateVisualsForced.get() > 0) {
                             ArrayVisualizer.this.updateVisualsForced.decrementAndGet();
                             ArrayVisualizer.this.renderer.updateVisualsStart(ArrayVisualizer.this);
-                            int[][] arrays = ArrayVisualizer.this.arrays.toArray(new int[][] { });
-                            ArrayVisualizer.this.renderer.drawVisual(ArrayVisualizer.this.visualStyle, arrays, ArrayVisualizer.this, ArrayVisualizer.this.Highlights);
+                            int ttl = ArrayVisualizer.this.arrays.size() + ArrayVisualizer.this.arrayVLists.size();
+                            int[][] arrays = ArrayVisualizer.this.arrays.toArray(new int[ttl][]);
+                            int count = ArrayVisualizer.this.arrays.size();
+                            for(int v = 0; count < ttl; v++, count++) {
+                            	try {
+                            		arrays[count] = ArrayVisualizer.this.arrayVLists.get(v).toIntArray();
+                            	} catch(IndexOutOfBoundsException e) {
+                            		// no.
+                            	}
+                            }
+                            ArrayVisualizer.this.renderer.drawVisual(ArrayVisualizer.this.runningVisual, arrays, ArrayVisualizer.this, ArrayVisualizer.this.Highlights);
 
                             if (ArrayVisualizer.this.showStatistics) {
                                 ArrayVisualizer.this.statSnapshot.updateStats(ArrayVisualizer.this);
@@ -603,32 +605,55 @@ public final class ArrayVisualizer {
         return window;
     }
 
-    public void refreshSorts() {
+    public void refreshTables() {
         this.sorts = this.sortAnalyzer.getSorts();
+        this.visuals = this.sortAnalyzer.getVisuals();
         this.invalidSorts = this.sortAnalyzer.getInvalidSorts();
         this.sortSuggestions = this.sortAnalyzer.getSuggestions();
+    }
+    
+    private void drawString(String text, int x, int y, boolean dropShadow) {
+    	if(dropShadow) return;
+        Stroke stroke = this.mainRender.getStroke();
+        Color color = this.mainRender.getColor();
+        this.mainRender.setStroke(new BasicStroke(5f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND));
+        
+        TextLayout layout = new TextLayout(text, this.typeFace, this.mainRender.getFontRenderContext());
+        AffineTransform transform = new AffineTransform();
+        transform.setToTranslation(x, y);
+        Shape shape = layout.getOutline(transform);
+        this.mainRender.setColor(Color.black);
+        this.mainRender.draw(shape);
+        this.mainRender.setColor(color);
+        // make shape visible
+        this.mainRender.drawString(text, x, y);
+        // this.mainRender.fill(shape);
+        // this.mainRender.fill(shape);
+        this.mainRender.setStroke(stroke);
     }
 
     private void drawStats(Color textColor, boolean dropShadow) {
         int xOffset = 15;
-        int yOffset = 30;
+        int yOffset = 36;
         if (dropShadow) {
             xOffset += 3;
             yOffset += 3;
         }
 
-        double windowRatio = this.getWindowRatio();
-        int yPos = (int)(fontSelectionScale / 25.0 * 30);
-
+    	int fHeight = this.mainRender.getFontMetrics().getHeight();
+        int yPos = this.mainRender.getFontMetrics().getAscent(), fyPos = yPos;
+        
         this.mainRender.setColor(textColor);
 
+        int wMax = 0;
+        statLoop:
         for (StatisticType statType : statsConfig) {
             // System.out.println(yPos);
             String stat;
             switch (statType) {
                 case LINE_BREAK:
-                    yPos += (int)(fontSelectionScale / 25.0 * 15);
-                    continue;
+                    yPos += (int)(fHeight * 9.0 / 15);
+                    continue statLoop;
                 case SORT_IDENTITY:
                     stat = statSnapshot.getSortIdentity();
                     break;
@@ -656,6 +681,22 @@ public final class ArrayVisualizer {
                 case REVERSALS:
                     stat = statSnapshot.getReversalCount();
                     break;
+                case AUX_STATS:
+                	for(String neostat : statSnapshot.parseMap()) {
+                    	wMax = Math.max(wMax, this.mainRender.getFontMetrics().stringWidth(neostat));
+                        mainRender.drawString(neostat, xOffset, yPos + yOffset);
+                        yPos += fHeight - 2;
+                	}
+                    continue statLoop;
+                case CONSTANT:
+                    stat = statSnapshot.getConstant();
+                    break;
+                case RECURSIONS:
+                    stat = statSnapshot.getRecursionCount();
+                    break;
+                case RECDEPTH:
+                    stat = statSnapshot.getRecursionDepth();
+                    break;
                 case MAIN_WRITE:
                     stat = statSnapshot.getMainWriteCount();
                     break;
@@ -665,14 +706,38 @@ public final class ArrayVisualizer {
                 case AUX_ALLOC:
                     stat = statSnapshot.getAuxAllocAmount();
                     break;
-                case SEGMENTS:
+                /*case SEGMENTS:
                     stat = statSnapshot.getSegments();
-                    break;
+                    break;*/
                 default:
                     stat = null; // Unreachable
             }
-            mainRender.drawString(stat, xOffset, (int)(windowRatio * yPos) + yOffset);
-            yPos += fontSelectionScale;
+        	wMax = Math.max(wMax, this.mainRender.getFontMetrics().stringWidth(stat));
+            //mainRender.drawString(stat, xOffset, (int)(windowRatio * yPos) + yOffset);
+        	drawString(stat, xOffset, yPos + yOffset, dropShadow);
+            yPos += fHeight - 2;
+        }
+        if (Highlights.getDeclaredColors().size() > 0) {
+            int startOffset = currentWidth() - 8,
+                copy = startOffset,
+                startStat = wMax + xOffset + 8,
+                copyYPos = fyPos + yOffset + 2, textWidth,
+                fDescent = this.mainRender.getFontMetrics().getDescent();
+            for (String color : Highlights.getDeclaredColors()) {
+                textWidth = mainRender.getFontMetrics().stringWidth(color);
+                startOffset -= textWidth + fHeight + 12;
+                if (startOffset <= startStat) {
+                    startOffset = copy - textWidth - fHeight - 12;
+                    copyYPos += fHeight + 8;
+                }
+                if (!dropShadow)
+                    mainRender.setColor(Highlights.getColorFromName(color));
+                mainRender.fillRect(startOffset + xOffset - 15, copyYPos - fHeight + fDescent, fHeight, fHeight);
+                if (!dropShadow)
+                    mainRender.setColor(textColor);
+                //mainRender.drawString(color, startOffset + metricFontHeight + xOffset - 9, copyYPos);
+            	drawString(color, startOffset + fHeight + xOffset - 9, copyYPos, dropShadow);
+            }
         }
     }
 
@@ -774,6 +839,9 @@ public final class ArrayVisualizer {
     public ArrayList<int[]> getArrays() {
         return this.arrays;
     }
+    public ArrayList<ArrayVList> getArrayVLists() {
+        return this.arrayVLists;
+    }
 
     public ArrayManager getArrayManager() {
         return this.arrayManager;
@@ -799,9 +867,6 @@ public final class ArrayVisualizer {
     public Timer getTimer() {
         return this.Timer;
     }
-    public VisualStyles getVisualStyles() {
-        return this.visualStyle;
-    }
     public Writes getWrites() {
         return this.Writes;
     }
@@ -810,8 +875,8 @@ public final class ArrayVisualizer {
         return scriptManager;
     }
 
-    public Visual[] getVisuals() {
-        return this.visualClasses;
+    public VisualInfo[] getVisuals() {
+        return this.visuals;
     }
 
     public UtilFrame getUtilFrame() {
@@ -967,6 +1032,15 @@ public final class ArrayVisualizer {
     public String getExtraHeading() {
         return this.extraHeading;
     }
+    public UnaryOperator<Long> getConstant() {
+        return this.constant;
+    }
+    public ConstantBuilder getConstantBuilder() {
+        return this.constantBuilder;
+    }
+    public void setConstant(UnaryOperator<Long> constant) {
+        this.constant = constant;
+    }
     public void setHeading(String text) {
         this.heading = text;
     }
@@ -1068,17 +1142,23 @@ public final class ArrayVisualizer {
     public Graphics2D getExtraRender() {
         return this.extraRender;
     }
-    public void setMainRender() {
+    @SuppressWarnings("serial")
+	public void setMainRender() {
         this.mainRender = (Graphics2D) this.img.getGraphics();
+        this.mainRender.addRenderingHints(new IdentityHashMap<RenderingHints.Key,Object>() {{
+        	put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        	put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+        	put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+        	// put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        }});
     }
     public void setExtraRender() {
         this.extraRender = (Graphics2D) this.img.getGraphics();
     }
-    public void updateVisuals() {
-        for (Visual visual : this.visualClasses) {
-            visual.updateRender(this);
-        }
+    public void updateRendersForActiveVisual() {
+    	this.runningVisual.updateRender(INSTANCE);
     }
+    
     public void resetMainStroke() {
         this.mainRender.setStroke(this.getDefaultStroke());
     }
@@ -1112,6 +1192,14 @@ public final class ArrayVisualizer {
         return this.highlightAsAnalysis;
     }
 
+    public void setSeeded(boolean Bool) {
+        this.seeded = Bool;
+    }
+    
+    public boolean isSeeded() {
+        return this.seeded;
+    }
+
     public int halfCircle() {
         return (this.sortLength / 2);
     }
@@ -1120,6 +1208,11 @@ public final class ArrayVisualizer {
     public synchronized void verifySortAndSweep() {
         this.Highlights.toggleFancyFinish(true);
         this.Highlights.resetFancyFinish();
+        this.Highlights.clearColorList();
+        this.Highlights.clearAllColorsReferenced();
+        this.Writes.deleteAllExternalArrays();
+        this.arrayVLists.clear();
+        Renderer.unregisterAllRenderables();
 
         this.Delays.setSleepRatio(1);
 
@@ -1315,14 +1408,39 @@ public final class ArrayVisualizer {
         this.showExternalArrays = showExternalArrays;
     }
 
-    public void setVisual(VisualStyles choice) {
-        if (choice == io.github.arrayv.visuals.VisualStyles.CUSTOM_IMAGE) {
-            ((CustomImage) this.visualClasses[9]).enableImgMenu();
-        }
-        this.visualStyle = choice;
+    public Visual getActiveVisual() {
+        return this.runningVisual;
+    }
+    
+    public void setActiveVisual(VisualInfo visual) {
+    	this.runningVisual.pullDown();
+    	this.runningVisual = visual.getFreshInstance();
         synchronized (this) {
             this.updateNow();
         }
+    	this.runningVisual.bringUp();
+    }
+    
+    public void setActiveVisual(Visual visual) {
+    	this.runningVisual.pullDown();
+    	this.runningVisual = visual;
+        synchronized (this) {
+            this.updateNow();
+        }
+    	this.runningVisual.bringUp();
+    }
+    
+    public int[] getTopPos(int[] array, int idx) {
+    	return this.runningVisual.getTopPos(array, idx, this, this.renderer);
+    }
+    public int[] getTopPosFor(int[] array, double idx, int val) {
+    	return this.runningVisual.getTopPosFor(array, idx, val, this, this.renderer);
+    }
+    public int[] getBottomPos(int[] array, int idx) {
+    	return this.runningVisual.getBottomPos(array, idx, this, this.renderer);
+    }
+    public int[] getBottomPosFor(int[] array, double idx, int val) {
+    	return this.runningVisual.getBottomPosFor(array, idx, val, this, this.renderer);
     }
 
     public int getCurrentGap() {
@@ -1414,31 +1532,22 @@ public final class ArrayVisualizer {
     }
 
     private void drawWindows() {
-        this.visualStyle = io.github.arrayv.visuals.VisualStyles.BARS;
+    	this.runningVisual = new io.github.arrayv.visuals.bars.BarGraphTiled(this);
         this.category = "Select a Sort";
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         this.window.setSize((int) (screenSize.getWidth() / 2), (int) (screenSize.getHeight() / 2));
 
-        StringBuilder title = new StringBuilder("w0rthy's Array Visualizer - ");
+        StringBuilder title = new StringBuilder("w0rthy's ArrayV++ - ");
         title.append(this.sorts.length);
-        title.append(" Sorts, 15 Visual Styles, and Infinite Inputs to Sort");
-        String versionName = buildInfo.getProperty("version");
-        String commitSha = buildInfo.getProperty("commitId");
-        if (commitSha != null || versionName != null) {
-            title.append(" (");
-            if (versionName != null) {
-                title.append("version ").append(versionName);
-                if (commitSha != null) {
-                    title.append(", ");
-                }
-            }
-            if (commitSha != null) {
-                title.append("commit ").append(commitSha);
-            }
-            title.append(')');
-        }
-
+        title.append(" Sorts, ");
+        title.append(this.visuals.length);
+        title.append(" Visual Styles, and Infinite Inputs to Sort");
+        title.append(" (v5.2");
+        String versionSha = buildInfo.getProperty("commitId");
+        if (!versionSha.equals("${git.commit.id.abbrev}") && !versionSha.equals("unknown")) // Hash not loaded
+            title.append(", commit ").append(versionSha);
+        title.append(")");
         this.window.setLocation(0, 0);
         this.window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.window.setTitle(title.toString());

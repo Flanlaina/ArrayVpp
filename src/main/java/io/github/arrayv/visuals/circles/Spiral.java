@@ -1,11 +1,13 @@
 package io.github.arrayv.visuals.circles;
 
+import java.awt.Color;
+
+import com.scrtwpns.Mixbox;
+
 import io.github.arrayv.main.ArrayVisualizer;
 import io.github.arrayv.utils.Highlights;
 import io.github.arrayv.utils.Renderer;
 import io.github.arrayv.visuals.Visual;
-
-import java.awt.*;
 
 /*
  *
@@ -38,10 +40,33 @@ public final class Spiral extends Visual {
 
     public Spiral(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
+
+        this.setListName("Spiral");
+        this.setCategory("Circle Visuals");
+        this.setOverlayable(true);
+    }
+
+    public int[] getTopPosFor(int[] array, double idx, int val, ArrayVisualizer ArrayVisualizer, Renderer Renderer) {
+    	int width  = ArrayVisualizer.windowWidth();
+        int height = ArrayVisualizer.windowHeight();
+        int n = ArrayVisualizer.getCurrentLength();
+        double r = Math.min(width, height)/2.5;
+        double mult = (double) val / n - 1;
+        mult = 1 - mult * mult;
+        return new int[] {
+        		width/2 + (int)(mult * r * Math.cos(Math.PI * (2d*idx / n - 0.5))),
+        		height/2 + (int)(mult * r * Math.sin(Math.PI * (2d*idx / n - 0.5)))
+        };
+    }
+    public int[] getBottomPosFor(int[] array, double idx, int val, ArrayVisualizer ArrayVisualizer, Renderer Renderer) {
+    	return new int[] {
+    		ArrayVisualizer.windowWidth()/2,
+    		ArrayVisualizer.windowHeight()/2
+    	};
     }
 
     @Override
-    public void drawVisual(int[] array, ArrayVisualizer arrayVisualizer, Renderer renderer, Highlights Highlights) {
+    public void drawVisual(int[] array, int[] boundingBox, ArrayVisualizer arrayVisualizer, Renderer renderer, Highlights Highlights) {
         if (renderer.isAuxActive()) return;
 
         int width  = arrayVisualizer.windowWidth();
@@ -59,9 +84,8 @@ public final class Spiral extends Visual {
         double mult = (double) array[n-1] / arrayVisualizer.getCurrentLength() - 1;
         mult = 1 - mult*mult;
 
-        double angle = Math.PI * (2d * (n - 1) / n - 0.5);
-        x[2] =  width/2 + (int)(mult * r * Math.cos(angle));
-        y[2] = height/2 + (int)(mult * r * Math.sin(angle));
+        x[2] =  width/2 + (int)(mult * r * Math.cos(Math.PI * (2d*(n-1) / n - 0.5)));
+        y[2] = height/2 + (int)(mult * r * Math.sin(Math.PI * (2d*(n-1) / n - 0.5)));
 
         for (int i = 0; i < n; i++) {
             x[1] = x[2];
@@ -79,10 +103,17 @@ public final class Spiral extends Visual {
             else if (Highlights.containsPosition(i)) {
                 this.mainRender.setColor(arrayVisualizer.getHighlightColor());
                 this.extraRender.drawPolygon(x, y, 3);
-            } else if (arrayVisualizer.colorEnabled())
-                this.mainRender.setColor(getIntColor(array[i], arrayVisualizer.getCurrentLength()));
-
-            else this.mainRender.setColor(Color.WHITE);
+            } else if (arrayVisualizer.colorEnabled()) {
+            	if (Highlights.hasColor(array, i))
+            		this.mainRender.setColor(new Color(Mixbox.lerp(
+            			getIntColor(array[i], arrayVisualizer.getCurrentLength()).getRGB(),
+	                	Highlights.colorAt(array, i).getRGB(),
+	                	0.5f
+	                )));
+            	else this.mainRender.setColor(getIntColor(array[i], arrayVisualizer.getCurrentLength()));
+            } else if (Highlights.hasColor(array, i)) {
+                this.mainRender.setColor(Highlights.colorAt(array, i));
+            } else this.mainRender.setColor(Color.WHITE);
 
             this.mainRender.fillPolygon(x, y, 3);
         }

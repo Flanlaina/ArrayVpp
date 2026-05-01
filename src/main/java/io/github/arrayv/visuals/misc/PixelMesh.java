@@ -1,14 +1,16 @@
 package io.github.arrayv.visuals.misc;
 
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+
 import io.github.arrayv.main.ArrayVisualizer;
 import io.github.arrayv.utils.Highlights;
 import io.github.arrayv.utils.Renderer;
 import io.github.arrayv.visuals.Visual;
-
-import java.awt.*;
+import com.scrtwpns.Mixbox;
 
 /*
- *
+ * 
 MIT License
 
 Copyright (c) 2020-2021 ArrayV 4.0 Team
@@ -33,46 +35,114 @@ SOFTWARE.
  *
  */
 
-public final class PixelMesh extends Visual {
-    public PixelMesh(ArrayVisualizer arrayVisualizer) {
-        super(arrayVisualizer);
-    }
-
-    @Override
-    public void drawVisual(int[] array, ArrayVisualizer arrayVisualizer, Renderer renderer, Highlights Highlights) {
-        if (renderer.isAuxActive()) return;
-
-        int width = arrayVisualizer.windowWidth()-40;
-        int height = arrayVisualizer.windowHeight()-50;
-        int length = arrayVisualizer.getCurrentLength();
+final public class PixelMesh extends Visual {
+	public PixelMesh(ArrayVisualizer ArrayVisualizer) {
+		super(ArrayVisualizer);
+		
+        this.setListName("Pixel Mesh");
+        this.setCategory("Miscellaneous Visuals");
+        this.setOverlayable(true);
+	}
+	
+	private int multx2i(int a, int b) {
+		return b<64?(a*b)/127:b<128?(a*(b+1))/127:255-(((255-a)*(255-b))/128);
+	}
+	private Color multx2(Color a, Color b) {
+		return new Color(multx2i(a.getRed(), b.getRed()), multx2i(a.getGreen(), b.getGreen()), multx2i(a.getBlue(), b.getBlue()));
+	}
+    
+    public int[] getTopPosFor(int[] array, double idx, int val, ArrayVisualizer ArrayVisualizer, Renderer Renderer) {
+    	int width = ArrayVisualizer.windowWidth()-40;
+        int height = ArrayVisualizer.windowHeight()-50;
+        int length = ArrayVisualizer.getCurrentLength();
 
         int sqrt = (int)Math.ceil(Math.sqrt(length));
-        int square = sqrt*sqrt;
-        double scale = (double)length / square;
 
-        int x = 0;
-        int y = 0;
         double xStep = (double)width / sqrt;
         double yStep = (double)height / sqrt;
-
-        for (int i = 0; i < square; i++) {
-            int idx = (int)(i * scale);
-
-            if (Highlights.fancyFinishActive() && idx < Highlights.getFancyFinishPosition())
-                this.mainRender.setColor(Color.GREEN);
-
-            else if (Highlights.containsPosition(idx)) {
-                if (arrayVisualizer.analysisEnabled()) this.mainRender.setColor(Color.LIGHT_GRAY);
-                else                                   this.mainRender.setColor(Color.WHITE);
-            } else this.mainRender.setColor(getIntColor(array[idx], length));
-
-            this.mainRender.fillRect(20 + (int)(x * xStep), 40 + (int)(y * yStep),
-                                     (int)((x+1)*xStep - x*xStep)+1, (int)((y+1)*yStep - y*yStep)+1);
-
-            if (++x == sqrt) {
-                x = 0;
-                y++;
-            }
-        }
+        
+        int y = (int)idx/sqrt;
+        int x = (int)idx-y*sqrt;
+        return new int[] {
+    		20 + (int)((x+0.5) * xStep),
+            40 + (int)((y+0.5) * yStep)
+        };
     }
+    
+    public int[] getBottomPosFor(int[] array, double idx, int val, ArrayVisualizer ArrayVisualizer, Renderer Renderer) {
+    	int width = ArrayVisualizer.windowWidth()-40;
+        int height = ArrayVisualizer.windowHeight()-50;
+        int length = ArrayVisualizer.getCurrentLength();
+
+        int sqrt = (int)Math.ceil(Math.sqrt(length));
+
+        double xStep = (double)width / sqrt;
+        double yStep = (double)height / sqrt;
+        
+        int y = (int)idx/sqrt;
+        int x = (int)idx-y*sqrt;
+        return new int[] {
+    		20 + (int)((x+1) * xStep),
+            40 + (int)((y+1) * yStep)
+        };
+    }
+	
+	private static boolean mixedMesh = true;
+	
+	public void drawVisual(int[] array, int[] boundingBox, ArrayVisualizer ArrayVisualizer, Renderer Renderer, Highlights Highlights) {
+		if(Renderer.isAuxActive()) return;
+		
+		int width = ArrayVisualizer.windowWidth();
+		int height = ArrayVisualizer.windowHeight()-50;
+		int length = ArrayVisualizer.getCurrentLength();
+		
+		int sqrt = (int)Math.ceil(Math.sqrt(length));
+		int square = sqrt*sqrt;
+		double scale = (double)length / square;
+		
+		Color currColor;
+		int imgWidth = Math.min(sqrt, width), imgHeight = Math.min(sqrt, height);
+		BufferedImage img = new BufferedImage(imgWidth, imgHeight, BufferedImage.TYPE_INT_RGB);
+		
+		double xScale = (double)sqrt/imgWidth;
+		double yScale = (double)sqrt/imgHeight;
+		
+		for(int y = 0; y < imgHeight; y++) {
+			int yi = (int)(y * yScale);
+			
+			for(int x = 0; x < imgWidth; x++) {
+				int xi  = (int)(x * xScale);
+				int idx = (int)((yi*sqrt + xi) * scale);
+				
+				if(ArrayVisualizer.colorEnabled()) {
+					if(Highlights.containsPosition(idx)) {
+						if(ArrayVisualizer.analysisEnabled()) currColor = Color.LIGHT_GRAY;
+						else								  currColor = Color.WHITE;
+					}
+					else if(mixedMesh)
+		            	currColor = multx2(getIntColor(array[idx]*sqrt, length), getGray(array[idx]/sqrt+1,(length-1)/sqrt+2));
+		            else
+		            	currColor = getIntColor(array[idx], length);
+				} else {
+					if(Highlights.containsPosition(idx)) {
+						if(ArrayVisualizer.analysisEnabled()) currColor = Color.BLUE;
+						else								  currColor = Color.RED;
+					}
+					else currColor = getGray(array[idx], length);
+				}
+				Color c = null;
+				
+				if(Highlights.fancyFinishActive() && idx < Highlights.getFancyFinishPosition()) {
+					c = Color.GREEN;
+				} else if(Highlights.hasColor(array, idx)) {
+		            c = Highlights.colorAt(array, idx);
+				}
+				
+				if(c != null) currColor = new Color(Mixbox.lerp(currColor.getRGB(), c.getRGB(), 0.5f));
+				
+				img.setRGB(x, y, currColor.getRGB());
+			}
+		}
+		this.mainRender.drawImage(img, 10, 40, width-10, height+40, 0, 0, imgWidth, imgHeight, null);
+	}
 }

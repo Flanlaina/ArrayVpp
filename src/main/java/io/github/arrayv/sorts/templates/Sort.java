@@ -1,6 +1,9 @@
 package io.github.arrayv.sorts.templates;
 
+import java.util.function.UnaryOperator;
+
 import io.github.arrayv.main.ArrayVisualizer;
+import io.github.arrayv.utils.Constants;
 import io.github.arrayv.utils.Delays;
 import io.github.arrayv.utils.Highlights;
 import io.github.arrayv.utils.Reads;
@@ -29,61 +32,44 @@ public abstract class Sort {
     private void initDeprecatedMetadataTable() {
         if (deprecatedMetadataTable != null) return;
         deprecatedMetadataTable = new Object[] {
-            true, "", "", "", "", false, false, false, 0, null, 0
+            true, "", "", "", "", (UnaryOperator<Long>) (n -> -1L), false, false, false, 0, null, 0
         };
     }
 
-    /**
-     * @deprecated Please move to the new {@link SortMeta} API.
-     */
-    @Deprecated
     public boolean isFromExtraSorts() {
         return arrayVisualizer.getSortAnalyzer().didSortComeFromExtra(getClass());
     }
 
-    /**
-     * @deprecated Please move to the new {@link SortMeta} API.
-     */
-    @Deprecated
     public boolean isSortEnabled() {
         initDeprecatedMetadataTable();
         return (boolean)deprecatedMetadataTable[0];
     }
 
-    /**
-     * @deprecated Please move to the new {@link SortMeta} API.
-     */
-    @Deprecated
     public String getSortListName() {
         initDeprecatedMetadataTable();
         return (String)deprecatedMetadataTable[1];
     }
 
-    /**
-     * @deprecated Please move to the new {@link SortMeta} API.
-     */
-    @Deprecated
+
     public String getRunAllSortsName() {
         initDeprecatedMetadataTable();
         return (String)deprecatedMetadataTable[2];
     }
 
-    /**
-     * @deprecated Please move to the new {@link SortMeta} API.
-     */
-    @Deprecated
+
     public String getRunSortName() {
         initDeprecatedMetadataTable();
         return (String)deprecatedMetadataTable[3];
     }
 
-    /**
-     * @deprecated Please move to the new {@link SortMeta} API.
-     */
-    @Deprecated
     public String getCategory() {
         initDeprecatedMetadataTable();
         return (String)deprecatedMetadataTable[4];
+    }
+
+    public UnaryOperator<Long> getConstant() {
+        initDeprecatedMetadataTable();
+        return (UnaryOperator)deprecatedMetadataTable[5];
     }
 
     /**
@@ -96,112 +82,74 @@ public abstract class Sort {
         return false;
     }
 
-    /**
-     * @deprecated Please move to the new {@link SortMeta} API.
-     */
-    @Deprecated
     public boolean usesBuckets() {
-        initDeprecatedMetadataTable();
-        return (boolean)deprecatedMetadataTable[5];
-    }
-
-    /**
-     * @deprecated Please move to the new {@link SortMeta} API.
-     */
-    @Deprecated
-    public boolean isRadixSort() {
         initDeprecatedMetadataTable();
         return (boolean)deprecatedMetadataTable[6];
     }
 
-    /**
-     * @deprecated Please move to the new {@link SortMeta} API.
-     */
-    @Deprecated
-    public boolean isUnreasonablySlow() {
-        initDeprecatedMetadataTable();
-        return (int)deprecatedMetadataTable[8] > 0;
-    }
-
-    /**
-     * @deprecated Please move to the new {@link SortMeta} API.
-     */
-    @Deprecated
-    public int getUnreasonableLimit() {
-        initDeprecatedMetadataTable();
-        return (int)deprecatedMetadataTable[8];
-    }
-
-    /**
-     * @deprecated Please move to the new {@link SortMeta} API.
-     */
-    @Deprecated
-    public boolean isBogoSort() {
+    public boolean isRadixSort() {
         initDeprecatedMetadataTable();
         return (boolean)deprecatedMetadataTable[7];
     }
 
-    /**
-     * @deprecated Please move to the new {@link SortMeta} API.
-     */
-    @Deprecated
+    public boolean isUnreasonablySlow() {
+        initDeprecatedMetadataTable();
+        return (int)deprecatedMetadataTable[9] > 0;
+    }
+
+    public int getUnreasonableLimit() {
+        initDeprecatedMetadataTable();
+        return (int)deprecatedMetadataTable[9];
+    }
+
+    public boolean isBogoSort() {
+        initDeprecatedMetadataTable();
+        return (boolean)deprecatedMetadataTable[8];
+    }
+
     public String getQuestion() {
         initDeprecatedMetadataTable();
-        return (String)deprecatedMetadataTable[9];
+        return (String)deprecatedMetadataTable[10];
     }
 
-    /**
-     * @deprecated Please move to the new {@link SortMeta} API.
-     */
-    @Deprecated
     public int getDefaultAnswer() {
         initDeprecatedMetadataTable();
-        return (int)deprecatedMetadataTable[10];
+        return (int)deprecatedMetadataTable[11];
     }
 
-    /**
-     * @deprecated Please move to the new {@link SortMeta} API.
-     */
-    @Deprecated
     protected void enableSort(boolean enabled) {
         initDeprecatedMetadataTable();
         deprecatedMetadataTable[0] = enabled;
     }
 
-    /**
-     * @deprecated Please move to the new {@link SortMeta} API.
-     */
-    @Deprecated
     protected void setSortListName(String listName) {
         initDeprecatedMetadataTable();
         deprecatedMetadataTable[1] = listName;
     }
 
-    /**
-     * @deprecated Please move to the new {@link SortMeta} API.
-     */
-    @Deprecated
     protected void setRunAllSortsName(String showcaseName) {
         initDeprecatedMetadataTable();
         deprecatedMetadataTable[2] = showcaseName;
     }
 
-    /**
-     * @deprecated Please move to the new {@link SortMeta} API.
-     */
-    @Deprecated
     protected void setRunSortName(String runName) {
         initDeprecatedMetadataTable();
         deprecatedMetadataTable[3] = runName;
     }
 
-    /**
-     * @deprecated Please move to the new {@link SortMeta} API.
-     */
-    @Deprecated
     protected void setCategory(String category) {
         initDeprecatedMetadataTable();
         deprecatedMetadataTable[4] = category;
+    }
+
+    protected void setConstant(String alias) {
+        initDeprecatedMetadataTable();
+        deprecatedMetadataTable[5] = Constants.constants.getOrDefault(alias, n -> -1L);
+    }
+
+    protected void setConstant(UnaryOperator<Long> rawfn) {
+        initDeprecatedMetadataTable();
+        deprecatedMetadataTable[5] = rawfn;
     }
 
     /**
@@ -213,69 +161,41 @@ public abstract class Sort {
     public void setComparisonBased(boolean comparisonBased) {
     }
 
-    /**
-     * @deprecated Please move to the new {@link SortMeta} API.
-     */
-    @Deprecated
     public void setBucketSort(boolean bucketSort) {
         initDeprecatedMetadataTable();
-        deprecatedMetadataTable[5] = bucketSort;
+        deprecatedMetadataTable[6] = bucketSort;
     }
 
-    /**
-     * @deprecated Please move to the new {@link SortMeta} API.
-     */
-    @Deprecated
     protected void setRadixSort(boolean radixSort) {
         initDeprecatedMetadataTable();
-        deprecatedMetadataTable[6] = radixSort;
+        deprecatedMetadataTable[7] = radixSort;
     }
 
-    /**
-     * @deprecated Please move to the new {@link SortMeta} API. This method also no longer does anything.
-     */
-    @Deprecated
     public void setUnreasonablySlow(boolean unreasonableSlow) {
     }
 
-    /**
-     * @deprecated Please move to the new {@link SortMeta} API.
-     */
-    @Deprecated
     public void setUnreasonableLimit(int unreasonableLimit) {
         initDeprecatedMetadataTable();
-        deprecatedMetadataTable[8] = unreasonableLimit;
+        deprecatedMetadataTable[9] = unreasonableLimit;
     }
 
-    /**
-     * @deprecated Please move to the new {@link SortMeta} API.
-     */
-    @Deprecated
     protected void setBogoSort(boolean bogoSort) {
         initDeprecatedMetadataTable();
-        deprecatedMetadataTable[7] = bogoSort;
+        deprecatedMetadataTable[8] = bogoSort;
     }
 
-    /**
-     * @deprecated Please move to the new {@link SortMeta} API.
-     */
-    @Deprecated
     protected void setQuestion(String question) {
         initDeprecatedMetadataTable();
-        deprecatedMetadataTable[9] = question;
+        deprecatedMetadataTable[10] = question;
     }
 
-    /**
-     * @deprecated Please move to the new {@link SortMeta} API.
-     */
-    @Deprecated
     protected void setQuestion(String question, int defaultAnswer) {
         initDeprecatedMetadataTable();
-        deprecatedMetadataTable[9] = question;
-        deprecatedMetadataTable[10] = defaultAnswer;
+        deprecatedMetadataTable[10] = question;
+        deprecatedMetadataTable[11] = defaultAnswer;
     }
 
-    public static int validateAnswer(int answer) {
+    public int validateAnswer(int answer) {
         return answer;
     }
 

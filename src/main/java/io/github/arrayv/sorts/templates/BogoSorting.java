@@ -148,6 +148,15 @@ public abstract class BogoSorting extends Sort {
         }
         return true;
     }
+    protected boolean isRangeReversed(int[] array, int start, int end, boolean mark, boolean markLast) {
+        for (int i = start; i < end - 1; ++i) {
+            if (Reads.compareIndices(array, i, i + 1, this.delay, mark) < 0) {
+                if (markLast) Highlights.markArray(3, i + 1);
+                return false;
+            }
+        }
+        return true;
+    }
 
     /**
      * Checks if the range {@code [start, end)} of {@code array} is sorted.

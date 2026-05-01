@@ -113,7 +113,7 @@ public final class SmoothSort extends Sort {
         }
     }
 
-    private void smoothSort(int[] A, int lo, int hi, boolean fullSort)
+    public void smoothSort(int[] A, int lo, int hi, boolean fullSort)
     {
         int head = lo; // the offset of the first element of the prefix into m
 

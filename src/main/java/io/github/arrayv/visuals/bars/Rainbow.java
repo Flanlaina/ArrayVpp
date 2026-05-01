@@ -1,11 +1,13 @@
 package io.github.arrayv.visuals.bars;
 
+import java.awt.Color;
+
+import com.scrtwpns.Mixbox;
+
 import io.github.arrayv.main.ArrayVisualizer;
 import io.github.arrayv.utils.Highlights;
 import io.github.arrayv.utils.Renderer;
 import io.github.arrayv.visuals.Visual;
-
-import java.awt.*;
 
 /*
  *
@@ -36,19 +38,45 @@ SOFTWARE.
 public final class Rainbow extends Visual {
     public Rainbow(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
+
+        this.setListName("Rainbow");
+        this.setCategory("Bar Visuals");
+        this.setColorable(stance.ALWAYS);
+        this.setAuxable(true);
+        this.setOverlayable(true);
+    }
+
+    public int[] getTopPosFor(int[] array, double idx, int val, ArrayVisualizer ArrayVisualizer, Renderer Renderer) {
+    	return new int[] {
+    		(int)(Renderer.getXScale()*(idx+0.5d))+20,
+    		(int)(Renderer.getYOffset()-29)
+    	};
+    }
+    public int[] getBottomPosFor(int[] array, double idx, int val, ArrayVisualizer ArrayVisualizer, Renderer Renderer) {
+    	return new int[] {
+    		(int)(Renderer.getXScale()*(idx+0.5d))+20,
+    		(int)(Renderer.getYOffset() + Renderer.getViewSize() - 20)
+    	};
     }
 
     @Override
-    public void drawVisual(int[] array, ArrayVisualizer arrayVisualizer, Renderer renderer, Highlights Highlights) {
+    public void drawVisual(int[] array, int[] boundingBox, ArrayVisualizer arrayVisualizer, Renderer renderer, Highlights Highlights) {
         for (int i = 0, j = 0; i < renderer.getArrayLength(); i++) {
             int width = (int) (renderer.getXScale() * (i + 1)) - j;
             if (width == 0) continue;
 
             if (Highlights.fancyFinishActive() && i < Highlights.getFancyFinishPosition())
                 this.mainRender.setColor(Color.GREEN);
-            else this.mainRender.setColor(getIntColor(array[i], arrayVisualizer.getCurrentLength()));
-
-            this.mainRender.fillRect(j + 20, renderer.getYOffset() - 20, width, renderer.getViewSize());
+            else {
+            	if (Highlights.hasColor(array, i))
+            		this.mainRender.setColor(new Color(Mixbox.lerp(
+            			getIntColor(array[i], arrayVisualizer.getCurrentLength()).getRGB(),
+	                	Highlights.colorAt(array, i).getRGB(),
+	                	0.5f
+	                )));
+            	else this.mainRender.setColor(getIntColor(array[i], arrayVisualizer.getCurrentLength()));
+            }
+            this.mainRender.fillRect(j + 20, renderer.getYOffset() - 20, width, (int) (renderer.getViewSize()));
 
             j += width;
         }
@@ -60,7 +88,7 @@ public final class Rainbow extends Visual {
 
             if (Highlights.containsPosition(i)) {
 
-                this.mainRender.fillRect(j + 20, renderer.getYOffset() - 20, Math.max(width, 2), renderer.getViewSize());
+                this.mainRender.fillRect(j + 20, renderer.getYOffset() - 20, Math.max(width, 2), (int) (renderer.getViewSize()));
             }
             j += width;
         }

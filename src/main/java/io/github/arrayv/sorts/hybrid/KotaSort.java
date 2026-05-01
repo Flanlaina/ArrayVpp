@@ -12,7 +12,8 @@ public final class KotaSort extends KotaSorting {
         //this.setRunAllSortsName("Grail Sort [Block Merge Sort]");
         this.setRunAllSortsName("Kotasort");
         this.setRunSortName("Kotasort");
-        this.setCategory("Hybrid Sorts");
+        this.setCategory("Block Merge Sorts");
+        this.setConstant("n log n");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

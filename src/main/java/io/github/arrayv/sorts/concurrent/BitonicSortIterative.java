@@ -1,7 +1,6 @@
 package io.github.arrayv.sorts.concurrent;
 
 import io.github.arrayv.main.ArrayVisualizer;
-import io.github.arrayv.sortdata.SortMeta;
 import io.github.arrayv.sorts.templates.Sort;
 
 /*
@@ -12,14 +11,19 @@ import io.github.arrayv.sorts.templates.Sort;
  * work for array lengths other than powers of two!
  */
 
-@SortMeta(
-    name = "Iterative Bitonic",
-    listName = "Bitonic (Iterative)",
-    runName = "Iterative Bitonic Sort"
-)
 public final class BitonicSortIterative extends Sort {
     public BitonicSortIterative(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
+
+        this.setSortListName("Bitonic (Iterative)");
+        this.setRunAllSortsName("Iterative Bitonic Sort");
+        this.setRunSortName("Iterative Bitonic Sort");
+        this.setCategory("Concurrent Sorts");
+        this.setBucketSort(false);
+        this.setRadixSort(false);
+        this.setUnreasonablySlow(false);
+        this.setUnreasonableLimit(0);
+        this.setBogoSort(false);
     }
 
     @Override

@@ -4,6 +4,7 @@ import io.github.arrayv.dialogs.ShuffleDialog;
 import io.github.arrayv.frames.AppFrame;
 import io.github.arrayv.frames.UtilFrame;
 import io.github.arrayv.main.ArrayManager;
+import io.github.arrayv.main.ArrayVisualizer;
 import io.github.arrayv.panes.JErrorPane;
 import io.github.arrayv.utils.Distributions;
 import io.github.arrayv.utils.Shuffles;
@@ -42,6 +43,7 @@ public final class ShufflePrompt extends javax.swing.JFrame implements AppFrame 
     private static final long serialVersionUID = 1L;
 
     private final ArrayManager arrayManager;
+    private ArrayVisualizer arrayVisualizer;
     private final JFrame frame;
     private final UtilFrame utilFrame;
 
@@ -52,8 +54,9 @@ public final class ShufflePrompt extends javax.swing.JFrame implements AppFrame 
      * Creates new form SortPrompt
      */
     @SuppressWarnings("unchecked")
-    public ShufflePrompt(ArrayManager arrayManager, JFrame frame, UtilFrame utilFrame) {
+    public ShufflePrompt(ArrayManager arrayManager, ArrayVisualizer arrayVisualizer, JFrame frame, UtilFrame utilFrame) {
         this.arrayManager = arrayManager;
+        this.arrayVisualizer = arrayVisualizer;
         this.frame = frame;
         this.utilFrame = utilFrame;
 
@@ -110,6 +113,7 @@ public final class ShufflePrompt extends javax.swing.JFrame implements AppFrame 
 
         // Variables declaration - do not modify//GEN-BEGIN:variables
         javax.swing.JButton jButton1 = new javax.swing.JButton();
+        javax.swing.JCheckBox jCheckBox1 = new javax.swing.JCheckBox();
 
         javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
         javax.swing.JScrollPane jScrollPane1 = new javax.swing.JScrollPane();
@@ -123,6 +127,10 @@ public final class ShufflePrompt extends javax.swing.JFrame implements AppFrame 
 
         jButton1.setText("Open Advanced Editor");
         jButton1.addActionListener(evt -> jButton1ActionPerformed());
+
+        jCheckBox1.setSelected(arrayVisualizer.isSeeded());
+        jCheckBox1.setText("Seeded");
+        jCheckBox1.addActionListener(evt -> arrayVisualizer.setSeeded(jCheckBox1.isSelected()));
 
         jLabel1.setText("What shape do you want the array to have?");
         jLabel2.setText("How do you want the array to be shuffled?");
@@ -152,49 +160,59 @@ public final class ShufflePrompt extends javax.swing.JFrame implements AppFrame 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addGroup(layout.createSequentialGroup()
-                            .addGap(20, 20, 20)
-                            .addComponent(jLabel1)
-                            .addGap(5, 5, 5))
-                    .addGroup(layout.createSequentialGroup()
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGap(20, 20, 20))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGap(475, 475, 475)
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                         .addGroup(layout.createSequentialGroup()
                                 .addGap(20, 20, 20)
-                                .addComponent(jLabel2)
+                                .addComponent(jLabel1)
                                 .addGap(5, 5, 5))
                         .addGroup(layout.createSequentialGroup()
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(20, 20, 20))
-                .addGroup(javax.swing.GroupLayout.Alignment.CENTER, layout.createSequentialGroup()
-                    .addComponent(jButton1)))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jLabel1))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, true)
                                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(20, 20, 20))
-                .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jLabel2))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, true)
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(10, 10, 10)
-                        .addComponent(jButton1)
-                        .addGap(15, 15, 15))
-        );
+                                .addGap(20, 20, 20)
+                        .addGroup(layout.createSequentialGroup()
+                                .addComponent(jButton1)))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGap(475, 475, 475)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addGroup(layout.createSequentialGroup()
+                                    .addGap(20, 20, 20)
+                                    .addComponent(jLabel2)
+                                    .addGap(5, 5, 5))
+                            .addGroup(layout.createSequentialGroup()
+                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGap(20, 20, 20)
+    	                    .addGroup(layout.createSequentialGroup()
+    	                            .addComponent(jCheckBox1)))
+                    )
+                    /*
+                    .addGroup(javax.swing.GroupLayout.Alignment.CENTER, layout.createSequentialGroup()
+                            .addComponent(this.jButton1)
+                            .addComponent(this.jCheckBox1)))*/
+            );
+            layout.setVerticalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                            .addContainerGap()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel1))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, true)
+                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGap(10, 10, 10)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, true)
+    	                        	.addComponent(jButton1)))
+                    .addGroup(layout.createSequentialGroup()
+                            .addContainerGap()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel2))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, true)
+                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGap(10, 10, 10)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, true)
+    	                        	.addComponent(jCheckBox1))
+                            .addGap(15, 15, 15))
+            );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents

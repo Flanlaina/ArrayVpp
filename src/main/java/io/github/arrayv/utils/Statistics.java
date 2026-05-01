@@ -3,6 +3,10 @@ package io.github.arrayv.utils;
 import io.github.arrayv.main.ArrayVisualizer;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class Statistics {
     private long frameTimeMillis;
@@ -20,6 +24,11 @@ public final class Statistics {
     private String comparisonCount;
     private String swapCount;
     private String reversalCount;
+    private String constant;
+    private String recursions;
+    private String recDepth;
+
+    private static HashMap<String, Long> addedCounts;
 
     private String mainWriteCount;
     private String auxWriteCount;
@@ -32,7 +41,29 @@ public final class Statistics {
 
     public Statistics(ArrayVisualizer arrayVisualizer) {
         this.formatter = arrayVisualizer.getNumberFormat();
+        addedCounts = new HashMap<>();
         this.updateStats(arrayVisualizer);
+    }
+    
+    public static void putStat(String name) {
+    	addedCounts.putIfAbsent(name, 0l);
+    }
+    public static void putStats(String... names) {
+    	Arrays.stream(names).forEachOrdered(Statistics::putStat);
+    }
+    public static void resetStat(String name) {
+    	addedCounts.put(name, 0l);
+    }
+    public static void addStat(String name) {
+    	if (addedCounts.containsKey(name))
+    		addedCounts.put(name, addedCounts.get(name) + 1L);
+    }
+    public static void addStat(String name, long amount) {
+    	if (addedCounts.containsKey(name))
+    		addedCounts.put(name, addedCounts.get(name) + amount);
+    }
+    public static void removeAllStats() {
+    	addedCounts.clear();
     }
 
     public int[] findSegments(int[] array, int length, boolean reversed) {
@@ -69,16 +100,19 @@ public final class Statistics {
         this.comparisonCount = arrayVisualizer.getReads().getStats();
         this.swapCount = arrayVisualizer.getWrites().getSwaps();
         this.reversalCount = arrayVisualizer.getWrites().getReversals();
+        this.constant = arrayVisualizer.getConstantBuilder().getConstant();
+        this.recursions = arrayVisualizer.getWrites().getRecursions();
+        this.recDepth = arrayVisualizer.getWrites().getRecursionDepth();
 
         this.mainWriteCount = arrayVisualizer.getWrites().getMainWrites();
         this.auxWriteCount = arrayVisualizer.getWrites().getAuxWrites();
 
         this.auxAllocAmount = arrayVisualizer.getWrites().getAllocAmount();
 
-        int[] shadowarray    = arrayVisualizer.getArray();
-        int[] rawSegments    = this.findSegments(shadowarray, arrayVisualizer.getCurrentLength(), arrayVisualizer.reversedComparator());
-        String plural = rawSegments[0] == 1 ? "" : "s";
-        this.segments        = rawSegments[1] + "% Sorted (" + rawSegments[0] + " Segment" + plural + ")";
+        // int[] shadowarray    = arrayVisualizer.getArray();
+        // int[] rawSegments    = this.findSegments(shadowarray, arrayVisualizer.getCurrentLength(), arrayVisualizer.reversedComparator());
+        // String plural = rawSegments[0] == 1 ? "" : "s";
+        // this.segments        = rawSegments[1] + "% Sorted (" + rawSegments[0] + " Segment" + plural + ")";
     }
 
     public void setFrameTimeMillis(long frameTimeMillis) {
@@ -112,6 +146,25 @@ public final class Statistics {
     public String getReversalCount() {
         return this.reversalCount;
     }
+    public String getConstant() {
+        return this.constant;
+    }
+    public String getRecursionCount() {
+        return this.recursions;
+    }
+    public String getRecursionDepth() {
+        return this.recDepth;
+    }
+
+    public ArrayList<String> parseMap() {
+    	ArrayList<String> strs = new ArrayList<>();
+    	for(Map.Entry<String, Long> stat : addedCounts.entrySet()) {
+    		long val = stat.getValue();
+    		strs.add(formatter.format(val) + " " + stat.getKey() + (val==1?"":"s"));
+    	}
+    	return strs;
+    }
+    
     public String getMainWriteCount() {
         return this.mainWriteCount;
     }

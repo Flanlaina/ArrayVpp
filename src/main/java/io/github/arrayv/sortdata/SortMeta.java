@@ -43,6 +43,11 @@ public @interface SortMeta {
     String showcaseName() default "";
 
     /**
+     * The sort's constant. Unlike the constructor, only aliases can be used.
+     */
+    String constantName() default "unknown";
+
+    /**
      * Whether this sort is disabled. Disabled sorts won't be loaded.
      * @return Whether this sort is disabled.
      */

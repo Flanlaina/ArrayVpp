@@ -143,7 +143,7 @@ public final class GroovyLocals {
      */
     public static SortInfo registerSort(SortInfo sort) {
         sort = getArrayv().getSortAnalyzer().insortSort(sort);
-        getArrayv().refreshSorts();
+        getArrayv().refreshTables();
         return sort;
     }
 

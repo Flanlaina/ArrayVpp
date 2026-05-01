@@ -2,12 +2,14 @@ package io.github.arrayv.sortdata;
 
 import io.github.arrayv.main.ArrayVisualizer;
 import io.github.arrayv.sorts.templates.Sort;
+import io.github.arrayv.utils.Constants;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.function.IntUnaryOperator;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 
 public final class SortInfo {
     private static final String NAME_MUST_BE_SPECIFIED =
@@ -22,6 +24,7 @@ public final class SortInfo {
     private final String runName;
     private final String runAllName;
     private final String category;
+    private final UnaryOperator<Long> constant;
     private final boolean bogoSort;
     private final boolean radixSort;
     private final boolean bucketSort;
@@ -40,6 +43,7 @@ public final class SortInfo {
         this.runName = sort.runName;
         this.runAllName = sort.runAllName;
         this.category = sort.category;
+        this.constant = sort.constant;
         this.bogoSort = sort.bogoSort;
         this.radixSort = sort.radixSort;
         this.bucketSort = sort.bucketSort;
@@ -68,6 +72,7 @@ public final class SortInfo {
             this.runName = sort.getRunSortName();
             this.runAllName = sort.getRunAllSortsName();
             this.category = sort.getCategory();
+            this.constant = sort.getConstant();
             this.bogoSort = sort.isBogoSort();
             this.radixSort = sort.isRadixSort();
             this.bucketSort = sort.usesBuckets();
@@ -87,6 +92,7 @@ public final class SortInfo {
                 ? requireName(name) + " Sort"
                 : metaAnnotation.showcaseName();
             this.category = metaAnnotation.category().isEmpty() ? findSortCategory(sortClass) : metaAnnotation.category();
+            this.constant = Constants.constants.getOrDefault(metaAnnotation.constantName(), n -> -1L);
             this.bogoSort = metaAnnotation.bogoSort();
             this.radixSort = metaAnnotation.radixSort();
             this.bucketSort = metaAnnotation.bucketSort();
@@ -114,6 +120,7 @@ public final class SortInfo {
             this.runName = sort.getRunSortName();
             this.runAllName = sort.getRunAllSortsName();
             this.category = sort.getCategory();
+            this.constant = sort.getConstant();
             this.bogoSort = sort.isBogoSort();
             this.radixSort = sort.isRadixSort();
             this.bucketSort = sort.usesBuckets();
@@ -133,6 +140,7 @@ public final class SortInfo {
                 ? requireName(name) + " Sort"
                 : metaAnnotation.showcaseName();
             this.category = metaAnnotation.category().isEmpty() ? findSortCategory(sort.getClass()) : metaAnnotation.category();
+            this.constant = Constants.constants.getOrDefault(metaAnnotation.constantName(), n -> -1L);
             this.bogoSort = metaAnnotation.bogoSort();
             this.radixSort = metaAnnotation.radixSort();
             this.bucketSort = metaAnnotation.bucketSort();
@@ -152,6 +160,7 @@ public final class SortInfo {
         String runName,
         String runAllName,
         String category,
+        UnaryOperator<Long> constant,
         boolean slowSort,
         boolean bogoSort,
         boolean radixSort,
@@ -169,6 +178,7 @@ public final class SortInfo {
         this.runName = runName;
         this.runAllName = runAllName;
         this.category = category;
+        this.constant = constant;
         this.bogoSort = bogoSort;
         this.radixSort = radixSort;
         this.bucketSort = bucketSort;
@@ -249,6 +259,10 @@ public final class SortInfo {
 
     public String getCategory() {
         return category;
+    }
+
+    public UnaryOperator<Long> getConstant() {
+        return constant;
     }
 
     public boolean hasUnreasonableLimit() {
@@ -425,6 +439,7 @@ public final class SortInfo {
         private String runName = null;
         private String runAllName = null;
         private String category; // Required
+        private UnaryOperator<Long> constant = n -> -1L;
         private boolean slowSort = false;
         private boolean bogoSort = false;
         private boolean radixSort = false;
@@ -447,6 +462,7 @@ public final class SortInfo {
                 runName != null ? runName : (listName + "sort"),
                 runAllName != null ? runAllName : (listName + " Sort"),
                 Objects.requireNonNull(category, "category"),
+                constant,
                 slowSort,
                 bogoSort,
                 radixSort,
@@ -499,6 +515,11 @@ public final class SortInfo {
 
         public Builder category(String category) {
             this.category = category;
+            return this;
+        }
+
+        public Builder constant(UnaryOperator<Long> constant) {
+            this.constant = constant;
             return this;
         }
 

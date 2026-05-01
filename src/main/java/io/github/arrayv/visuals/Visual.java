@@ -2,26 +2,116 @@ package io.github.arrayv.visuals;
 
 import io.github.arrayv.main.ArrayVisualizer;
 import io.github.arrayv.utils.Highlights;
+import io.github.arrayv.utils.Renderable;
 import io.github.arrayv.utils.Renderer;
+import io.github.arrayv.visuals.Visual.stance;
 
 import java.awt.*;
 
 public abstract class Visual {
+	public static enum stance {
+		NEVER(-1),
+		AGNOSTIC(0),
+		ALWAYS(1);
+		public final int type;
+		stance(int swing) {
+			this.type = swing;
+		}
+	};
+    private boolean visualEnabled;
+
+    private String listName;
+    private String category;
+    
+    private stance colorable;
+    private boolean overlayable;
+    private boolean auxable;
+    private int maxAuxLists;
+    
     protected Graphics2D mainRender;
     protected Graphics2D extraRender;
 
     public Visual(ArrayVisualizer arrayVisualizer) {
         this.updateRender(arrayVisualizer);
+        
+        this.enableVisual(true);        
+        this.setListName("");
+        this.setCategory("");
+        this.setColorable(stance.AGNOSTIC);
+        this.setAuxable(false);
+        this.setOverlayable(false);
+        this.setMaximumAuxLists(7);
+    }
+
+    protected void enableVisual(boolean Bool) {
+        this.visualEnabled = Bool;
+    }
+
+    protected void setListName(String ID) {
+        this.listName = ID;
+    }
+
+    protected void setCategory(String ID) {
+        this.category = ID;
+    }
+
+    protected void setColorable(stance Stance) {
+        this.colorable = Stance;
+    }
+
+    protected void setAuxable(boolean auxable) {
+        this.auxable = auxable;
+    }
+
+    protected void setMaximumAuxLists(int maxCount) {
+        this.maxAuxLists = maxCount;
+    }
+
+    protected void setOverlayable(boolean overlayable) {
+        this.overlayable = overlayable;
+    }
+
+    public boolean isVisualEnabled() {
+        return this.visualEnabled;
+    }
+
+    public String getListName() {
+        return this.listName;
+    }
+
+    public String getCategory() {
+        return this.category;
+    }
+
+    public stance getColorability() {
+        return this.colorable;
+    }
+
+    public boolean isAuxable() {
+        return this.auxable;
+    }
+
+    public int getMaximumAuxLists() {
+        return this.maxAuxLists;
+    }
+
+    public boolean isOverlayable() {
+        return this.overlayable;
     }
 
     public void updateRender(ArrayVisualizer arrayVisualizer) {
-        this.mainRender = arrayVisualizer.getMainRender();
+        Renderable.mainRender = this.mainRender = arrayVisualizer.getMainRender();
         this.extraRender = arrayVisualizer.getExtraRender();
     }
 
     public static Color getIntColor(int i, int length) {
         return Color.getHSBColor(((float) i / length), 0.8F, 0.8F);
     }
+	
+	public static Color getGray(int t, int n) {
+		int c = (int)(255 * (double)Math.max(0, Math.min(t, n))/n);
+		return new Color(c, c, c);
+	}
 
     public static void markBar(Graphics2D bar, boolean color, boolean rainbow, boolean analysis) {
         if (color || rainbow) {
@@ -127,5 +217,30 @@ public abstract class Visual {
         }
     }
 
-    public abstract void drawVisual(int[] array, ArrayVisualizer arrayVisualizer, Renderer renderer, Highlights Highlights);
+    public int[] getTopPosFor(int[] array, double idx, int val, ArrayVisualizer arrayVisualizer, Renderer renderer) {
+    	return new int[0];
+    }
+    public int[] getTopPos(int[] array, int idx, ArrayVisualizer arrayVisualizer, Renderer renderer) {
+    	return this.getTopPosFor(array, idx, array[idx], arrayVisualizer, renderer);
+    }
+    public int[] getBottomPosFor(int[] array, double idx, int val, ArrayVisualizer ArrayVisualizer, Renderer Renderer) {
+    	return new int[0];
+    }
+    public int[] getBottomPos(int[] array, int idx, ArrayVisualizer arrayVisualizer, Renderer renderer) {
+    	return this.getTopPosFor(array, idx, array[idx], arrayVisualizer, renderer);
+    }
+
+    public void bringUp() {}
+    public int[] getBoundingBox(int[] array, int index, int length, ArrayVisualizer arrayVisualizer, Renderer renderer) {
+    	int ysize = renderer.getViewSize();
+    	return new int[] {
+    		20, arrayVisualizer.currentWidth() - 20,     // X_LEFT : X_RIGHT
+    		64 + ysize * index, 44 + ysize * (index + 1) // Y_TOP  : Y_BOTTOM
+    	};
+    }
+    public int[] getBoundingBox(int[][] arrays, int index, int eff_index, int eff_length, ArrayVisualizer arrayVisualizer, Renderer renderer) {
+    	return this.getBoundingBox(arrays[eff_index], index, eff_length, arrayVisualizer, renderer);
+    }
+    public abstract void drawVisual(int[] array, int[] boundingBox, ArrayVisualizer arrayVisualizer, Renderer renderer, Highlights highlights);
+    public void pullDown() {}
 }

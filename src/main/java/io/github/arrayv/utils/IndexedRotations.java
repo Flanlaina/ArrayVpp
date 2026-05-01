@@ -28,7 +28,31 @@ public final class IndexedRotations {
         Rotations.cycleReverse(array, start, mid - start, end - mid, pause, mark, auxwrite);
     }
 
+    public static void uniBeaker(int[] array, int start, int mid, int end, double pause, boolean mark, boolean auxwrite) {
+        Rotations.uniBeaker(array, start, mid - start, end - mid, pause, mark, auxwrite);
+    }
+
+    public static void simpleBeaker(int[] array, int start, int mid, int end, double pause, boolean mark, boolean auxwrite) {
+        Rotations.simpleBeaker(array, start, mid - start, end - mid, pause, mark, auxwrite);
+    }
+
+    public static void centered(int[] array, int start, int mid, int end, double pause, boolean mark, boolean auxwrite) {
+        Rotations.centered(array, start, mid - start, end - mid, pause, mark, auxwrite);
+    }
+
+    public static void neon(int[] array, int start, int mid, int end, double pause, boolean mark, boolean auxwrite) {
+        Rotations.neon(array, start, mid - start, end - mid, pause, mark, auxwrite);
+    }
+
+    public static void neon22(int[] array, int start, int mid, int end, double pause, boolean mark, boolean auxwrite) {
+        Rotations.neon22(array, start, mid - start, end - mid, pause, mark, auxwrite);
+    }
+
     public static void bridge(int[] array, int start, int mid, int end, double pause, boolean mark, boolean auxwrite) {
         Rotations.bridge(array, start, mid - start, end - mid, pause, mark, auxwrite);
+    }
+
+    public static void tripleShift(int[] array, int start, int mid, int end, double pause, boolean mark, boolean auxwrite) {
+        Rotations.tripleShift(array, start, mid - start, end - mid, pause, mark, auxwrite);
     }
 }

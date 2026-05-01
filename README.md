@@ -1,12 +1,6 @@
-# ArrayV
+# ArrayV++
 
-![Discord](https://img.shields.io/discord/592082838791127075?color=%237289DA&label=Discord&logo=discord&logoColor=white)
-![GitHub Workflow Status (branch)](https://img.shields.io/github/actions/workflow/status/Gaming32/ArrayV/maven.yml?branch=main)
-![GitHub Workflow Status (branch)](https://img.shields.io/github/actions/workflow/status/Gaming32/ArrayV/checkstyle.yml?branch=main&label=checkstyle)
-
-Over 200 sorting algorithms animated with 15 unique graphic designs
-
-[Join the Discord server!](https://discord.gg/thestudio)
+A hodgepodge of every ArrayV variant on the market.
 
 To compile use:
 ```shell
@@ -19,7 +13,36 @@ To run use:
 ```
 Alternatively, you can double click on "run" or "run.bat" on Windows.
 
-You can always download the most up-to-date pre-built JAR from [GitHub Actions](https://nightly.link/Gaming32/ArrayV/workflows/maven/main/standalone-jar.zip) (link via [nightly.link](https://nightly.link)).
+## Heritage
+
+ArrayV++ is based on the master branch of ArrayV 5.2-SNAPSHOT, taking features and/or algorithms from:
+
+### Public ArrayV strains
+- [PCBoyGames' ArrayV 4.0 fork](https://github.com/PCBoyGames/ArrayV-v4.0)
+- [Flanlaina's ArrayV 4.0 fork](https://github.com/Flanlaina/ArrayV-v4.0)
+
+### Private ArrayV strains
+- AmongV (based on ArrayV 4.0)
+- DistrrayV:
+	- Based on ArrayV 4.0.
+	- Started August 2021. Contains first attempts at:
+	    - Subarray marking (initially made through absurd generic typechecks and hardcoded highlight limits)
+	    - ArrayList visualization (implemented in ArrayV5)
+	    - Big-O based calculations (eventually evolved into the constant calculator)
+- ArrayTest (or "srcexp"):
+    - Based on w0rthy's Sorts 2018.
+    - Started independently of ArrayV, ~2 months after 2.1's release. Contains:
+        - Two new categories (Unreasonable, Experimental)
+        - A backport of one of the earliest versions of HolyGrail
+
+### ArrayV-likes
+- Scandum's WT++ visualizer (inspired colorcoding though ArrayV PR#80)
+- MakeCode Arcade Sort Visualizer (updated subarray highlight system)
+
+### Unique to ArrayV++
+- VisualStyles gutted, and replaced with a modified version of SortAnalyzer, enabling:
+     - Enforcement of which features the visual allows or operates with
+     - Control over how the visual partitions screenspace for auxiliary lists
 
 ## Legacy changelog
 

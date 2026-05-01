@@ -37,7 +37,7 @@ public final class EctaSort extends Sort {
         this.setSortListName("Ecta");
         this.setRunAllSortsName("Ecta Sort");
         this.setRunSortName("Ectasort");
-        this.setCategory("Hybrid Sorts");
+        this.setCategory("Block Merge Sorts");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

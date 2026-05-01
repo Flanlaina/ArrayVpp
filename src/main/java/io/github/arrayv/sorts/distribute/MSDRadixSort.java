@@ -47,7 +47,7 @@ public final class MSDRadixSort extends Sort {
         this.setBogoSort(false);
     }
 
-    private void radixMSD(int[] array, int length, int min, int max, int radix, int pow) {
+    public void radixMSD(int[] array, int length, int min, int max, int radix, int pow) {
         if(min >= max || pow < 0)
             return;
 

@@ -4,8 +4,11 @@ import io.github.arrayv.panes.JErrorPane;
 import io.github.arrayv.sortdata.SortComparator;
 import io.github.arrayv.sortdata.SortInfo;
 import io.github.arrayv.sortdata.SortNameType;
+import io.github.arrayv.sortdata.VisualComparator;
+import io.github.arrayv.sortdata.VisualInfo;
 import io.github.arrayv.sorts.templates.Sort;
 import io.github.arrayv.utils.CommonUtils;
+import io.github.arrayv.visuals.Visual;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ScanResult;
@@ -86,6 +89,7 @@ public final class SortAnalyzer {
     }
 
     private final ArrayList<SortInfo> sorts;
+    public ArrayList<VisualInfo> visuals;
     private final ArrayList<String> invalidSorts;
     private final ArrayList<String> suggestions;
 
@@ -95,6 +99,7 @@ public final class SortAnalyzer {
 
     SortAnalyzer(ArrayVisualizer arrayVisualizer) {
         this.sorts = new ArrayList<>();
+        this.visuals = new ArrayList<>();
         this.invalidSorts = new ArrayList<>();
         this.suggestions = new ArrayList<>();
 
@@ -194,6 +199,28 @@ public final class SortAnalyzer {
         return true;
     }
 
+    private boolean compileSingleVisual(Class<? extends Visual> vslClass) {
+        try {
+            VisualInfo visual = new VisualInfo(visuals.size(), vslClass);
+
+            try {
+                if (verifyVisual(visual)) {
+                    visuals.add(visual);
+                } else {
+                    throw new Exception(sortErrorMsg);
+                }
+            } catch (Exception e) {
+                invalidSorts.add(vslClass.getName() + " (" + e.getMessage() + ")");
+                return false;
+            }
+        } catch (Exception e) {
+            JErrorPane.invokeErrorMessage(e, "Could not load " + vslClass.getName());
+            invalidSorts.add(vslClass.getName() + " (failed to load)");
+            return false;
+        }
+        return true;
+    }
+
     private Map<String, SortInfo> getSortNameCategory(SortNameType type) {
         return sortsByName.computeIfAbsent(type, k -> new HashMap<>());
     }
@@ -228,11 +255,40 @@ public final class SortAnalyzer {
 
     public void analyzeSorts(boolean includeExtras) {
         this.sorts.clear();
+        this.visuals.clear();
         this.invalidSorts.clear();
         this.suggestions.clear();
         this.sortErrorMsg = null;
         this.sortsByName.clear();
         analyzeSorts(classGraph(includeExtras));
+    }
+
+    public void analyzeVisuals() {
+        ClassGraph classGraph = new ClassGraph()
+            .acceptPackages(
+            	"visuals",           "io.github.arrayv.visuals"
+            )
+            .rejectClasses(
+            	"visuals.Visual",    "io.github.arrayv.visuals.Visual"
+            )
+            .rejectPackages(
+            	"visuals.templates", "io.github.arrayv.visuals.templates"
+            )
+            .initializeLoadedClasses();
+        
+        try (ScanResult scanResult = classGraph.scan()) {
+            List<ClassInfo> visualFiles;
+            visualFiles = scanResult.getAllClasses();
+
+            for (int i = 0; i < visualFiles.size(); i++) {
+                ClassInfo visualFile = visualFiles.get(i);
+                if (visualFile.getName().contains("$")) continue; // Ignore inner classes
+                this.compileSingleVisual(visualFile.loadClass(Visual.class));
+            }
+            sortSorts();
+        } catch (Exception e) {
+            JErrorPane.invokeErrorMessage(e);
+        }
     }
 
     public void analyzeSortsExtrasOnly() {
@@ -664,7 +720,7 @@ public final class SortAnalyzer {
 
         if (showConfirmation) {
             sortSorts();
-            arrayVisualizer.refreshSorts();
+            arrayVisualizer.refreshTables();
             JOptionPane.showMessageDialog(null, "Successfully imported sort " + name, "Import Sort", JOptionPane.INFORMATION_MESSAGE);
         }
         return true;
@@ -682,6 +738,18 @@ public final class SortAnalyzer {
             SortInfo sort = sorts.get(i);
             if (sort.getId() != i) {
                 sorts.set(i, sort.withId(i));
+            }
+        }
+    }
+
+    public void sortVisuals() {
+        VisualComparator vslComparator = new VisualComparator();
+        Collections.sort(visuals, vslComparator);
+        // This loop fixes all the visual IDs to match up with the indices again
+        for (int i = 0; i < visuals.size(); i++) {
+            VisualInfo visual = visuals.get(i);
+            if (visual.getId() != i) {
+                visuals.set(i, visual.withId(i));
             }
         }
     }
@@ -711,6 +779,22 @@ public final class SortAnalyzer {
         return true;
     }
 
+    private boolean verifyVisual(VisualInfo visual) {
+        if (visual.isDisabled()) {
+            this.sortErrorMsg = "manually disabled";
+            return false;
+        }
+        if (visual.getListName().isEmpty()) {
+            this.sortErrorMsg = "missing 'Choose Visual' name";
+            return false;
+        }
+        if (visual.getCategory().isEmpty()) {
+            this.sortErrorMsg = "missing category";
+            return false;
+        }
+        return true;
+    }
+
     private static String checkForSuggestions(SortInfo sort) {
         StringBuilder suggestions = new StringBuilder();
         boolean warned = false;
@@ -732,13 +816,10 @@ public final class SortAnalyzer {
 
     public SortInfo[] getSorts() {
         return sorts.toArray(new SortInfo[this.sorts.size()]);
-        // SortInfo[] sorts = new SortInfo[this.sorts.size()];
+    }
 
-        // for (int i = 0; i < sorts.length; i++) {
-        //     sorts[i] = new SortInfo(i, this.sorts.get(i));
-        // }
-
-        // return sorts;
+    public VisualInfo[] getVisuals() {
+        return visuals.toArray(new VisualInfo[this.visuals.size()]);
     }
 
     public String[] getInvalidSorts() {

@@ -6,7 +6,7 @@ import io.github.arrayv.main.ArrayVisualizer;
 import io.github.arrayv.panes.JErrorPane;
 import io.github.arrayv.prompts.ShufflePrompt;
 import io.github.arrayv.prompts.SortPrompt;
-import io.github.arrayv.prompts.ViewPrompt;
+import io.github.arrayv.prompts.VisualPrompt;
 import io.github.arrayv.utils.Delays;
 import io.github.arrayv.utils.Highlights;
 import io.github.arrayv.utils.Sounds;
@@ -58,6 +58,9 @@ public final class UtilFrame extends javax.swing.JFrame {
     private final JFrame frame;
     private final Timer Timer;
     private final Sounds Sounds;
+    
+    private boolean lastUnlockedColor = false;
+    private boolean lastUnlockedAux = false;
 
     private AppFrame abstractFrame;
 
@@ -276,6 +279,38 @@ public final class UtilFrame extends javax.swing.JFrame {
         this.jComboBox1.setSelectedItem(mode);
     }
 
+    public void lockColorState(boolean val) {
+    	if(jCheckBox8.isEnabled()) {
+	    	this.lastUnlockedColor = jCheckBox8.isSelected();
+	    	jCheckBox8.setSelected(val);
+	    	jCheckBox8.setEnabled(false);
+	        arrayVisualizer.toggleColor(jCheckBox8.isSelected());
+    	}
+    }
+    public void unlockColorState() {
+    	if(!jCheckBox8.isEnabled()) {
+	    	jCheckBox8.setEnabled(true);
+	    	jCheckBox8.setSelected(this.lastUnlockedColor);
+	        arrayVisualizer.toggleColor(jCheckBox8.isSelected());
+    	}
+    }
+
+    public void lockAuxState(boolean val) {
+    	if(jCheckBox9.isEnabled()) {
+	    	this.lastUnlockedAux = jCheckBox9.isSelected();
+	    	jCheckBox9.setSelected(val);
+	    	jCheckBox9.setEnabled(false);
+	        arrayVisualizer.toggleExternalArrays(jCheckBox9.isSelected());
+    	}
+    }
+    public void unlockAuxState() {
+    	if(!jCheckBox9.isEnabled()) {
+	    	jCheckBox9.setEnabled(true);
+	    	jCheckBox9.setSelected(this.lastUnlockedAux);
+	        arrayVisualizer.toggleExternalArrays(jCheckBox9.isSelected());
+    	}
+    }
+
     private void jButton1ActionPerformed() {//GEN-FIRST:event_jButton1ActionPerformed
         //CHANGE SORT
         if (this.abstractFrame != null && abstractFrame.isVisible()){
@@ -306,13 +341,13 @@ public final class UtilFrame extends javax.swing.JFrame {
     private void jButton2ActionPerformed() {//GEN-FIRST:event_jButton2ActionPerformed
         //CHANGE VIEW
         if (this.abstractFrame != null && abstractFrame.isVisible()){
-            boolean tmp = this.abstractFrame instanceof ViewPrompt;
+            boolean tmp = this.abstractFrame instanceof VisualPrompt;
             jButton2ResetText();
             abstractFrame.dispose();
             if (tmp)
                 return;
         }
-        this.abstractFrame = new ViewPrompt(this.arrayVisualizer, this.frame, this);
+        this.abstractFrame = new VisualPrompt(this.arrayVisualizer, this.frame, this);
         jButton2.setText("Close");
         jButton1ResetText();
         jButton6ResetText();
@@ -392,7 +427,7 @@ public final class UtilFrame extends javax.swing.JFrame {
             if (tmp)
                 return;
         }
-        this.abstractFrame = new ShufflePrompt(this.arrayManager, this.frame, this);
+        this.abstractFrame = new ShufflePrompt(this.arrayManager, this.arrayVisualizer, this.frame, this);
         jButton6.setText("Close");
         jButton1ResetText();
         jButton2ResetText();
