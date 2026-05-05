@@ -618,9 +618,7 @@ public final class Highlights {
     	float[] thisHM = heatVals.get(array);
     	if (thisHM == null || heatPosition < 0 || heatPosition >= array.length)
             return;
-    	int n = array == main ? arrayVisualizer.getCurrentLength() : array.length;
-    	float HN = Math.min(HEAT * (float)Math.pow(4096f / n, 1.25f), 2f/5f);
-		thisHM[heatPosition] = 1f - ((1f - thisHM[heatPosition]) * (1f - HN));
+		thisHM[heatPosition] = 1f - ((1f - thisHM[heatPosition]) * (1f - HEAT));
     }
     
     public synchronized void coolDown(int[] array, int n, double scale) {

@@ -1595,7 +1595,7 @@ public final class ArrayVisualizer {
     }
 
     public static void main(String[] args) throws IOException {
-        System.setProperty("sun.java2d.d3d", "false");
+        System.setProperty("sun.java2d.d3d", "true");
         if (args.length > 0) {
             ArrayVisualizer.maxLengthPower = Integer.parseInt(args[0]);
         }
