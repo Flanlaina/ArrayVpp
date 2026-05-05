@@ -21,7 +21,7 @@ jobs:
           run: mvn clean install
         - name: Upload artifact
           uses: actions/upload-artifact@v4
-          if: ${{ matrix.java == 8 && matrix.os == 'ubuntu-latest' }}
+          if: ${{ matrix.java == 21 && matrix.os == 'ubuntu-latest' }}
           with:
             name: standalone-jar
             path: target/ArrayV-*.jar
