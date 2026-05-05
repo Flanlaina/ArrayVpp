@@ -127,6 +127,7 @@ public final class Highlights {
     
     public void unregisterMarks(int[] array) {
     	clearAllMarks(array);
+    	unregisterHeat(array);
     	highlights.remove(array);
     	markCounts.remove(array);
     	markCount.remove(array);

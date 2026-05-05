@@ -24,4 +24,4 @@ jobs:
           if: ${{ matrix.java == 21 && matrix.os == 'ubuntu-latest' }}
           with:
             name: standalone-jar
-            path: target/ArrayV-*.jar
+            path: target/ArrayVpp-*.jar
