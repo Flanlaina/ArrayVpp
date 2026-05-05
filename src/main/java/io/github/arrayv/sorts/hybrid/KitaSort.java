@@ -51,22 +51,22 @@ final public class KitaSort extends Sort {
 		int i = a, j = m;
 		
 		while(i < m && j < b) {
-			Highlights.markArray(2, i);
-			Highlights.markArray(3, j);
+			Highlights.markArray(from, 2, i);
+			Highlights.markArray(from, 3, j);
 			
-			if(Reads.compareValues(from[i], from[j]) <= 0)
-				Writes.write(to, p++, from[i++], 1, true, auxwrite);
+			if(Reads.compareIndices(from, i, j, 0.5, true) <= 0)
+				Writes.write(to, p++, from[i++], 0.5, true, auxwrite);
 			else 
-				Writes.write(to, p++, from[j++], 1, true, auxwrite);
+				Writes.write(to, p++, from[j++], 0.5, true, auxwrite);
 		}
 		Highlights.clearAllMarks();
 		
 		while(i < m) {
-			Highlights.markArray(2, i);
+			Highlights.markArray(from, 2, i);
 			Writes.write(to, p++, from[i++], 1, true, auxwrite);
 		}
 		while(j < b) {
-			Highlights.markArray(3, j);
+			Highlights.markArray(from, 3, j);
 			Writes.write(to, p++, from[j++], 1, true, auxwrite);
 		}
 	}
@@ -86,7 +86,7 @@ final public class KitaSort extends Sort {
 		int i = s-1, j = m-1;
 		
 		while(i >= 0 && j >= a) {
-			Highlights.markArray(2, j);
+			Highlights.markArray(array, 2, j);
 			
 			if(Reads.compareValues(tmp[i], array[j]) >= 0)
 				Writes.write(array, --b, tmp[i--], 1, true, false);
@@ -186,11 +186,11 @@ final public class KitaSort extends Sort {
 			if(++c == bLen) {
 				if(lBuf) {
 					l -= bLen;
-					Writes.write(tTmp, t++, tags[bi++], 0, false, true);
+					Writes.write(tTmp, t++, tags[bi++], 0, true, true);
 				}
 				else {
 					r -= bLen;
-					Writes.write(tTmp, t++, tags[bj++]+(tm-ta)*bLen, 0, false, true);
+					Writes.write(tTmp, t++, tags[bj++]+(tm-ta)*bLen, 0, true, true);
 				}
 				
 				lBuf = l >= r;
@@ -204,17 +204,17 @@ final public class KitaSort extends Sort {
 		
 		while(l > 0) {
 			Writes.arraycopy(buf, p, array, a+tags[bi], bLen, 1, true, false);
-			Writes.write(tTmp, t++, tags[bi++], 0, false, true);
+			Writes.write(tTmp, t++, tags[bi++], 0, true, true);
 			p += bLen;
 			l -= bLen;
 		}
 		while(r > 0) {
 			Writes.arraycopy(buf, p, array, m+tags[bj], bLen, 1, true, false);
-			Writes.write(tTmp, t++, tags[bj++]+(tm-ta)*bLen, 0, false, true);
+			Writes.write(tTmp, t++, tags[bj++]+(tm-ta)*bLen, 0, true, true);
 			p += bLen;
 			r -= bLen;
 		}
-		Writes.arraycopy(tTmp, 0, tags, ta, tb-ta, 0, false, true);
+		Writes.arraycopy(tTmp, 0, tags, ta, tb-ta, 0, true, true);
 	}
 	private void blockCycle(int[] array, int[] buf, int[] keys, int a, int bLen, int bCnt) {
 		for(int i = 0; i < bCnt; i++) {
@@ -255,6 +255,9 @@ final public class KitaSort extends Sort {
 		int[] buf  = Writes.createExternalArray(bufLen);
 		int[] tags = Writes.createExternalArray(tLen);
 		int[] tTmp = Writes.createExternalArray(tLen);
+		Highlights.registerMarks(buf);  Highlights.registerHeat(buf);
+		Highlights.registerMarks(tags); Highlights.registerHeat(tags);
+		Highlights.registerMarks(tTmp); Highlights.registerHeat(tTmp);
 		
 		int b1 = b-length%bLen,
 			j = 1;

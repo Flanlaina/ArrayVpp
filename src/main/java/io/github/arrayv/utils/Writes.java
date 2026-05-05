@@ -273,7 +273,10 @@ public final class Writes {
             System.err.println("Warning: write to index " + at + ", which is out of bounds for the current length (" + arrayVisualizer.getCurrentLength() + ")");
         }
 
-        if (mark) Highlights.markArray(1, at);
+        if (mark) {
+        	if(auxwrite) Highlights.markArray(array, 1, at);
+        	else         Highlights.markArray(1, at);
+        }
 
         if (auxwrite) auxWrites.incrementAndGet();
         else          writes.incrementAndGet();
@@ -438,13 +441,9 @@ public final class Writes {
         }
         for (int i = start; i != end; i += dir) {
             if (mark) {
-                if (aux) {
-                    Highlights.markArray(1, srcPos + i);
-                } else {
-                    Highlights.markArray(1, destPos + i);
-                }
+                Highlights.markArray(src, 1, srcPos + i);
             }
-            write(dest, destPos + i, src[srcPos + i], sleep, false, aux);
+            write(dest, destPos + i, src[srcPos + i], sleep, mark, aux);
         }
     }
 

@@ -8,15 +8,28 @@ import io.github.arrayv.utils.Renderer;
 import io.github.arrayv.visuals.Visual;
 import com.scrtwpns.Mixbox;
 
-public final class BarGraphTiled extends Visual {
-    public BarGraphTiled(ArrayVisualizer arrayVisualizer) {
-        super(arrayVisualizer);
+final public class HeatMapTiled extends Visual {
+    // loosely based on :matter
+    private static Color[] STATES = {
+    	new Color(25, 12, 50),
+    	new Color(127, 32, 95),
+        new Color(255, 127, 127),
+        new Color(255, 255, 191),
+        new Color(240, 255, 240)
+    };
+    private static float[] CUTS = {
+    	1f/6f, 1f/2f, 1f/3f, 1f
+    };
 
-        this.setListName("Bar Graph (Tiled Auxiliary)");
+    public HeatMapTiled(ArrayVisualizer ArrayVisualizer) {
+        super(ArrayVisualizer);
+
+        this.setListName("Access Heat Map (Tiled Auxiliary)");
         this.setCategory("Bar Visuals");
+        this.setColorable(stance.NEVER);
         this.setAuxable(true);
         this.setOverlayable(true);
-        this.setMaximumAuxLists(96);
+        this.setMaximumAuxLists(16);
     }
 
     public int[] getTopPosFor(int[] array, double idx, int val, ArrayVisualizer ArrayVisualizer, Renderer Renderer) {
@@ -39,8 +52,9 @@ public final class BarGraphTiled extends Visual {
     		(int)(box[3])
     	};
     }
+    
     // returns wgre
-    private double[] scales(double a, double b) {
+    public static double[] scales(double a, double b) {
     	double[] s = new double[] {b, b};
     	s[a>b?1:0]=a;
     	return s;
@@ -86,7 +100,7 @@ public final class BarGraphTiled extends Visual {
     		vc, vcm, vr, vrm
     	};
     }
-
+    
     @Override
     public void drawVisual(int[] array, int[] boundingBox, ArrayVisualizer arrayVisualizer, Renderer renderer, Highlights Highlights) {
     	// precalculate the bottom of the list area
@@ -99,7 +113,6 @@ public final class BarGraphTiled extends Visual {
 		// keep booleans we're accessing here
     	boolean fancy = Highlights.fancyFinishActive(),
     			color = arrayVisualizer.colorEnabled(),
-    			change = fancy || color,
     			useAltVals = arrayVisualizer.doingStabilityCheck() && color;
 
     	// calculate the min and max of the scales
@@ -111,53 +124,44 @@ public final class BarGraphTiled extends Visual {
     	// change the array color at the start
     	if(fancy)
             this.mainRender.setColor(Color.GREEN);
-    	else
-    		this.mainRender.setColor(Color.WHITE);
     	for (int i = 0, j = 0; i < m; i++) {
     		// get the width of the indice
     		int width = (int) ((i + 1) * scl[1] - j);
     		// get the highlight index (given the list, the indice, the upper bound, and the scale),
     		// turn it back into a raw value
-    		int hm = Highlights.containsMax(array, i, n, scl[0]), v = hm < 0 ? ~hm : hm;
+    		int hm = Highlights.containsMax(array, i, n, scl[0]);
+    		int v = hm < 0 ? ~hm : hm;
     		boolean hl = hm >= 0;
-    		if(hl || Highlights.hasColor(array, v)) {
-    			// set highlight color if highlighted
-				if(hl)
+    		float heat = Highlights.heatAt(array, v);
+    		if (heat >= 0f) {
+        		int idx = 0;
+        		float cutval = 0f;
+        		while(cutval <= heat) {
+        			cutval += CUTS[idx++];
+        		}
+        		if(idx == 0) this.mainRender.setColor(STATES[0]);
+        		else this.mainRender.setColor(new Color(Mixbox.lerp(
+                    STATES[idx-1].getRGB(),
+                    STATES[idx].getRGB(),
+                	(heat - cutval + CUTS[idx-1]) / CUTS[idx-1]
+                )));
+    		} else if(!fancy || v >= Highlights.getFancyFinishPosition()) {
+				if (hl)
 					this.mainRender.setColor(arrayVisualizer.getHighlightColor());
-				else if(color) {
-					// transparent colorcode if list in color
-					val = useAltVals ? arrayVisualizer.getIndexValue(array[v]) : array[v];
-	                this.mainRender.setColor(new Color(Mixbox.lerp(
-	                	getIntColor(val, arrayVisualizer.getCurrentLength()).getRGB(),
-	                	Highlights.colorAt(array, v).getRGB(),
-	                	0.5f
-	                )));
-				} else
+				else if (Highlights.hasColor(array, v))
 					this.mainRender.setColor(Highlights.colorAt(array, v));
-				change = true;
-			} else if(change) {
-	            if (!fancy || v >= Highlights.getFancyFinishPosition()) {
-	            	if (color) {
-	            		val = useAltVals ? arrayVisualizer.getIndexValue(array[v]) : array[v];
-		                this.mainRender.setColor(getIntColor(val, arrayVisualizer.getCurrentLength()));
-	            	} else {
-	            		this.mainRender.setColor(Color.WHITE);
-	            		change = false;
-	            	}
-	            }
-            }
-            try {
-            	val = useAltVals ? arrayVisualizer.getStabilityValue(array[v]) : array[v];
-            } catch(ArrayIndexOutOfBoundsException e) {
-            	// fuck you
-            	val = 0;
-            }
+				else
+					this.mainRender.setColor(Color.WHITE);
+    		}
+            
+            val = useAltVals ? arrayVisualizer.getStabilityValue(array[v]) : array[v];
             int h = (int) ((val + 1) * yScale);
             int nw = hl && width == 1 ? 1 : 0;
 
             this.mainRender.fillRect(j + left - nw, bottom - h, width + nw, h);
             j += width;
     	}
+    	Highlights.coolDown(array, n, scl[0]);
         if (arrayVisualizer.externalArraysEnabled() && boundingBox.length == 8) {
             this.mainRender.setColor(Color.BLUE);
             int X = boundingBox[4], XM = boundingBox[5], Y = boundingBox[6], YM = boundingBox[7];

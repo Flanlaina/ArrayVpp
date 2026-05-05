@@ -130,8 +130,8 @@ public final class Reads {
 
     public int compareIndices(int[] array, int left, int right, double sleep, boolean mark) {
         if (mark) {
-            Highlights.markArray(1, left);
-            Highlights.markArray(2, right);
+            Highlights.markArray(array, 1, left);
+            Highlights.markArray(array, 2, right);
             Delays.sleep(sleep);
         }
         if (arrayVisualizer.generateSortingNetworks()) {
@@ -143,8 +143,8 @@ public final class Reads {
 
     public int compareOriginalIndices(int[] array, int left, int right, double sleep, boolean mark) {
         if (mark) {
-            Highlights.markArray(1, left);
-            Highlights.markArray(2, right);
+            Highlights.markArray(array, 1, left);
+            Highlights.markArray(array, 2, right);
             Delays.sleep(sleep);
         }
         return this.compareOriginalValues(array[left], array[right]);
@@ -152,7 +152,7 @@ public final class Reads {
 
     public int compareIndexValue(int[] array, int index, int value, double sleep, boolean mark) {
         if (mark) {
-            Highlights.markArray(1, index);
+            Highlights.markArray(array, 1, index);
             Delays.sleep(sleep);
         }
         return this.compareValues(array[index], value);
@@ -160,7 +160,7 @@ public final class Reads {
 
     public int compareOriginalIndexValue(int[] array, int index, int value, double sleep, boolean mark) {
         if (mark) {
-            Highlights.markArray(1, index);
+            Highlights.markArray(array, 1, index);
             Delays.sleep(sleep);
         }
         return this.compareOriginalValues(array[index], value);
@@ -168,7 +168,7 @@ public final class Reads {
 
     public int compareValueIndex(int[] array, int value, int index, double sleep, boolean mark) {
         if (mark) {
-            Highlights.markArray(1, index);
+            Highlights.markArray(array, 1, index);
             Delays.sleep(sleep);
         }
         return this.compareValues(value, array[index]);
@@ -176,7 +176,7 @@ public final class Reads {
 
     public int compareOriginalValueIndex(int[] array, int value, int index, double sleep, boolean mark) {
         if (mark) {
-            Highlights.markArray(1, index);
+            Highlights.markArray(array, 1, index);
             Delays.sleep(sleep);
         }
         return this.compareOriginalValues(value, array[index]);
@@ -202,7 +202,7 @@ public final class Reads {
             Timer.stopLap();
 
             if (mark) {
-                Highlights.markArray(1, i);
+                Highlights.markArray(array, 1, i);
                 Delays.sleep(sleep);
             }
         }
@@ -233,7 +233,7 @@ public final class Reads {
             Timer.stopLap();
 
             if (mark) {
-                Highlights.markArray(1, i);
+                Highlights.markArray(array, 1, i);
                 Delays.sleep(sleep);
             }
         }
@@ -264,7 +264,7 @@ public final class Reads {
             Timer.stopLap();
 
             if (mark) {
-                Highlights.markArray(1, i);
+                Highlights.markArray(array, 1, i);
                 Delays.sleep(sleep);
             }
         }
@@ -295,7 +295,7 @@ public final class Reads {
             Timer.stopLap();
 
             if (mark) {
-                Highlights.markArray(1, i);
+                Highlights.markArray(array, 1, i);
                 Delays.sleep(sleep);
             }
         }
@@ -326,7 +326,7 @@ public final class Reads {
 
             Timer.stopLap();
 
-            Highlights.markArray(1, i);
+            Highlights.markArray(array, 1, i);
             Delays.sleep(0.75);
         }
 

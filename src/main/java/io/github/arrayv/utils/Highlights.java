@@ -38,12 +38,15 @@ SOFTWARE.
  */
 
 public final class Highlights {
+    public static final float HEAT = 0.133f;
+    public static final float COOL = 0.00625f;
 
     // This is in desperate need of optimization.
     private volatile Map<int[], int[]> highlights;
     private volatile Map<int[], byte[]> markCounts;
     private volatile Map<int[], boolean[]> colorMarks;
     private volatile Map<int[], Color[]> colorColors;
+    private volatile Map<int[], float[]> heatVals;
     
     private volatile Map<String, Color> defined;
     private static int[] main;
@@ -70,9 +73,11 @@ public final class Highlights {
 
     private boolean showFancyFinishes;
     private volatile boolean fancyFinish;
+    private final AtomicInteger trackFinish = new AtomicInteger();
+    
     private volatile boolean retainColorMarks = false;
     public static volatile boolean fancyFinishFix = true;
-    private final AtomicInteger trackFinish = new AtomicInteger();
+    public static volatile boolean lazyCooling = false;
 
     private final ArrayVisualizer arrayVisualizer;
     private Delays Delays;
@@ -87,11 +92,13 @@ public final class Highlights {
             this.colorMarks = new IdentityHashMap<>();
             this.colorColors = new IdentityHashMap<>();
             this.markCount = new IdentityHashMap<>();
+            this.heatVals = new IdentityHashMap<>();
             
             main = arrayVisualizer.getArray();
             
             this.registerMarks(main);
             this.registerColors(main);
+            this.registerHeat(main);
         } catch (OutOfMemoryError e) {
             JErrorPane.invokeCustomErrorMessage("Failed to allocate mark arrays. The program will now exit.");
             System.exit(1);
@@ -123,6 +130,24 @@ public final class Highlights {
     	highlights.remove(array);
     	markCounts.remove(array);
     	markCount.remove(array);
+    }
+    
+    public synchronized void registerHeat(int[] array) {
+        try {
+            if (!highlights.containsKey(array)) {
+                throw new Exception("Highlights.registerHeat(): Array must be markable to use heatmaps!");
+            } else {
+            	float[] heat = new float[array.length];
+            	Arrays.fill(heat, 0f);
+            	heatVals.putIfAbsent(array, heat);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void unregisterHeat(int[] array) {
+        heatVals.remove(array);
     }
     
     public synchronized void registerColors(int[] array) {
@@ -229,7 +254,7 @@ public final class Highlights {
     public int containsMax(int[] array, int i, int n, double scale) {
     	byte[] thisMC = markCounts.get(array);
     	int ii = ind(i, scale);
-    	if (thisMC == null || ii >= n) return ~ii;
+    	if (thisMC == null || (ii >= n && n > 0)) return ~ii;
     	int[] thisHL = highlights.get(array);
     	if (thisHL == null) return ~ii;
     	if (scale == 1) {
@@ -278,7 +303,7 @@ public final class Highlights {
     public boolean containsPosition(int arrayPosition) {
     	return containsPosition(main, arrayPosition);
     }
-
+    
     public synchronized void markArray(int[] array, int marker, int markPosition) {
         try {
             if (markPosition < 0) {
@@ -298,6 +323,7 @@ public final class Highlights {
                     clearColor(markPosition);
                 }
                 thisHL[marker] = markPosition;
+                this.heatUp(array, markPosition);
                 incrementIndexMarkCount(array, markPosition);
 
                 if (marker >= this.maxHighlightMarked) {
@@ -573,5 +599,44 @@ public final class Highlights {
         for (boolean[] list : colorMarks.values()) {
             Arrays.fill(list, false);
         }
+    }
+
+    public synchronized float[] getHeatmap(int[] array) {
+        return heatVals.get(array);
+    }
+    
+    public synchronized float heatAt(int[] array, int position) {
+    	if(!heatVals.containsKey(array)) return -1f;
+        return getHeatmap(array)[position];
+    }
+    public synchronized float heatAt(int position) {
+        return heatAt(main, position);
+    }
+    
+    public synchronized void heatUp(int[] array, int heatPosition) {
+    	float[] thisHM = heatVals.get(array);
+    	if (thisHM == null || heatPosition < 0 || heatPosition >= array.length)
+            return;
+    	int n = array == main ? arrayVisualizer.getCurrentLength() : array.length;
+    	float HN = Math.min(HEAT * (float)Math.pow(4096f / n, 1.25f), 2f/5f);
+		thisHM[heatPosition] = 1f - ((1f - thisHM[heatPosition]) * (1f - HN));
+    }
+    
+    public synchronized void coolDown(int[] array, int n, double scale) {
+    	float[] thisHM = heatVals.get(array);
+    	if (thisHM == null)
+            return;
+    	if (lazyCooling) // This is a horrible way to speed it up for large n. Until a better system is in place, please don't use this.
+    		for (int i = 0, j = ind(i, scale); j < n; j = ind(++i, scale)) {
+    			if (containsMax(array, i, n, scale) >= 0)
+    				for (int k = ind(i - 1, scale); ++k < j;)
+    					thisHM[i] *= 1f - COOL;
+    			thisHM[j] *= 1f - COOL;
+    		}
+    	else
+    		for (int i = 0; i < n; i++) {
+    			if (!containsPosition(array, i))
+    				thisHM[i] *= 1f - COOL;
+    		}
     }
 }

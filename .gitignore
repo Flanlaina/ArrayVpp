@@ -1,4 +1,6 @@
 *.class
+.classpath
+.project
 target
 __pycache__
 cache
@@ -8,5 +10,6 @@ sorting_networks
 /stats-config.txt
 dependency-reduced-pom.xml
 /scripts
+.settings/
 .idea/
 *.iml
