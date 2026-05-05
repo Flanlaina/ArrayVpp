@@ -499,8 +499,11 @@ public final class Writes {
 
     public void deleteExternalArrays(int[]... arrays) {
         this.allocAmount.addAndGet(-Arrays.stream(arrays).reduce(0, (a, b) -> (a + b.length), Integer::sum));
-        List<int[]> visArrays = arrayVisualizer.getArrays();
-        Arrays.stream(arrays).forEach(visArrays::remove);
+        Arrays.stream(arrays).forEach((array) -> {
+        	arrayVisualizer.getArrays().remove(array);
+            Highlights.unregisterMarks(array);
+            Highlights.unregisterColors(array);
+        });
         arrayVisualizer.updateNow();
     }
 
