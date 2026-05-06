@@ -255,9 +255,6 @@ final public class KitaSort extends Sort {
 		int[] buf  = Writes.createExternalArray(bufLen);
 		int[] tags = Writes.createExternalArray(tLen);
 		int[] tTmp = Writes.createExternalArray(tLen);
-		Highlights.registerMarks(buf);  Highlights.registerHeat(buf);
-		Highlights.registerMarks(tags); Highlights.registerHeat(tags);
-		Highlights.registerMarks(tTmp); Highlights.registerHeat(tTmp);
 		
 		int b1 = b-length%bLen,
 			j = 1;

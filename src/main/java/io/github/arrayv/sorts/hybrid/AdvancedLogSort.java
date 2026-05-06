@@ -464,7 +464,6 @@ final public class AdvancedLogSort extends Sort {
 	public void runSort(int[] array, int length, int bucketCount) {
 		int l = productLog(length);
 		int[] tmp = Writes.createExternalArray(l);
-		Highlights.registerMarks(tmp);
 		advLogSort(array, tmp, 0, length, l, 0);
 	}
 }

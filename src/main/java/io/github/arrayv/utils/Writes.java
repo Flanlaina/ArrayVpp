@@ -485,6 +485,17 @@ public final class Writes {
         this.allocAmount.addAndGet(length);
         int[] result = new int[length];
         arrayVisualizer.getArrays().add(result);
+        Highlights.registerMarks(result);
+        Highlights.registerHeat(result);
+        // [colors would be a bit much]
+        arrayVisualizer.updateNow();
+        return result;
+    }
+
+    public int[] createBareExternalArray(int length) {
+        this.allocAmount.addAndGet(length);
+        int[] result = new int[length];
+        arrayVisualizer.getArrays().add(result);
         arrayVisualizer.updateNow();
         return result;
     }
