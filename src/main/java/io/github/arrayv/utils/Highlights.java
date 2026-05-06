@@ -305,12 +305,12 @@ public final class Highlights {
     	return containsPosition(main, arrayPosition);
     }
     
-    public synchronized void markArray(int[] array, int marker, int markPosition) {
+    private synchronized void markArrayInternal(int[] array, int marker, int markPosition) {
         try {
             if (markPosition < 0) {
-                if (markPosition == -1) throw new Exception("Highlights.markArray(): Invalid position! -1 is reserved for the clearMark method.");
-                else if (markPosition == -5) throw new Exception("Highlights.markArray(): Invalid position! -5 was the constant originally used to unmark numbers in the array. Instead, use the clearMark method.");
-                else throw new Exception("Highlights.markArray(): Invalid position!");
+                if (markPosition == -1) throw new Exception("Highlights.markArrayInternal(): Invalid position! -1 is reserved for the clearMark method.");
+                else if (markPosition == -5) throw new Exception("Highlights.markArrayInternal(): Invalid position! -5 was the constant originally used to unmark numbers in the array. Instead, use the clearMark method.");
+                else throw new Exception("Highlights.markArrayInternal(): Invalid position!");
             } else {
             	int[] thisHL = highlights.get(array);
             	if (thisHL == null || thisHL[marker] == markPosition) {
@@ -337,11 +337,19 @@ public final class Highlights {
         arrayVisualizer.updateNow();
         Delays.enableStepping();
     }
+    public synchronized <T> void markArray(T array, int marker, int markPosition) {
+    	if (ArrayVList.class.isInstance(array))
+    		markArrayInternal(((ArrayVList)array).__internal_array(), marker, markPosition);
+    	else {
+    		assert int[].class.isInstance(array) : "Highlights.markArray(): Not an integer array or ArrayVList!";
+    		markArrayInternal((int[])array, marker, markPosition);
+    	}
+    }
     public synchronized void markArray(int marker, int markPosition) {
-        markArray(main, marker, markPosition);
+        markArrayInternal(main, marker, markPosition);
     }
 
-    public synchronized void clearMark(int[] array, int marker) {
+    private synchronized void clearMarkInternal(int[] array, int marker) {
     	int[] thisHL = highlights.get(array);
         if (thisHL == null || thisHL[marker] == -1) {
             return;
@@ -366,8 +374,16 @@ public final class Highlights {
         arrayVisualizer.updateNow();
         Delays.enableStepping();
     }
+    public synchronized <T> void clearMark(T array, int marker) {
+    	if (ArrayVList.class.isInstance(array))
+    		clearMarkInternal(((ArrayVList)array).__internal_array(), marker);
+    	else {
+    		assert int[].class.isInstance(array) : "Highlights.clearMark(): Not an integer array or ArrayVList!";
+    		clearMarkInternal((int[])array, marker);
+    	}
+    }
     public synchronized void clearMark(int marker) {
-    	clearMark(main, marker);
+    	clearMarkInternal(main, marker);
     }
 
     public synchronized void clearAllMarksPossible() {
@@ -386,7 +402,7 @@ public final class Highlights {
         Delays.enableStepping();
     }
 
-    public synchronized void clearAllMarks(int[] array) {
+    private synchronized void clearAllMarksInternal(int[] array) {
         Delays.disableStepping();
         int[] thisHL = highlights.get(array);
         byte[] thisMC = markCounts.get(array);
@@ -411,9 +427,37 @@ public final class Highlights {
         arrayVisualizer.updateNow();
         Delays.enableStepping();
     }
-
+    public synchronized <T> void clearAllMarks(T array) {
+    	if (ArrayVList.class.isInstance(array))
+    		clearAllMarksInternal(((ArrayVList)array).__internal_array());
+    	else {
+    		assert int[].class.isInstance(array) : "Highlights.clearAllMarks(): Not an integer array or ArrayVList!";
+    		clearAllMarksInternal((int[])array);
+    	}
+    }
     public synchronized void clearAllMarks() {
-        clearAllMarks(main);
+        clearAllMarksInternal(main);
+    }
+    
+    public synchronized void __transferMarkInfo(int[] src, int[] dest) {
+    	System.arraycopy(highlights.get(src), 0, highlights.get(dest), 0, Math.min(src.length, dest.length));
+    	System.arraycopy(markCounts.get(src), 0, markCounts.get(dest), 0, Math.min(src.length, dest.length));
+    	if (heatVals.containsKey(src) && heatVals.containsKey(dest))
+    		System.arraycopy(heatVals.get(src), 0, heatVals.get(dest), 0, Math.min(src.length, dest.length));
+    	markCount.put(dest, markCount.get(src));
+    }
+    
+    public synchronized void __cutRange(int[] array, int from, int to) {
+    	int[] thisHL = highlights.get(array);
+    	for (int i = 0; i < this.maxHighlightMarked; i++) {
+    		if (from <= thisHL[i] && thisHL[i] < to)
+    			clearMarkInternal(array, i);
+    		else if (to <= thisHL[i]) {
+    			int HL = thisHL[i];
+    			clearMarkInternal(array, i);
+    			markArrayInternal(array, i, HL - to + from);
+    		}
+    	}
     }
 
     public synchronized boolean isRetainingColorMarks() {

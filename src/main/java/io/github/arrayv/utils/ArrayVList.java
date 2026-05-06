@@ -25,6 +25,7 @@ public class ArrayVList extends AbstractList<Integer> implements RandomAccess, C
     // @checkstyle:off StaticVariableNameCheck
     private static Reads Reads;
     private static Writes Writes;
+    private static Highlights Highlights;
     // @checkstyle:on StaticVariableNameCheck
 
     int[] internal;
@@ -45,8 +46,11 @@ public class ArrayVList extends AbstractList<Integer> implements RandomAccess, C
             arrayVisualizer = ArrayVisualizer.getInstance();
             Reads = arrayVisualizer.getReads();
             Writes = arrayVisualizer.getWrites();
+            Highlights = arrayVisualizer.getHighlights();
         }
         this.internal = new int[capacity];
+        Highlights.registerMarks(internal);
+        Highlights.registerHeat(internal);
         show();
         this.count = 0;
         this.capacity = capacity;
@@ -57,6 +61,7 @@ public class ArrayVList extends AbstractList<Integer> implements RandomAccess, C
         Writes.changeAllocAmount(-count);
         hide();
         disableColors();
+        Highlights.unregisterMarks(internal);
         this.internal = null;
         this.count = 0;
         this.capacity = 0;
@@ -110,13 +115,13 @@ public class ArrayVList extends AbstractList<Integer> implements RandomAccess, C
     public void enableColors() {
         if (!colorsEnabled) {
             colorsEnabled = true;
-            arrayVisualizer.getHighlights().registerColors(internal);
+            Highlights.registerColors(internal);
         }
     }
     public void disableColors() {
         if (colorsEnabled) {
             colorsEnabled = false;
-            arrayVisualizer.getHighlights().unregisterColors(internal);
+            Highlights.unregisterColors(internal);
         }
     }
     
@@ -133,9 +138,19 @@ public class ArrayVList extends AbstractList<Integer> implements RandomAccess, C
         int newCapacity = (int)Math.ceil(capacity * growFactor);
         int[] newInternal = new int[newCapacity];
         System.arraycopy(internal, 0, newInternal, 0, count);
+    	Highlights.registerMarks(newInternal);
+    	Highlights.registerHeat(newInternal);
+    	Highlights.__transferMarkInfo(internal, newInternal);
+        Highlights.unregisterMarks(internal);
         if (colorsEnabled) {
-            arrayVisualizer.getHighlights().unregisterColors(internal);
-            arrayVisualizer.getHighlights().registerColors(newInternal);
+        	Color[] oldColors = Highlights.getColorColors(internal);
+        	boolean[] oldMarks = Highlights.getColorMarks(internal);
+            Highlights.unregisterColors(internal);
+            Highlights.registerColors(newInternal);
+            Color[] newColors = Highlights.getColorColors(newInternal);
+            boolean[] newMarks = Highlights.getColorMarks(newInternal);
+            System.arraycopy(oldColors, 0, newColors, 0, count);
+            System.arraycopy(oldMarks, 0, newMarks, 0, count);
         }
         this.capacity = newCapacity;
         this.internal = newInternal;
@@ -160,7 +175,7 @@ public class ArrayVList extends AbstractList<Integer> implements RandomAccess, C
             if (!colorsEnabled) {
                 throw new Exception("ArrayVList.colorCode(): List can't be colorcoded!");
             }
-            arrayVisualizer.getHighlights().colorCode(internal, position, alias);
+            Highlights.colorCode(internal, position, alias);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -171,7 +186,7 @@ public class ArrayVList extends AbstractList<Integer> implements RandomAccess, C
             if (!colorsEnabled) {
                 throw new Exception("ArrayVList.colorCode(): List can't be colorcoded!");
             }
-            arrayVisualizer.getHighlights().colorCode(internal, alias, positions);
+            Highlights.colorCode(internal, alias, positions);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -182,16 +197,36 @@ public class ArrayVList extends AbstractList<Integer> implements RandomAccess, C
             if (!colorsEnabled) {
                 throw new Exception("ArrayVList.rawColorCode(): List can't be colorcoded!");
             }
-            arrayVisualizer.getHighlights().setRawColor(internal, position, color);
+            Highlights.setRawColor(internal, position, color);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    public void mark(int marker, int markPos) {
+        Highlights.markArray(internal, marker, markPos);
+    }
+
+    public void clearMark(int marker) {
+        Highlights.clearMark(internal, marker);
+    }
+
+    public void clearAllMarks(int marker) {
+        Highlights.clearAllMarks(internal);
+    }
+
     private void fastRemove(int index) {
         int numMoved = count - index - 1;
-        if (numMoved > 0)
+        if (numMoved > 0) {
             Writes.arraycopy(internal, index + 1, internal, index, numMoved, 0, false, true);
+            Highlights.__cutRange(internal, index, index + 1);
+            if (colorsEnabled) {
+            	Color[] colors = Highlights.getColorColors(internal);
+            	boolean[] marks = Highlights.getColorMarks(internal);
+            	System.arraycopy(colors, index + 1, colors, index, numMoved);
+            	System.arraycopy(marks, index + 1, marks, index, numMoved);
+            }
+        }
         internal[--count] = 0;
         Writes.changeAllocAmount(-1);
     }
@@ -267,7 +302,14 @@ public class ArrayVList extends AbstractList<Integer> implements RandomAccess, C
     protected void removeRange(int fromIndex, int toIndex) {
         int numMoved = count - toIndex;
         System.arraycopy(internal, toIndex, internal, fromIndex,
-                         numMoved);
+                numMoved);
+        Highlights.__cutRange(internal, fromIndex, toIndex);
+        if (colorsEnabled) {
+        	Color[] colors = Highlights.getColorColors(internal);
+        	boolean[] marks = Highlights.getColorMarks(internal);
+            System.arraycopy(colors, toIndex, colors, fromIndex, numMoved);
+            System.arraycopy(marks, toIndex, marks, fromIndex, numMoved);
+        }
 
         int sizeOffset = toIndex - fromIndex;
         int newSize = count - sizeOffset;
@@ -326,6 +368,10 @@ public class ArrayVList extends AbstractList<Integer> implements RandomAccess, C
             }
         }
         return -1;
+    }
+
+    public int[] __internal_array() {
+        return internal;
     }
 
     @Override

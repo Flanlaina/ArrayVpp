@@ -270,12 +270,13 @@ public final class Renderer {
     public void drawVisual(Visual activeVisual, int[][] arrays, ArrayVisualizer arrayVisualizer, Highlights Highlights) {
     	arraysLast = arrays;
     	int vis_count = countLast = arrayVisualizer.externalArraysEnabled() ? Math.min(arrays.length - 1, activeVisual.getMaximumAuxLists()) : 0;
+    	int arrays_count = arrayVisualizer.getArrays().size();
     	int[] box;
         if (arrayVisualizer.externalArraysEnabled()) {
             this.auxActive = true;
             for (int i = vis_count; i > 0; i--) {
                 if (arrays[i] != null) {
-                    this.updateVisualsPerArray(arrayVisualizer, arrays[i], arrays[i].length);
+                    this.updateVisualsPerArray(arrayVisualizer, arrays[i], i >= arrays_count ? arrayVisualizer.getArrayVLists().get(i - arrays_count).size() : arrays[i].length);
                     box = activeVisual.getBoundingBox(arrays, vis_count - i, i, vis_count, arrayVisualizer, this);
                     activeVisual.drawVisual(arrays[i], box, arrayVisualizer, this, Highlights);
                     this.yoffset.addAndGet(this.vsize); // for compatibility

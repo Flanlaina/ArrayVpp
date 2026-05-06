@@ -562,11 +562,7 @@ public final class ArrayVisualizer {
                             int[][] arrays = ArrayVisualizer.this.arrays.toArray(new int[ttl][]);
                             int count = ArrayVisualizer.this.arrays.size();
                             for(int v = 0; count < ttl; v++, count++) {
-                            	try {
-                            		arrays[count] = ArrayVisualizer.this.arrayVLists.get(v).toIntArray();
-                            	} catch(IndexOutOfBoundsException e) {
-                            		// no.
-                            	}
+                            	arrays[count] = ArrayVisualizer.this.arrayVLists.get(v).__internal_array();
                             }
                             ArrayVisualizer.this.renderer.drawVisual(ArrayVisualizer.this.runningVisual, arrays, ArrayVisualizer.this, ArrayVisualizer.this.Highlights);
 
