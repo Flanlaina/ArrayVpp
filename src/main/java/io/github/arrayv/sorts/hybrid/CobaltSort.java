@@ -7,7 +7,7 @@ import io.github.arrayv.sorts.templates.Sort;
  * 
 MIT No Attribution
 
-Copyright (c) 2025 Distray
+Copyright (c) 2025-2026 Distray
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,6 @@ final public class CobaltSort extends Sort {
         this.setRunSortName("Cobalt Sort");
         this.setCategory("Block Merge Sorts");
         this.setConstant("n log n");
-        this.setComparisonBased(true);
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);
@@ -416,36 +415,6 @@ final public class CobaltSort extends Sort {
     	}
 		rotate(array, a, kStart, kStart + keys);
 		return keys;
-    }
-
-    // block merge
-    private void mergeFragTail(int[] array, int l, int le, int r, int re, int c) {
-    	if(l == le || r == re) return;
-    	int t = le-- + re-- - r;
-    	while(l <= le && r <= re) {
-			if(Reads.compareIndices(array, le, re, 1, true) > -c) {
-				Writes.swap(array, --t, le--, 1, true, false);
-			} else {
-				Writes.swap(array, --t, re--, 1, true, false);
-			}
-    	}
-    	while(r <= re) {
-			Writes.swap(array, --t, re--, 1, true, false);
-    	}
-    }
-    private int mergeFrag(int[] array, int l, int le, int r, int re, int t, int c) {
-    	while(l < le && r < re) {
-			if(Reads.compareIndices(array, l, r, 1, true) <= -c) {
-				Writes.swap(array, t++, l++, 1, true, false);
-			} else {
-				Writes.swap(array, t++, r++, 1, true, false);
-			}
-    	}
-    	if(l < le) {
-    		return ~(le - l);
-    	} else {
-    		return re - r;
-    	}
     }
     private void blockSelectInv(int[] array, int k, int a, int b, int s) {
     	int tb = Math.floorDiv(b - a, s);
