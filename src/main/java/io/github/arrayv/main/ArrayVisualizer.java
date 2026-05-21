@@ -1142,6 +1142,7 @@ public final class ArrayVisualizer {
 	public void setMainRender() {
         this.mainRender = (Graphics2D) this.img.getGraphics();
         this.mainRender.addRenderingHints(new IdentityHashMap<RenderingHints.Key,Object>() {{
+        	put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
         	put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         	put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
         	put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);

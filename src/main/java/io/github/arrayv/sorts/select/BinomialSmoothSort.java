@@ -11,6 +11,7 @@ public final class BinomialSmoothSort extends Sort {
         this.setRunAllSortsName("Binomial Smooth Sort");
         this.setRunSortName("Binomial Smoothsort");
         this.setCategory("Selection Sorts");
+		this.setConstant("n log n");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

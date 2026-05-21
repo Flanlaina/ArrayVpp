@@ -2,12 +2,11 @@ package io.github.arrayv.visuals.circles;
 
 import java.awt.Color;
 
-import com.scrtwpns.Mixbox;
-
 import io.github.arrayv.main.ArrayVisualizer;
 import io.github.arrayv.utils.Highlights;
 import io.github.arrayv.utils.Renderer;
-import io.github.arrayv.visuals.Visual;
+import io.github.arrayv.visuals.templates.VisualNoAntialiasing;
+import com.scrtwpns.Mixbox;
 
 /*
  *
@@ -36,7 +35,7 @@ SOFTWARE.
  *
  */
 
-public final class ColorCircle extends Visual {
+public final class ColorCircle extends VisualNoAntialiasing {
 
     public ColorCircle(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);

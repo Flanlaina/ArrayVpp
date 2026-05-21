@@ -5,7 +5,7 @@ import java.awt.Color;
 import io.github.arrayv.main.ArrayVisualizer;
 import io.github.arrayv.utils.Highlights;
 import io.github.arrayv.utils.Renderer;
-import io.github.arrayv.visuals.Visual;
+import io.github.arrayv.visuals.templates.VisualNoAntialiasing;
 import com.scrtwpns.Mixbox;
 
 /*
@@ -35,7 +35,7 @@ SOFTWARE.
  *
  */
 
-public final class DisparityCircle extends Visual {
+public final class DisparityCircle extends VisualNoAntialiasing {
 
     public DisparityCircle(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
