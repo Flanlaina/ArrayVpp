@@ -94,7 +94,7 @@ final public class ImprovedOnlinePDMSortII extends Sort {
     	Writes.recursion();
     	int l = merge(array, tmp, offstmp, a, b, exp >> 1, depth, aux), la = Math.abs(l), r = 0;
     	if (l == 0) return 0;
-    	while (la < exp) {
+    	if (la < exp) {
     		r = merge(array, tmp, offstmp, a + la, b, exp - la, depth, aux);
 	    	int ra = Math.abs(r);
 			if (r == 0) return l;
@@ -105,7 +105,6 @@ final public class ImprovedOnlinePDMSortII extends Sort {
 				mergehead(array, tmp, a, a + la, a + la + ra, offstmp, l < 0, r < 0, aux);
 				l = r < 0 ? r - la : r + la;
 			}
-			la = Math.abs(l);
     	}
     	return l;
     }
