@@ -4,8 +4,11 @@ import io.github.arrayv.main.ArrayVisualizer;
 import io.github.arrayv.utils.Highlights;
 import io.github.arrayv.utils.Renderable;
 import io.github.arrayv.utils.Renderer;
-import io.github.arrayv.visuals.Visual.stance;
 
+import java.awt.RenderingHints;
+import java.util.ArrayList;
+import java.util.IdentityHashMap;
+import java.util.Map.Entry;
 import java.awt.*;
 
 public abstract class Visual {
@@ -27,6 +30,7 @@ public abstract class Visual {
     private boolean overlayable;
     private boolean auxable;
     private int maxAuxLists;
+    private IdentityHashMap<RenderingHints.Key, Object> renderingHints;
     
     protected Graphics2D mainRender;
     protected Graphics2D extraRender;
@@ -41,6 +45,7 @@ public abstract class Visual {
         this.setAuxable(false);
         this.setOverlayable(false);
         this.setMaximumAuxLists(7);
+        this.setUpRenderingHints();
     }
 
     protected void enableVisual(boolean Bool) {
@@ -70,6 +75,18 @@ public abstract class Visual {
     protected void setOverlayable(boolean overlayable) {
         this.overlayable = overlayable;
     }
+    
+    private void setUpRenderingHints() {
+    	this.renderingHints = new IdentityHashMap<>();
+    }
+    
+    protected void addRenderingHints(Object... hints) {
+    	assert hints.length % 2 == 0 : "[Visual].addRenderingHints(): Missing key or value!";
+    	assert hints.length > 0 : "[Visual].addRenderingHints(): No rendering hints requested!";
+    	for(int i = 0; i < hints.length; i += 2) {
+    		this.renderingHints.put((RenderingHints.Key) hints[i], hints[i + 1]);
+    	}
+    }
 
     public boolean isVisualEnabled() {
         return this.visualEnabled;
@@ -97,6 +114,14 @@ public abstract class Visual {
 
     public boolean isOverlayable() {
         return this.overlayable;
+    }
+    
+    public Object[][] getRenderingHints() {
+    	ArrayList<Object[]> ents = new ArrayList<>();
+    	for (Entry<RenderingHints.Key, Object> e : renderingHints.entrySet()) {
+    		ents.add(new Object[] {e.getKey(), e.getValue()});
+    	}
+    	return ents.toArray(new Object[0][]);
     }
 
     public void updateRender(ArrayVisualizer arrayVisualizer) {

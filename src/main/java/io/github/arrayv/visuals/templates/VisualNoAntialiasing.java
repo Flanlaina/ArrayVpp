@@ -11,21 +11,19 @@ import io.github.arrayv.visuals.Visual;
 public abstract class VisualNoAntialiasing extends Visual {
     protected VisualNoAntialiasing(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
+    	this.addRenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
     }
     private Object lastAntialiasedState;
-
-    @SuppressWarnings("serial")
-    public void bringUp() {
-    	lastAntialiasedState = this.mainRender.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
-        this.mainRender.addRenderingHints(new IdentityHashMap<RenderingHints.Key,Object>() {{
-        	put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-        }});
+    
+    public void updateRender(ArrayVisualizer arrayVisualizer) {
+    	super.updateRender(arrayVisualizer);
+    	if (this.mainRender != null) this.lastAntialiasedState = this.mainRender.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
     }
 
     @SuppressWarnings("serial")
     public void pullDown() {
         this.mainRender.addRenderingHints(new IdentityHashMap<RenderingHints.Key,Object>() {{
-        	put(RenderingHints.KEY_ANTIALIASING, lastAntialiasedState);
+        	if (lastAntialiasedState != null) put(RenderingHints.KEY_ANTIALIASING, lastAntialiasedState);
         }});
     }
 

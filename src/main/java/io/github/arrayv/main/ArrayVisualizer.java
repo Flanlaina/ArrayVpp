@@ -1141,11 +1141,18 @@ public final class ArrayVisualizer {
     @SuppressWarnings("serial")
 	public void setMainRender() {
         this.mainRender = (Graphics2D) this.img.getGraphics();
+        if (this.runningVisual != null)
+        	this.runningVisual.updateRender(INSTANCE);
         this.mainRender.addRenderingHints(new IdentityHashMap<RenderingHints.Key,Object>() {{
-        	put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
-        	put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        	put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
-        	put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+        	if (runningVisual != null) {
+        		for (Object[] pair : runningVisual.getRenderingHints()) {
+            		put((RenderingHints.Key) pair[0], pair[1]);
+            	}
+        	}
+        	putIfAbsent(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+        	putIfAbsent(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        	putIfAbsent(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+        	putIfAbsent(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
         	// put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         }});
     }
@@ -1412,19 +1419,21 @@ public final class ArrayVisualizer {
     public void setActiveVisual(VisualInfo visual) {
     	this.runningVisual.pullDown();
     	this.runningVisual = visual.getFreshInstance();
+    	this.setMainRender();
+    	this.runningVisual.bringUp();
         synchronized (this) {
             this.updateNow();
         }
-    	this.runningVisual.bringUp();
     }
     
     public void setActiveVisual(Visual visual) {
     	this.runningVisual.pullDown();
     	this.runningVisual = visual;
+    	this.setMainRender();
+    	this.runningVisual.bringUp();
         synchronized (this) {
             this.updateNow();
         }
-    	this.runningVisual.bringUp();
     }
     
     public int[] getTopPos(int[] array, int idx) {

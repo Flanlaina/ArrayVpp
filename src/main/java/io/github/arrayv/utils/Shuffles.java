@@ -103,7 +103,7 @@ public enum Shuffles {
         public void shuffleArray(int[] array, ArrayVisualizer arrayVisualizer, Delays Delays, Highlights Highlights, Writes Writes) {
             int currentLen = arrayVisualizer.getCurrentLength();
             boolean delay = arrayVisualizer.shuffleEnabled();
-            this.sort(array, 0, currentLen, delay ? 1 : 0, Writes);
+            this.sort(array, array, -1, 0, currentLen, delay ? 1 : 0, Writes);
         }
     },
     NAIVE {
@@ -251,8 +251,8 @@ public enum Shuffles {
 
             this.shuffle(array, 0, currentLen, delay ? 0.5 : 0, Writes);
             Highlights.clearMark(2);
-            this.sort(array, 0, currentLen / 2, delay ? 0.5 : 0, Writes);
-            this.sort(array, currentLen / 2, currentLen, delay ? 0.5 : 0, Writes);
+            this.sort(array, array, -1, 0, currentLen / 2, delay ? 0.5 : 0, Writes);
+            this.sort(array, array, -1, currentLen / 2, currentLen, delay ? 0.5 : 0, Writes);
         }
     },
     SHUFFLED_HALF {
@@ -267,7 +267,7 @@ public enum Shuffles {
 
             this.shuffle(array, 0, currentLen, delay ? 2/3d : 0, Writes);
             Highlights.clearMark(2);
-            this.sort(array, 0, currentLen / 2, delay ? 2/3d : 0, Writes);
+            this.sort(array, array, -1, 0, currentLen / 2, delay ? 2/3d : 0, Writes);
         }
     },
     PARTITIONED {
@@ -280,7 +280,7 @@ public enum Shuffles {
             boolean delay = arrayVisualizer.shuffleEnabled();
             makeRandom(arrayVisualizer);
 
-            this.sort(array, 0, currentLen, delay ? 0.5 : 0, Writes);
+            this.sort(array, array, -1, 0, currentLen, delay ? 0.5 : 0, Writes);
             Highlights.clearMark(2);
             this.shuffle(array, 0, currentLen/2, delay ? 0.5 : 0, Writes);
             this.shuffle(array, currentLen/2, currentLen, delay ? 0.5 : 0, Writes);
@@ -1240,10 +1240,10 @@ public enum Shuffles {
                 int keys = blockLen + numKeys;
 
                 shuffle(array, 0, currentLen, delay ? 0.25 : 0, Writes);
-                sort(array, 0, keys, delay ? 0.25 : 0, Writes);
+                sort(array, array, -1, 0, keys, delay ? 0.25 : 0, Writes);
                 Writes.reversal(array, 0, keys-1, delay ? 0.25 : 0, true, false);
                 Highlights.clearMark(2);
-                sort(array, keys, currentLen, delay ? 0.25 : 0, Writes);
+                sort(array, array, -1, keys, currentLen, delay ? 0.25 : 0, Writes);
 
                 push(array, keys, currentLen, blockLen, delay ? 0.25 : 0, Writes);
             }
@@ -1550,9 +1550,27 @@ public enum Shuffles {
     		Writes.arraycopy(tmp, 0, array, 0, n, 1, true, false);
     		Writes.deleteExternalArrays(tmp);
     	}
+    },
+    RANDOM_RUNS {
+        public String getName() {
+            return "Random Runs";
+        }
+        @Override
+        public void shuffleArray(int[] array, ArrayVisualizer arrayVisualizer, Delays Delays, Highlights Highlights, Writes Writes) {
+            int n = arrayVisualizer.getCurrentLength();
+            boolean d = arrayVisualizer.shuffleEnabled();
+            makeRandom(arrayVisualizer);
+            shuffle(array, 0, n, d?1:0, Writes);
+            for(int i = 0; i < n;) {
+            	int r = random.nextInt(n / 24);
+            	sort(array, array, -1, i, Math.min(i + r, n), d?1:0, Writes);
+            	i += r;
+            }
+        }
     };
 
-    public void sort(int[] array, int start, int end, double sleep, Writes Writes) {
+    public void sort(int[] array, int[] dest_array, int dest_start, int start, int end, double sleep, Writes Writes) {
+    	if (dest_start < 0) dest_start = start;
         int min = array[start], max = min;
         for (int i = start+1; i < end; i++) {
             if (array[i] < min) min = array[i];
@@ -1565,11 +1583,10 @@ public enum Shuffles {
         for (int i = start; i < end; i++)
             Writes.write(holes, array[i] - min, holes[array[i] - min] + 1, 0, false, true);
 
-        for (int i = 0, j = start; i < size; i++) {
+        for (int i = 0; i < size; i++) {
             while (holes[i] > 0) {
                 Writes.write(holes, i, holes[i] - 1, 0, false, true);
-                Writes.write(array, j, i + min, sleep, true, false);
-                j++;
+                Writes.write(dest_array, dest_start++, i + min, sleep, true, false);
             }
         }
     }
