@@ -21,6 +21,7 @@ public final class AdaptiveBinaryInsertionSort extends Sort {
         this.setRunAllSortsName("Adaptive Binary Insertion Sort");
         this.setRunSortName("Adaptive Binary Insertsort");
         this.setCategory("Insertion Sorts");
+        this.setConstant("n^2");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

@@ -20,6 +20,7 @@ public final class PDBinaryInsertionSort extends Sort {
         this.setRunAllSortsName("Pattern-Defeating Binary Insertion Sort");
         this.setRunSortName("Pattern-Defeating Binary Insertsort");
         this.setCategory("Insertion Sorts");
+        this.setConstant("n log n");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

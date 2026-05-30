@@ -11,6 +11,7 @@ public final class ShellSortParallel extends ShellSorting {
 		this.setRunAllSortsName("Parallel Shell Sort");
 		this.setRunSortName("Parallel Shellsort");
 		this.setCategory("Insertion Sorts");
+        this.setConstant("n cbrt n");
 		this.setBucketSort(false);
 		this.setRadixSort(false);
 		this.setUnreasonablySlow(false);

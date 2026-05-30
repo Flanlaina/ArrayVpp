@@ -17,6 +17,7 @@ public final class AVLTreeSort extends Sort {
 		this.setRunAllSortsName("Tree Sort (AVL Balanced)");
 		this.setRunSortName("Tree sort (AVL Balanced)");
 		this.setCategory("Insertion Sorts");
+        this.setConstant("n log n");
 		this.setBucketSort(false);
 		this.setRadixSort(false);
 		this.setUnreasonablySlow(false);

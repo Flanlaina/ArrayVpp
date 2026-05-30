@@ -37,6 +37,7 @@ public final class InsertionSort extends InsertionSorting {
         this.setRunAllSortsName("Insertion Sort");
         this.setRunSortName("Insertsort");
         this.setCategory("Insertion Sorts");
+        this.setConstant("n^2");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

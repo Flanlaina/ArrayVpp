@@ -37,6 +37,7 @@ public final class BinaryInsertionSort extends BinaryInsertionSorting {
         this.setRunAllSortsName("Binary Insertion Sort");
         this.setRunSortName("Binary Insertsort");
         this.setCategory("Insertion Sorts");
+        this.setConstant("n^2");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

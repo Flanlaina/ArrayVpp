@@ -17,6 +17,7 @@ public final class TreeSort extends Sort {
 		this.setRunAllSortsName("Tree Sort (Unbalanced)");
 		this.setRunSortName("Tree sort (Unbalanced)");
 		this.setCategory("Insertion Sorts");
+        this.setConstant("n log n");
 		this.setBucketSort(false);
 		this.setRadixSort(false);
 		this.setUnreasonablySlow(false);

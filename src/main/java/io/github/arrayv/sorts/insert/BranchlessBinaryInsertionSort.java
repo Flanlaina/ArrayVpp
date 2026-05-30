@@ -13,6 +13,7 @@ final public class BranchlessBinaryInsertionSort extends Sort {
         this.setRunAllSortsName("Branchless Binary Insertion Sort");
         this.setRunSortName("Branchless Binary Insertsort");
         this.setCategory("Insertion Sorts");
+        this.setConstant("n^2");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

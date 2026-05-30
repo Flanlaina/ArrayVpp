@@ -12,6 +12,7 @@ public final class BlockInsertionSort extends GrailSorting {
         this.setRunAllSortsName("Block Insertion Sort");
         this.setRunSortName("Block Insertsort");
         this.setCategory("Insertion Sorts");
+        this.setConstant("n^2");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

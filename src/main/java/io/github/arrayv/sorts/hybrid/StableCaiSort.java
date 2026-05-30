@@ -5,7 +5,6 @@ import java.util.Collection;
 
 import io.github.arrayv.main.ArrayVisualizer;
 import io.github.arrayv.sorts.insert.BinaryInsertionSort;
-import io.github.arrayv.sorts.insert.BranchlessBinaryInsertionSort;
 import io.github.arrayv.sorts.templates.GrailSorting;
 import io.github.arrayv.utils.IndexedRotations;
 

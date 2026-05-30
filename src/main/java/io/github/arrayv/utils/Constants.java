@@ -48,6 +48,10 @@ public final class Constants {
 		put("n^8",  n -> n * n * n * n * n * n * n * n);
 		put("n^9",  n -> n * n * n * n * n * n * n * n * n);
 		put("n^10", n -> n * n * n * n * n * n * n * n * n * n);
+		put("n^n", n -> (long) Math.pow(n, n));
+		
+		put("2^n", n -> 1L << (long)n);
+		
 		put("goblin", n -> (long) (n * n * n) * (long) (Math.pow(n * fact(n), fact(n) + 1)));
 	}};
 }

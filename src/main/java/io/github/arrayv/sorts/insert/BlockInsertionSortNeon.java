@@ -12,6 +12,7 @@ final public class BlockInsertionSortNeon extends GrailSorting {
         this.setRunAllSortsName("Block Insertion Sort, Neon Rotations");
         this.setRunSortName("Block Insertsort, Neon Rotations");
         this.setCategory("Insertion Sorts");
+        this.setConstant("n^2");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

@@ -15,6 +15,7 @@ public final class SplaySort extends Sort {
         this.setRunAllSortsName("Splay Sort");
         this.setRunSortName("Splaysort");
         this.setCategory("Insertion Sorts");
+        this.setConstant("n log n");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

@@ -38,6 +38,7 @@ public final class StacklessHybridQuickSort extends Sort {
 		this.setRunAllSortsName("Stackless Hybrid Quicksort");
 		this.setRunSortName("Stackless Hybrid Quicksort");
 		this.setCategory("Hybrid Sorts");
+        this.setConstant("n log n");
 		this.setBucketSort(false);
 		this.setRadixSort(false);
 		this.setUnreasonablySlow(false);
