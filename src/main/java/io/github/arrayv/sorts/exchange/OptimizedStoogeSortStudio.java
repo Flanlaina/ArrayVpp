@@ -22,6 +22,7 @@ public final class OptimizedStoogeSortStudio extends Sort {
         this.setRunAllSortsName("Optimized Stooge Sort");
         this.setRunSortName("Optistooge Sort");
         this.setCategory("Exchange Sorts");
+        this.setConstant("n^2");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);
@@ -37,7 +38,7 @@ public final class OptimizedStoogeSortStudio extends Sort {
 		return false;
 	}
 
-	private boolean stoogeSort(int[] array, int a, int m, int b, boolean merge) {
+	public boolean stoogeSort(int[] array, int a, int m, int b, boolean merge) {
 		if(a >= m)
 			return false;
 		if(b-a == 2)

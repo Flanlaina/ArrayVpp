@@ -11,6 +11,7 @@ public class CrunchyCourtyardSort extends Sort {
         this.setRunAllSortsName("Crunchy Courtyard Sort");
         this.setRunSortName("Crunchy Courtyard Sort");
         this.setCategory("Hybrid Sorts");
+        this.setConstant("n log n");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);
