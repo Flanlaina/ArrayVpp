@@ -131,7 +131,7 @@ final public class UnnecessaryDistractionSort extends Sort {
 	
 	@Override
 	public void runSort(int[] array, int sortLength, int bucketCount) {
-		Distraction distraction = new Distraction(arrayVisualizer, 60, 2, 2, 60, 15, Math.PI * 1d / 3d, 30, 180, 50);
+		Distraction distraction = new Distraction(arrayVisualizer, 120, 2, 2, 120, 15, Math.PI * 1d / 3d, 30, 180, 50);
 		Renderer.registerRenderable(distraction);
 		GritSort grit = new GritSort(arrayVisualizer);
 		grit.runSort(array, sortLength, bucketCount);
