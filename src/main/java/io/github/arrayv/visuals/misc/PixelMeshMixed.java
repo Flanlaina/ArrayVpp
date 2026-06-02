@@ -35,13 +35,21 @@ SOFTWARE.
  *
  */
 
-final public class PixelMesh extends Visual {
-	public PixelMesh(ArrayVisualizer ArrayVisualizer) {
+final public class PixelMeshMixed extends Visual {
+	public PixelMeshMixed(ArrayVisualizer ArrayVisualizer) {
 		super(ArrayVisualizer);
 		
-        this.setListName("Pixel Mesh");
+        this.setListName("Pixel Mesh (Mixed Mesh)");
         this.setCategory("Miscellaneous Visuals");
+        this.setColorable(stance.ALWAYS);
         this.setOverlayable(true);
+	}
+	
+	private int multx2i(int a, int b) {
+		return b<64?(a*b)/127:b<128?(a*(b+1))/127:255-(((255-a)*(255-b))/128);
+	}
+	private Color multx2(Color a, Color b) {
+		return new Color(multx2i(a.getRed(), b.getRed()), multx2i(a.getGreen(), b.getGreen()), multx2i(a.getBlue(), b.getBlue()));
 	}
     
     public int[] getTopPosFor(int[] array, double idx, int val, ArrayVisualizer ArrayVisualizer, Renderer Renderer) {
@@ -105,17 +113,10 @@ final public class PixelMesh extends Visual {
 				int xi  = (int)(x * xScale);
 				int idx = (int)((yi*sqrt + xi) * scale);
 				
-				if(ArrayVisualizer.colorEnabled()) {
-					if(Highlights.containsPosition(idx)) {
-						if(ArrayVisualizer.analysisEnabled()) currColor = Color.LIGHT_GRAY;
-						else								  currColor = Color.WHITE;
-					} else currColor = getIntColor(array[idx], length);
-				} else {
-					if(Highlights.containsPosition(idx)) {
-						if(ArrayVisualizer.analysisEnabled()) currColor = Color.BLUE;
-						else								  currColor = Color.RED;
-					} else currColor = getGray(array[idx], length);
-				}
+				if(Highlights.containsPosition(idx)) {
+					if(ArrayVisualizer.analysisEnabled()) currColor = Color.LIGHT_GRAY;
+					else								  currColor = Color.WHITE;
+				} else currColor = multx2(getIntColor(array[idx]*sqrt, length), getGray(array[idx]/sqrt+1,(length-1)/sqrt+2));
 				Color c = null;
 				
 				if(Highlights.fancyFinishActive() && idx < Highlights.getFancyFinishPosition()) {

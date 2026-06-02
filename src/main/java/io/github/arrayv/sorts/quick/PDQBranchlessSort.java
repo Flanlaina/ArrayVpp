@@ -1,4 +1,4 @@
-package io.github.arrayv.sorts.hybrid;
+package io.github.arrayv.sorts.quick;
 
 import io.github.arrayv.main.ArrayVisualizer;
 import io.github.arrayv.sorts.select.MaxHeapSort;

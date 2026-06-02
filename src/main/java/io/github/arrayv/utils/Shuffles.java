@@ -1511,7 +1511,7 @@ public enum Shuffles {
 					   18118, 8129, 3659, 1636, 701, 301, 132, 57, 23, 10, 4, 1};
     		int[] cnts = Writes.createExternalArray(n);
     		int[] tmp = Writes.createExternalArray(n);
-    		int x = gaps.length, rift = gaps.length - 1;
+    		int x = gaps.length;
     		cnts[0] = tmp[0] = x;
     		for(int j : gaps) {
     			x--;
@@ -1526,7 +1526,6 @@ public enum Shuffles {
     					}
     				}
     			}
-    			rift++;
     		}
     		int min = cnts[0], max = cnts[0];
     		for(int i = 1; i < n; i++) {
@@ -1565,6 +1564,28 @@ public enum Shuffles {
             	int r = random.nextInt(n / 24);
             	sort(array, array, -1, i, Math.min(i + r, n), d?1:0, Writes);
             	i += r;
+            }
+        }
+    },
+    TRAIL {
+        public String getName() {
+            return "Trail";
+        }
+        @Override
+        public void shuffleArray(int[] array, ArrayVisualizer ArrayVisualizer, Delays Delays, Highlights Highlights, Writes Writes) {
+            int currentLen = ArrayVisualizer.getCurrentLength();
+            Reads reads = ArrayVisualizer.getReads();
+            int min = currentLen/2, max=min, now=min;
+            int[] trail = new int[currentLen];
+            for(int i=0; i<currentLen-1; i++) {
+            	trail[i]=now;
+            	now-=reads.compareValues(array[i], array[i+1]);
+            	if(now<min) min=now; if(now>max) max=now;
+            }
+            trail[currentLen-1] = now;
+            for(int i=0; i<currentLen; i++) {
+            	double v = (trail[i]-min)/((max-min)/(double)currentLen);
+            	Writes.write(array, i, (int) v, 1, true, false);
             }
         }
     };

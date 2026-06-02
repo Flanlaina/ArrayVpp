@@ -177,7 +177,7 @@ public final class Renderer {
     }
 
     public static void createRenders(ArrayVisualizer arrayVisualizer) {
-        arrayVisualizer.createVolatileImage();
+        arrayVisualizer.createImage();
         arrayVisualizer.setMainRender();
         arrayVisualizer.setExtraRender();
         arrayVisualizer.updateRendersForActiveVisual();
@@ -292,7 +292,7 @@ public final class Renderer {
 	        	try {
 	        		((Renderable) renderables.get(i)).render(arrays[0], arrayVisualizer, this, Highlights);
 	        	} catch(Exception e) {
-	        		//System.out.println(e);
+	        		System.out.println(e);
 	        	}
 	        }
         }

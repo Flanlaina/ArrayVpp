@@ -3,7 +3,8 @@ package io.github.arrayv.sorts.hybrid;
 import io.github.arrayv.main.ArrayVisualizer;
 import io.github.arrayv.sorts.templates.Sort;
 import io.github.arrayv.sorts.insert.InsertionSort;
-import io.github.arrayv.sorts.exchange.LRQuickSort;
+import io.github.arrayv.sorts.quick.LRQuickSort;
+
 import java.util.Random;
 
 

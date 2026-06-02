@@ -24,6 +24,7 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.*;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -184,7 +185,7 @@ public final class ArrayVisualizer {
     private volatile int ch;
     private volatile int cw;
 
-    private Image img;
+    private BufferedImage img;
     private Graphics2D mainRender;
     private Graphics2D extraRender;
 
@@ -1117,8 +1118,8 @@ public final class ArrayVisualizer {
         }
     }
 
-    public void createVolatileImage() {
-        this.img = this.window.getGraphicsConfiguration().createCompatibleVolatileImage(this.cw, this.ch);
+    public void createImage() {
+        this.img = this.window.getGraphicsConfiguration().createCompatibleImage(cw, ch);
     }
     public Stroke getThickStroke() {
         return new BasicStroke((float) (5 * this.getWindowRatio()));
@@ -1131,6 +1132,9 @@ public final class ArrayVisualizer {
     }
     public Stroke getCustomStroke(double size) {
         return new BasicStroke((float) (size * this.getWindowRatio()));
+    }
+    public BufferedImage getFramebuffer() {
+    	return this.img;
     }
     public Graphics2D getMainRender() {
         return this.mainRender;

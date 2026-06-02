@@ -3,7 +3,7 @@ package io.github.arrayv.sorts.distribute;
 import java.util.function.Function;
 
 import io.github.arrayv.main.ArrayVisualizer;
-import io.github.arrayv.sorts.hybrid.PDQBranchedSort;
+import io.github.arrayv.sorts.quick.PDQBranchedSort;
 import io.github.arrayv.sorts.templates.Sort;
 
 // Copyright Malte Skarupke 2016.

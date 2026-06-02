@@ -1,4 +1,4 @@
-package io.github.arrayv.sorts.hybrid;
+package io.github.arrayv.sorts.quick;
 
 import io.github.arrayv.main.ArrayVisualizer;
 import io.github.arrayv.sorts.insert.InsertionSort;
@@ -17,7 +17,7 @@ public final class OptimizedDualPivotQuickSort extends Sort {
         //this.setRunAllID("Optimized Dual-Pivot Quick Sort");
         this.setRunAllSortsName("Optimized Dual-Pivot Quick Sort [Arrays.sort]");
         this.setRunSortName("Optimized Dual-Pivot Quicksort");
-        this.setCategory("Hybrid Sorts");
+        this.setCategory("Quick Sorts");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

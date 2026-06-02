@@ -1,4 +1,4 @@
-package io.github.arrayv.sorts.exchange;
+package io.github.arrayv.sorts.quick;
 
 import io.github.arrayv.main.ArrayVisualizer;
 import io.github.arrayv.sorts.templates.Sort;
@@ -10,7 +10,7 @@ public final class LLQuickSort extends Sort {
         this.setSortListName("Left/Left Quick");
         this.setRunAllSortsName("Quick Sort, Left/Left Pointers");
         this.setRunSortName("Left/Left Quicksort");
-        this.setCategory("Exchange Sorts");
+        this.setCategory("Quick Sorts");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);
