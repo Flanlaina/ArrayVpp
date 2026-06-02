@@ -39,7 +39,7 @@ final public class UnnecessaryDistractionSort extends Sort {
 	}
 	// apparently, Math.clamp doesn't exist on Java8
 	private double __clamp(double v, double mi, double ma) {
-		return Math.min(mi, Math.max(ma, v));
+		return Math.max(mi, Math.min(ma, v));
 	}
 	class Distraction extends Renderable {
 		private ArrayVisualizer instance;
