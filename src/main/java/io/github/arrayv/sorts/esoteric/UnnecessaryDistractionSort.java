@@ -37,6 +37,10 @@ final public class UnnecessaryDistractionSort extends Sort {
 		double s = Math.sin(v), c = Math.cos(v);
 		return c / Math.pow(Math.pow(s, p) + Math.pow(c, p), 1d / p);
 	}
+	// apparently, Math.clamp doesn't exist on Java8
+	private double __clamp(double v, double mi, double ma) {
+		return Math.min(mi, Math.max(ma, v));
+	}
 	class Distraction extends Renderable {
 		private ArrayVisualizer instance;
 		private int rad, hyp, corner, bezel, handleWidth, handleLength, gripPoint;
@@ -79,7 +83,7 @@ final public class UnnecessaryDistractionSort extends Sort {
 			double b = Math.pow(Math.pow((ellc[0]-pos[0])/(double)corner, hyp) + Math.pow((ellc[1]-pos[1])/(double)corner, hyp), 1d / (double)hyp);
 			double at = Math.atan2(ellc[1] - pos[1], ellc[0] - pos[0]);
 			return new double[] {
-				Math.clamp(1d - b, 0, 1),
+				__clamp(1d - b, 0, 1),
 				hecos(at, hyp), hesin(at, hyp)
 			};
 		}
