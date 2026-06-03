@@ -118,16 +118,8 @@ final public class BinomialVelvetSortStackless extends Sort {
     public void runSort(int[] array, int currentLength, int bucketCount) {
     	// build list according to invariant
     	heap(array, 0, currentLength);
-        for(int i=1, b = pot(currentLength) / 2; i<currentLength-1; i++) {
-        	// skip new roots
-        	if(i==b) {
-        		int c = (b+pot(currentLength))/2;
-        		while(c >= currentLength) c=(c+b)/2;
-        		b = c;
-        		continue;
-        	}
+        for(int i=1; i<currentLength-1; i++)
         	// pick lowest element
         	sift(array, 0, i, currentLength, array[i], 0);
-        }
     }
 }

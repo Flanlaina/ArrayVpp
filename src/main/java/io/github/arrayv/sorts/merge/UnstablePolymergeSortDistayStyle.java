@@ -42,8 +42,8 @@ final public class UnstablePolymergeSortDistayStyle extends Sort {
 			}
 			Color t = mainRender.getColor();
 			mainRender.setColor(Visual.getIntColor(i, idx+1));
-			this.drawBoundaryFXW(arrayVisualizer, a, -2);
-			this.drawBoundaryFXW(arrayVisualizer, a, 2);
+			drawBoundaryFXW(arrayVisualizer, a, -2);
+			drawBoundaryFXW(arrayVisualizer, a, 2);
 			mainRender.setColor(t);
 		}
 	}
