@@ -25,10 +25,12 @@ ArrayV++ is based on the master branch of ArrayV 5.2-SNAPSHOT, taking features a
 - AmongV (based on ArrayV 4.0)
 - DistrrayV:
 	- Based on ArrayV 4.0.
-	- Started August 2021. Contains first attempts at:
+	- Started August 2021. Contains initial implementations of:
 	    - Subarray marking (initially made through absurd generic typechecks and hardcoded highlight limits)
 	    - ArrayList visualization (implemented in ArrayV5)
 	    - Big-O based calculations (eventually evolved into the constant calculator)
+		- Custom statistics
+	    - Per-sort rendering extensions ("Renderables")
 - ArrayTest (or "srcexp"):
     - Based on w0rthy's Sorts 2018.
     - Started independently of ArrayV, ~2 months after 2.1's release. Contains:
@@ -40,9 +42,10 @@ ArrayV++ is based on the master branch of ArrayV 5.2-SNAPSHOT, taking features a
 - MakeCode Arcade Sort Visualizer (updated subarray highlight system)
 
 ### Unique to ArrayV++
-- VisualStyles gutted, and replaced with a modified version of SortAnalyzer, enabling:
+- VisualStyles gutted and replaced with a modified version of SortAnalyzer, enabling:
      - Enforcement of which features the visual allows or operates with
      - Control over how the visual partitions screenspace for auxiliary lists
+- Window graphics patched to use *BufferedImage*s instead, granting framebuffer capabilities to Renderables
 
 ## Legacy changelog
 
