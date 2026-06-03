@@ -1,7 +1,33 @@
 package io.github.arrayv.sorts.hybrid;
 
-import io.github.arrayv.sorts.templates.Sort;
 import io.github.arrayv.main.ArrayVisualizer;
+import io.github.arrayv.sorts.templates.Sort;
+
+/*
+ * 
+MIT License
+
+Copyright (c) 2026 Distray
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+ *
+ */
 
 final public class UnstableMicrokitaSort extends Sort {
 	public UnstableMicrokitaSort(ArrayVisualizer arrayVisualizer) {
@@ -18,8 +44,10 @@ final public class UnstableMicrokitaSort extends Sort {
 		this.setUnreasonableLimit(0);
 		this.setBogoSort(false);
 	}
-	// Unstable Microkita: Unstable Kita, golfed down to only 2x sqrt n buffer
-	
+	/*
+	 * Unstable Microkita: Unstable Kita, golfed down to only 2x sqrt n buffer
+	 */
+
 	private static final int MINSORT = 16;
 	
 	// potgte
@@ -35,7 +63,7 @@ final public class UnstableMicrokitaSort extends Sort {
 	}
 	
 	private void blockSwap(int[] array, int a, int b, int s) {
-		for (; s-->0;) Writes.swap(array, a++, b++, 0.5, true, false);
+		if (a != b) for (; s-- > 0;) Writes.swap(array, a++, b++, 0.5, true, false);
 	}
 	
 	private int doubleSearch(int[] array, int l, int a, int b, int r, int key, boolean leftSearch) {
@@ -254,25 +282,17 @@ final public class UnstableMicrokitaSort extends Sort {
     		}
     	}
     }
-
     private int[] quickselect(int[] array, int a, int b, int r) {
-    	int j = 0;
-    	int[] m;
+    	int j = 0, m[];
     	boolean bad = false;
-    	while (b - a > 24) {
-    		// pick median based on last partition's balance
+    	while (b - a > MINSORT) {
     		int p = bad ? median(array, a, b) : pseudomo27(array, a, b);
-    		// ternary partition
     		m = partition(array, a, b, array[p]);
-    		// imbalance 8:1
     		bad = (m[0] - a) * 8 <= b - a || (b - m[1]) * 8 < b - a;
 
-    		if (m[0] <= r && r <= m[1])
-    			return new int[] {j, m[0], m[1]}; // r in m
-    		else if (r < m[0])
-    			b = m[0];                         // r < m
-    		else
-    			a = m[1] + 1;                     // m < r
+    		if (m[0] <= r && r <= m[1]) return new int[] {j, m[0], m[1]};
+    		else if (r < m[0])          b = m[0];
+    		else                        a = m[1] + 1;
     		j++;
     	}
     	insertRun(array, a, b);
@@ -315,12 +335,11 @@ final public class UnstableMicrokitaSort extends Sort {
 			for (int i = a; i + T < b; i += 4 * T)
 				if (i + 3 * T >= b) {
 					mergeStatic(array, i, i + T, Math.min(i + 2 * T, b), t, true);
-					if (i + 2 * T < b)
-						tailMerge(array, i, i + 2 * T, b, t, true);
+					if (i + 2 * T < b) tailMerge(array, i, i + 2 * T, b, t, true);
 				} else {
 					int m = i + 2 * T, r = Math.min(i + 4 * T, b);
 					mergeStatic(array, i, i + T, m, t, false);
-					mergeStatic(array, m, i + 3 * T, r, i, false);
+					mergeStatic(array, m, m + T, r, i, false);
 					tailMerge(array, i, i + r - m, r, t, false);
 				}
 		
@@ -339,8 +358,7 @@ final public class UnstableMicrokitaSort extends Sort {
 	private int findNext(int[] array, int a, int b, int k, int p, int lv, final int s) {
 		int m = -1;
 		for (int i = 0; i < (b - a) / s; i++)
-			if (a + i * s != lv && // block might not be marked yet
-				Reads.compareIndexValue(array, k + i, p, 0.1, true) <= 0 && (m < 0 || blockLess(array, a, m, i, s)))
+			if (a + i * s != lv && Reads.compareIndexValue(array, k + i, p, 0.1, true) <= 0 && (m < 0 || blockLess(array, a, m, i, s)))
 				m = i;
 		return m < 0 ? m : a + m * s;
 	}
@@ -360,8 +378,8 @@ final public class UnstableMicrokitaSort extends Sort {
 	private void blockMerge(int[] array, int a, int m, int b, int k, int t, int p, final int s) {
 		int K = k + (m - a) / s;
 		int i = findNext(array, a, m, k, p, -1, s), j = findNext(array, m, b, K, p, -1, s),
-			l = i, r = j;
-		for (int c = 0; c < s; c++) {
+		    l = i, r = j;
+		for (int c = 0; c < s; c++)
 			if (Reads.compareIndices(array, i, j, 0.5, true) <= 0) {
 				Writes.swap(array, t + c, i, 1, true, false);
 				i = incrptr(array, a, m, k, p, i, s);
@@ -369,23 +387,19 @@ final public class UnstableMicrokitaSort extends Sort {
 				Writes.swap(array, t + c, j, 1, true, false);
 				j = incrptr(array, m, b, K, p, j, s);
 			}
-		}
 		while (l >= 0 && r >= 0) {
-			//boolean L = cnt(l, i, a, s) > 0 && (cnt(l, i, a, s) == s || Reads.compareIndices(array, l + s - 1, r + s - 1, 1, true) <= 0);
 			boolean L = i != l && (i < 0 || l % s == i % s || Reads.compareIndices(array, l + s - 1, r + s - 1, 1, true) <= 0);
 			for (int c = 0; c < s; c++) {
 				boolean CL = i >= 0 && (j < 0 || Reads.compareIndices(array, i, j, 0.5, true) <= 0);
-				Writes.swap(array, L?l:r, CL?i:j, 1, true, false);
+				Writes.swap(array, L ? l : r, CL ? i : j, 1, true, false);
 				if (L) l = incrbuf(array, a, m, k, p, l, i, s);
 				else   r = incrbuf(array, m, b, K, p, r, j, s);
 				if (CL) i = incrptr(array, a, m, k, p, i, s);
 				else    j = incrptr(array, m, b, K, p, j, s);
 			}
 		}
-		if (l >= 0)
-			blockSwap(array, t, l, s);
-		else
-			blockSwap(array, t, r, s);
+		if (l >= 0) blockSwap(array, t, l, s);
+		else        blockSwap(array, t, r, s);
 		for (int kv = 0; kv < (b - a) / s; kv++) {
 			if (a + kv * s == l || a + kv * s == r) continue;
 			if (Reads.compareIndexValue(array, k + kv, p, 0.5, true) > 0)
