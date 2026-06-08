@@ -39,10 +39,6 @@ final public class UnnecessaryDistractionSort extends Sort {
 		double s = Math.sin(v), c = Math.cos(v);
 		return c / Math.pow(Math.pow(s, p) + Math.pow(c, p), 1d / p);
 	}
-	// apparently, Math.clamp doesn't exist on Java8
-	private double __clamp(double v, double mi, double ma) {
-		return Math.max(mi, Math.min(ma, v));
-	}
 	class Distraction extends Renderable {
 		private int rad, hyp, corner, bezel, handleWidth, handleLength, gripPoint;
 		private double cnrRound, handleAngle;

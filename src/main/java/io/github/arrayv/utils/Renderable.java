@@ -57,7 +57,11 @@ public abstract class Renderable {
 		}
 		return O;
 	}
+	protected static double __clamp(double v, double mi, double ma) {
+		return Math.max(mi, Math.min(v, ma));
+	}
 	public static int bicubic(BufferedImage fb, double x, double y) {
+		// stolen from ref. impl
 		BinaryOperator<Double> u = (s, a) ->
 			(s >= 0 && s <= 1) ?
 				(a + 2d) * (s * s * s) - (a + 3d) * (s * s) + 1d :
@@ -82,7 +86,7 @@ public abstract class Renderable {
 				new int[] {YF - 1, YF, YF + 1, YF + 2},
 				(v) -> (((v >>> (16 - 8 * W)) & 0xFF))
 			);
-			V[W] = (int) Math.clamp(__dotProd(__dotProd(L, M), R)[0][0], 0d, 255d);
+			V[W] = (int) __clamp(__dotProd(__dotProd(L, M), R)[0][0], 0d, 255d);
 		}
 		return (V[0] << 16) | (V[1] << 8) | V[2];
 	}
