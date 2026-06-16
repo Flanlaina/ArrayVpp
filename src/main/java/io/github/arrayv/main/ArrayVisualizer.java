@@ -14,6 +14,7 @@ import io.github.arrayv.utils.Renderer;
 import io.github.arrayv.utils.Timer;
 import io.github.arrayv.utils.*;
 import io.github.arrayv.visuals.Visual;
+import io.github.arrayv.visuals.VisualFeature;
 
 import javax.swing.*;
 import java.awt.*;
@@ -201,6 +202,8 @@ public final class ArrayVisualizer {
 
     private VisualInfo[] visuals;
     private Visual runningVisual;
+    private VisualFeature[] features;
+    private IdentityHashMap<String, Boolean> featureStates;
 
     private final AtomicInteger updateVisualsForced;
     private volatile boolean benchmarking;
@@ -519,6 +522,8 @@ public final class ArrayVisualizer {
 
         this.updateVisualsForced = new AtomicInteger();
         this.benchmarking = false;
+        
+        this.featureStates = new IdentityHashMap<>();
 
         this.cx = 0;
         this.cy = 0;
@@ -605,6 +610,7 @@ public final class ArrayVisualizer {
     public void refreshTables() {
         this.sorts = this.sortAnalyzer.getSorts();
         this.visuals = this.sortAnalyzer.getVisuals();
+        this.features = this.sortAnalyzer.getVisualFeatures();
         this.invalidSorts = this.sortAnalyzer.getInvalidSorts();
         this.sortSuggestions = this.sortAnalyzer.getSuggestions();
     }
@@ -874,6 +880,47 @@ public final class ArrayVisualizer {
 
     public VisualInfo[] getVisuals() {
         return this.visuals;
+    }
+    
+    public VisualFeature[] getVisualFeatures() {
+    	return this.features;
+    }
+    
+    public boolean queryFeatureState(String id) {
+    	return this.featureStates.getOrDefault(id, false);
+    }
+    
+    public VisualFeature getVisualFeatureById(String id) {
+    	for (VisualFeature f : this.features) {
+    		if (f.getListID() == id) {
+    			return f;
+    		}
+    	}
+    	return null;
+    }
+    
+    public void setVisualFeature(String id, boolean state) {
+    	VisualFeature f = this.getVisualFeatureById(id);
+    	boolean prevState = this.queryFeatureState(id);
+    	if (f == null || prevState == state) return;
+    	this.featureStates.put(id, state);
+		if (state) {
+			for (String dep : f.getIDsPulledUp()) {
+				this.setVisualFeature(dep, state);
+			}
+			for (String dep : f.getIDsFlippedDown()) {
+				this.setVisualFeature(dep, !state);
+			}
+			f.pullUp(this);
+		} else {
+			f.pullDown(this);
+			for (String dep : f.getIDsPulledDown()) {
+				this.setVisualFeature(dep, state);
+			}
+			for (String dep : f.getIDsFlippedUp()) {
+				this.setVisualFeature(dep, !state);
+			}
+		}
     }
 
     public UtilFrame getUtilFrame() {

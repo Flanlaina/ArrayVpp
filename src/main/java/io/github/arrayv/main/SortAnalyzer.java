@@ -302,7 +302,8 @@ public final class SortAnalyzer {
             	"visuals",           "io.github.arrayv.visuals"
             )
             .rejectClasses(
-            	"visuals.Visual",    "io.github.arrayv.visuals.Visual"
+            	"visuals.Visual",        "io.github.arrayv.visuals.Visual",
+            	"visuals.VisualFeature", "io.github.arrayv.visuals.VisualFeature"
             )
             .rejectPackages(
             	"visuals.templates", "io.github.arrayv.visuals.templates"
@@ -874,7 +875,7 @@ public final class SortAnalyzer {
         return visuals.toArray(new VisualInfo[0]);
     }
     
-    public VisualFeature[] getFeatures() {
+    public VisualFeature[] getVisualFeatures() {
     	return features.toArray(new VisualFeature[0]);
     }
 
