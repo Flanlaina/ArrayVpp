@@ -169,7 +169,6 @@ public final class ArrayVisualizer {
 
     private volatile boolean showStatistics;
     private volatile boolean showColor;
-    private volatile boolean showLines;
     private volatile boolean showExternalArrays;
 
     private volatile boolean useAntiQSort;
@@ -511,7 +510,6 @@ public final class ArrayVisualizer {
         this.showStatistics = true;
 
         this.showColor = false;
-        this.showLines = false;
         this.showExternalArrays = false;
 
         this.useAntiQSort = false;
@@ -935,9 +933,9 @@ public final class ArrayVisualizer {
                     for (String dep : f.getIDsFlippedUp()) {
                         this.setVisualFeature(dep, 0);
                     }
-                    f.pullUp(this);
+                    f.pullUp();
                 } else if (state <= -1) {
-                    f.pullDown(this);
+                    f.pullDown();
                     for (String dep : f.getIDsPulledDown()) {
                         this.setVisualFeature(dep, -2);
                     }
@@ -1448,58 +1446,12 @@ public final class ArrayVisualizer {
         this.Highlights.clearAllMarks();
     }
 
-    /**
-     * @deprecated No longer does anything
-     */
-    @Deprecated
-    public void togglePointer(boolean showPointer) {
-    }
-
-    /**
-     * @deprecated No longer does anything
-     */
-    @Deprecated
-    public void toggleDistance(boolean unused) {
-    }
-
-    /**
-     * @deprecated No longer does anything
-     */
-    @Deprecated
-    public void togglePixels(boolean usePixels) {
-    }
-
-    /**
-     * @deprecated No longer does anything
-     */
-    @Deprecated
-    public void toggleRainbow(boolean rainbow) {
-    }
-
-    /**
-     * @deprecated No longer does anything
-     */
-    @Deprecated
-    public void toggleSpiral(boolean spiral) {
-    }
-
-    public void toggleLinkedDots(boolean showLines) {
-        this.showLines = showLines;
-    }
-
     public void toggleStatistics(boolean showStatistics) {
         this.showStatistics = showStatistics;
     }
 
     public void toggleColor(boolean showColor) {
         this.showColor = showColor;
-    }
-
-    /**
-     * @deprecated No longer does anything
-     */
-    @Deprecated
-    public void toggleWave(boolean useWave) {
     }
 
     public void toggleExternalArrays(boolean showExternalArrays) {
@@ -1511,20 +1463,26 @@ public final class ArrayVisualizer {
     }
     
     public void setActiveVisual(VisualInfo visual) {
-        this.runningVisual.pullDown();
+    	if (this.runningVisual != null) this.runningVisual.pullDown();
         this.runningVisual = visual.getFreshInstance();
         this.setMainRender();
         this.runningVisual.bringUp();
+        for (VisualFeature f : this.features) {
+        	this.setVisualFeature(f.getListID(), this.runningVisual.supportsExtraFeature("*") || this.runningVisual.supportsExtraFeature(f.getListID()) ? 0 : -2);
+        }
         synchronized (this) {
             this.updateNow();
         }
     }
     
     public void setActiveVisual(Visual visual) {
-        this.runningVisual.pullDown();
+        if (this.runningVisual != null) this.runningVisual.pullDown();
         this.runningVisual = visual;
         this.setMainRender();
         this.runningVisual.bringUp();
+        for (VisualFeature f : this.features) {
+        	this.setVisualFeature(f.getListID(), this.runningVisual.supportsExtraFeature("*") || this.runningVisual.supportsExtraFeature(f.getListID()) ? 0 : -2);
+        }
         synchronized (this) {
             this.updateNow();
         }
@@ -1562,57 +1520,8 @@ public final class ArrayVisualizer {
         this.utilFrame.reposition(this.arrayFrame);
     }
 
-    /**
-     * @deprecated No longer does anything (always returns {@code false})
-     * @return {@code false}
-     */
-    @Deprecated
-    public boolean rainbowEnabled() {
-        return false;
-    }
-
     public boolean colorEnabled() {
         return this.showColor;
-    }
-
-    /**
-     * @deprecated No longer does anything (always returns {@code false})
-     * @return {@code false}
-     */
-    @Deprecated
-    public boolean spiralEnabled() {
-        return false;
-    }
-
-    /**
-     * @deprecated No longer does anything (always returns {@code false})
-     * @return {@code false}
-     */
-    @Deprecated
-    public boolean distanceEnabled() {
-        return false;
-    }
-
-    /**
-     * @deprecated No longer does anything (always returns {@code false})
-     * @return {@code false}
-     */
-    @Deprecated
-    public boolean pixelsEnabled() {
-        return false;
-    }
-
-    public boolean linesEnabled() {
-        return this.showLines;
-    }
-
-    /**
-     * @deprecated No longer does anything (always returns {@code false})
-     * @return {@code false}
-     */
-    @Deprecated
-    public boolean waveEnabled() {
-        return false;
     }
 
     public boolean externalArraysEnabled() {
@@ -1631,8 +1540,10 @@ public final class ArrayVisualizer {
         return parsed.toString();
     }
 
+    public void fillVisual() {
+        this.setActiveVisual(new io.github.arrayv.visuals.bars.BarGraphTiled(this));
+    }
     private void drawWindows() {
-        this.runningVisual = new io.github.arrayv.visuals.bars.BarGraphTiled(this);
         this.category = "Select a Sort";
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

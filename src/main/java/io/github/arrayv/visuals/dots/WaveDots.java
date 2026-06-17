@@ -45,6 +45,7 @@ public final class WaveDots extends Visual {
         this.setCategory("Dot Visuals");
         this.setAuxable(true);
         this.setOverlayable(true);
+        this.addSupportedFeatures("linkeddots");
     }
 
     public int[] getTopPosFor(int[] array, double idx, int val, ArrayVisualizer ArrayVisualizer, Renderer Renderer) {
@@ -61,7 +62,7 @@ public final class WaveDots extends Visual {
     public void drawVisual(int[] array, int[] boundingBox, ArrayVisualizer arrayVisualizer, Renderer renderer, Highlights Highlights) {
         int offset = 20 + (int) (renderer.getXScale()/2);
 
-        if (arrayVisualizer.linesEnabled()) {
+        if (arrayVisualizer.queryFeatureState("linkeddots") > 0) {
             int lastX = 0;
             int lastY = (int) (((renderer.getViewSize() - 20) / 2.5) * Math.sin((2 * Math.PI * ((double) array[0] / renderer.getArrayLength()))) + renderer.halfViewSize() - 20);
             this.mainRender.setStroke(arrayVisualizer.getCustomStroke(2));

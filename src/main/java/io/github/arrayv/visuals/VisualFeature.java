@@ -74,8 +74,10 @@ public abstract class VisualFeature {
         return this.idFlipsDown;
     }
     
-    public void pullUp(ArrayVisualizer arrayVisualizer) {}
-    public void globalPrerender(ArrayVisualizer arrayVisualizer) {}
-    public void globalPostrender(ArrayVisualizer arrayVisualizer) {}
-    public void pullDown(ArrayVisualizer arrayVisualizer) {}
+    public void pullUp() {}
+    public void localPrerender(int[] array, int n) {}
+    public void localPostrender(int[] array, int n) {}
+    public void globalPrerender() {}
+    public void globalPostrender() {}
+    public void pullDown() {}
 }

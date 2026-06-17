@@ -44,6 +44,7 @@ public final class SpiralDots extends Visual {
         this.setListName("Spiral Dots");
         this.setCategory("Dot Visuals");
         this.setOverlayable(true);
+        this.addSupportedFeatures("linkeddots");
     }
     
     public int[] getTopPosFor(int[] array, double idx, int val, ArrayVisualizer ArrayVisualizer, Renderer Renderer) {
@@ -75,7 +76,7 @@ public final class SpiralDots extends Visual {
         int n = arrayVisualizer.getCurrentLength();
         double r = Math.min(width, height)/2.5;
 
-        if (arrayVisualizer.linesEnabled()) {
+        if (arrayVisualizer.queryFeatureState("linkeddots") > 0) {
             double mult = (double) array[n-1] / arrayVisualizer.getCurrentLength();
             int lastX =  width/2 + (int)(mult * r * Math.cos(Math.PI * (2d*(n-1) / n - 0.5)));
             int lastY = height/2 + (int)(mult * r * Math.sin(Math.PI * (2d*(n-1) / n - 0.5)));

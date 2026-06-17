@@ -42,6 +42,7 @@ public final class DisparityDots extends Visual {
         this.setListName("Disparity Dots");
         this.setCategory("Dot Visuals");
         this.setOverlayable(true);
+        this.addSupportedFeatures("linkeddots");
     }
 
     public int[] getTopPosFor(int[] array, double idx, int val, ArrayVisualizer ArrayVisualizer, Renderer Renderer) {
@@ -73,7 +74,7 @@ public final class DisparityDots extends Visual {
         int n = arrayVisualizer.getCurrentLength();
         double r = Math.min(width, height)/2.5;
 
-        if (arrayVisualizer.linesEnabled()) {
+        if (arrayVisualizer.queryFeatureState("linkeddots") > 0) {
             double disp = (1 + Math.cos((Math.PI * (array[n-1] - (n-1))) / (arrayVisualizer.getCurrentLength() * 0.5))) * 0.5;
             int lastX =  width/2 + (int)(disp * r * Math.cos(Math.PI * (2d*(n-1) / n - 0.5)));
             int lastY = height/2 + (int)(disp * r * Math.sin(Math.PI * (2d*(n-1) / n - 0.5)));

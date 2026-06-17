@@ -99,7 +99,6 @@ public final class UtilFrame extends javax.swing.JFrame {
         this.jButton2 = new javax.swing.JButton();
         JButton jButton3 = new JButton();
         this.jCheckBox1 = new javax.swing.JCheckBox();
-        this.jCheckBox2 = new javax.swing.JCheckBox();
         JButton jButton4 = new JButton();
         JButton jButton7 = new JButton();
         this.jCheckBox3 = new javax.swing.JCheckBox();
@@ -135,10 +134,6 @@ public final class UtilFrame extends javax.swing.JFrame {
         jCheckBox1.setSelected(true);
         jCheckBox1.setText("Show Shuffle");
         jCheckBox1.addActionListener(evt -> jCheckBox1ActionPerformed());
-
-        jCheckBox2.setSelected(false);
-        jCheckBox2.setText("Linked Dots");
-        jCheckBox2.addActionListener(evt -> jCheckBox2ActionPerformed());
 
         jCheckBox3.setSelected(true);
         jCheckBox3.setText("End Sweep Anim");
@@ -208,7 +203,6 @@ public final class UtilFrame extends javax.swing.JFrame {
                         .addComponent(jLabel1)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, true)
                             .addComponent(this.jCheckBox1)
-                            .addComponent(this.jCheckBox2)
                             .addComponent(this.jCheckBox3)
                             .addComponent(this.jCheckBox4)
                             .addComponent(this.jCheckBox6)
@@ -239,8 +233,6 @@ public final class UtilFrame extends javax.swing.JFrame {
                     .addGap(10, 10, 10)
                     .addComponent(this.jButton2)
                     .addGap(5, 5, 5)
-                    .addComponent(this.jCheckBox2)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                     .addComponent(this.jCheckBox8)
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                     .addComponent(this.jCheckBox9)
@@ -399,10 +391,6 @@ public final class UtilFrame extends javax.swing.JFrame {
         arrayVisualizer.toggleShuffleAnimation(jCheckBox1.isSelected());
     }//GEN-LAST:event_jCheckBox1ActionPerformed
 
-    private void jCheckBox2ActionPerformed() {//GEN-FIRST:event_jCheckBox3ActionPerformed
-        arrayVisualizer.toggleLinkedDots(jCheckBox2.isSelected());
-    }//GEN-LAST:event_jCheckBox2ActionPerformed
-
     private void jCheckBox3ActionPerformed() {//GEN-FIRST:event_jCheckBox3ActionPerformed
         Highlights.toggleFancyFinishes(jCheckBox3.isSelected());
     }//GEN-LAST:event_jCheckBox3ActionPerformed
@@ -539,7 +527,6 @@ public final class UtilFrame extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton6;
     private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JCheckBox jCheckBox3;
     private javax.swing.JCheckBox jCheckBox4;
     private javax.swing.JCheckBox jCheckBox5;
