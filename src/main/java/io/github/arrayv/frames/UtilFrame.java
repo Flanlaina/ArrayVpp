@@ -287,6 +287,10 @@ public final class UtilFrame extends javax.swing.JFrame {
 	        arrayVisualizer.toggleColor(jCheckBox8.isSelected());
     	}
     }
+    public void setColorState(boolean val) {
+    	jCheckBox8.setSelected(this.lastUnlockedColor = val);
+        arrayVisualizer.toggleColor(jCheckBox8.isSelected());
+    }
     public void unlockColorState() {
     	if(!jCheckBox8.isEnabled()) {
 	    	jCheckBox8.setEnabled(true);
@@ -297,16 +301,21 @@ public final class UtilFrame extends javax.swing.JFrame {
 
     public void lockAuxState(boolean val) {
     	if(jCheckBox9.isEnabled()) {
-	    	this.lastUnlockedAux = jCheckBox9.isSelected();
-	    	jCheckBox9.setSelected(val);
-	    	jCheckBox9.setEnabled(false);
+	        this.lastUnlockedAux = jCheckBox9.isSelected();
+	        jCheckBox9.setSelected(val);
+	        jCheckBox9.setEnabled(false);
 	        arrayVisualizer.toggleExternalArrays(jCheckBox9.isSelected());
     	}
     }
+
+    public void setAuxState(boolean val) {
+    	jCheckBox9.setSelected(this.lastUnlockedAux = val);
+	    arrayVisualizer.toggleExternalArrays(jCheckBox9.isSelected());
+    }
     public void unlockAuxState() {
     	if(!jCheckBox9.isEnabled()) {
-	    	jCheckBox9.setEnabled(true);
-	    	jCheckBox9.setSelected(this.lastUnlockedAux);
+	        jCheckBox9.setEnabled(true);
+	        jCheckBox9.setSelected(this.lastUnlockedAux);
 	        arrayVisualizer.toggleExternalArrays(jCheckBox9.isSelected());
     	}
     }

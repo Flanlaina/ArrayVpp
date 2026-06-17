@@ -317,7 +317,8 @@ public final class SortAnalyzer {
             for (int i = 0; i < visualFiles.size(); i++) {
                 ClassInfo visualFile = visualFiles.get(i);
                 if (visualFile.getName().contains("$")) continue; // Ignore inner classes
-                if (visualFile.extendsSuperclass(VisualFeature.class))
+                // visualFile.extendsSuperclass(VisualFeature.class) didn't work, and i'm not even going to try and pretend i know why
+                if (visualFile.loadClass().getSuperclass().equals(VisualFeature.class))
                     this.compileSingleVisualFeature(visualFile.loadClass(VisualFeature.class));
                 else
                     this.compileSingleVisual(visualFile.loadClass(Visual.class));

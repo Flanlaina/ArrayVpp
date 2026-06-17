@@ -203,7 +203,7 @@ public final class ArrayVisualizer {
     private VisualInfo[] visuals;
     private Visual runningVisual;
     private VisualFeature[] features;
-    private IdentityHashMap<String, Boolean> featureStates;
+    private IdentityHashMap<String, Integer> featureStates;
 
     private final AtomicInteger updateVisualsForced;
     private volatile boolean benchmarking;
@@ -568,7 +568,7 @@ public final class ArrayVisualizer {
                             int[][] arrays = ArrayVisualizer.this.arrays.toArray(new int[ttl][]);
                             int count = ArrayVisualizer.this.arrays.size();
                             for(int v = 0; count < ttl; v++, count++) {
-                            	arrays[count] = ArrayVisualizer.this.arrayVLists.get(v).__internal_array();
+                                arrays[count] = ArrayVisualizer.this.arrayVLists.get(v).__internal_array();
                             }
                             ArrayVisualizer.this.renderer.drawVisual(ArrayVisualizer.this.runningVisual, arrays, ArrayVisualizer.this, ArrayVisualizer.this.Highlights);
 
@@ -616,7 +616,7 @@ public final class ArrayVisualizer {
     }
     
     private void drawString(String text, int x, int y, boolean dropShadow) {
-    	if(dropShadow) return;
+        if(dropShadow) return;
         Stroke stroke = this.mainRender.getStroke();
         Color color = this.mainRender.getColor();
         this.mainRender.setStroke(new BasicStroke(5f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND));
@@ -643,7 +643,7 @@ public final class ArrayVisualizer {
             yOffset += 3;
         }
 
-    	int fHeight = this.mainRender.getFontMetrics().getHeight();
+        int fHeight = this.mainRender.getFontMetrics().getHeight();
         int yPos = this.mainRender.getFontMetrics().getAscent(), fyPos = yPos;
         
         this.mainRender.setColor(textColor);
@@ -685,11 +685,11 @@ public final class ArrayVisualizer {
                     stat = statSnapshot.getReversalCount();
                     break;
                 case AUX_STATS:
-                	for(String neostat : statSnapshot.parseMap()) {
-                    	wMax = Math.max(wMax, this.mainRender.getFontMetrics().stringWidth(neostat));
+                    for(String neostat : statSnapshot.parseMap()) {
+                        wMax = Math.max(wMax, this.mainRender.getFontMetrics().stringWidth(neostat));
                         mainRender.drawString(neostat, xOffset, yPos + yOffset);
                         yPos += fHeight - 2;
-                	}
+                    }
                     continue statLoop;
                 case CONSTANT:
                     stat = statSnapshot.getConstant();
@@ -715,9 +715,9 @@ public final class ArrayVisualizer {
                 default:
                     stat = null; // Unreachable
             }
-        	wMax = Math.max(wMax, this.mainRender.getFontMetrics().stringWidth(stat));
+            wMax = Math.max(wMax, this.mainRender.getFontMetrics().stringWidth(stat));
             //mainRender.drawString(stat, xOffset, (int)(windowRatio * yPos) + yOffset);
-        	drawString(stat, xOffset, yPos + yOffset, dropShadow);
+            drawString(stat, xOffset, yPos + yOffset, dropShadow);
             yPos += fHeight - 2;
         }
         if (Highlights.getDeclaredColors().size() > 0) {
@@ -739,7 +739,7 @@ public final class ArrayVisualizer {
                 if (!dropShadow)
                     mainRender.setColor(textColor);
                 //mainRender.drawString(color, startOffset + metricFontHeight + xOffset - 9, copyYPos);
-            	drawString(color, startOffset + fHeight + xOffset - 9, copyYPos, dropShadow);
+                drawString(color, startOffset + fHeight + xOffset - 9, copyYPos, dropShadow);
             }
         }
     }
@@ -883,44 +883,87 @@ public final class ArrayVisualizer {
     }
     
     public VisualFeature[] getVisualFeatures() {
-    	return this.features;
+        return this.features;
     }
     
-    public boolean queryFeatureState(String id) {
-    	return this.featureStates.getOrDefault(id, false);
+    public int queryFeatureState(String id) {
+        return this.featureStates.getOrDefault(id, -1);
     }
     
     public VisualFeature getVisualFeatureById(String id) {
-    	for (VisualFeature f : this.features) {
-    		if (f.getListID() == id) {
-    			return f;
-    		}
-    	}
-    	return null;
+        for (VisualFeature f : this.features) {
+            if (f.getListID() == id) {
+                return f;
+            }
+        }
+        return null;
     }
     
-    public void setVisualFeature(String id, boolean state) {
-    	VisualFeature f = this.getVisualFeatureById(id);
-    	boolean prevState = this.queryFeatureState(id);
-    	if (f == null || prevState == state) return;
-    	this.featureStates.put(id, state);
-		if (state) {
-			for (String dep : f.getIDsPulledUp()) {
-				this.setVisualFeature(dep, state);
-			}
-			for (String dep : f.getIDsFlippedDown()) {
-				this.setVisualFeature(dep, !state);
-			}
-			f.pullUp(this);
-		} else {
-			f.pullDown(this);
-			for (String dep : f.getIDsPulledDown()) {
-				this.setVisualFeature(dep, state);
-			}
-			for (String dep : f.getIDsFlippedUp()) {
-				this.setVisualFeature(dep, !state);
-			}
-		}
+    public void setVisualFeature(String id, int state) {
+        // the worst, least reliable code i have ever written
+        int prevState = this.queryFeatureState(id);
+        if (id == "$color") {
+            switch (state) {
+                case -2: utilFrame.lockColorState(false); break;
+                case -1: utilFrame.setColorState(false); break;
+                case 0: if (prevState <= 2 && prevState >= -2) utilFrame.unlockColorState(); break;
+                case 1: utilFrame.setColorState(true); break;
+                case 2: utilFrame.lockColorState(true); break;
+            }
+        } else if (id == "$aux") {
+            switch (state) {
+                case -2: utilFrame.lockAuxState(false); break;
+                case -1: utilFrame.setAuxState(false); break;
+                case 0: if (prevState <= 2 && prevState >= -2) utilFrame.unlockAuxState(); break;
+                case 1: utilFrame.setAuxState(true); break;
+                case 2: utilFrame.lockAuxState(true); break;
+            }
+        } else {
+            VisualFeature f = this.getVisualFeatureById(id);
+            if (f == null) return;
+            if (Math.signum(prevState) != Math.signum(state)) {
+                if (state >= 1) {
+                    for (String dep : f.getIDsPulledUp()) {
+                        this.setVisualFeature(dep, 2);
+                    }
+                    for (String dep : f.getIDsPulledDown()) {
+                        this.setVisualFeature(dep, 0);
+                    }
+                    for (String dep : f.getIDsFlippedDown()) {
+                        this.setVisualFeature(dep, -2);
+                    }
+                    for (String dep : f.getIDsFlippedUp()) {
+                        this.setVisualFeature(dep, 0);
+                    }
+                    f.pullUp(this);
+                } else if (state <= -1) {
+                    f.pullDown(this);
+                    for (String dep : f.getIDsPulledDown()) {
+                        this.setVisualFeature(dep, -2);
+                    }
+                    for (String dep : f.getIDsPulledUp()) {
+                        this.setVisualFeature(dep, 0);
+                    }
+                    for (String dep : f.getIDsFlippedUp()) {
+                        this.setVisualFeature(dep, 2);
+                    }
+                    for (String dep : f.getIDsFlippedDown()) {
+                        this.setVisualFeature(dep, 0);
+                    }
+                }
+            }
+        }
+        if (Math.abs(prevState) == 2 && Math.abs(state) == 1) {
+        	state = prevState;
+        } else if (Math.abs(prevState) > 2 || (Math.abs(prevState) == 2 && Math.abs(state) == 0)) {
+        	if (Math.abs(state) != 1) {
+                if (Math.signum(prevState) == Math.signum(state))
+                    state = (int) Math.signum(prevState) * (Math.abs(prevState) + 1);
+                else
+                    state = (int) Math.signum(prevState) * (Math.abs(prevState) - 1);
+        	} else  state = prevState;
+        }
+        this.featureStates.put(id, state == 0 ? prevState : state);
     }
 
     public UtilFrame getUtilFrame() {
@@ -1181,7 +1224,7 @@ public final class ArrayVisualizer {
         return new BasicStroke((float) (size * this.getWindowRatio()));
     }
     public BufferedImage getFramebuffer() {
-    	return this.img;
+        return this.img;
     }
     public Graphics2D getMainRender() {
         return this.mainRender;
@@ -1190,28 +1233,28 @@ public final class ArrayVisualizer {
         return this.extraRender;
     }
     @SuppressWarnings("serial")
-	public void setMainRender() {
+    public void setMainRender() {
         this.mainRender = (Graphics2D) this.img.getGraphics();
         if (this.runningVisual != null)
-        	this.runningVisual.updateRender(INSTANCE);
+            this.runningVisual.updateRender(INSTANCE);
         this.mainRender.addRenderingHints(new IdentityHashMap<RenderingHints.Key,Object>() {{
-        	if (runningVisual != null) {
-        		for (Object[] pair : runningVisual.getRenderingHints()) {
-            		put((RenderingHints.Key) pair[0], pair[1]);
-            	}
-        	}
-        	putIfAbsent(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
-        	putIfAbsent(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        	putIfAbsent(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
-        	putIfAbsent(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-        	// put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            if (runningVisual != null) {
+                for (Object[] pair : runningVisual.getRenderingHints()) {
+                    put((RenderingHints.Key) pair[0], pair[1]);
+                }
+            }
+            putIfAbsent(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+            putIfAbsent(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            putIfAbsent(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+            putIfAbsent(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+            // put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         }});
     }
     public void setExtraRender() {
         this.extraRender = (Graphics2D) this.img.getGraphics();
     }
     public void updateRendersForActiveVisual() {
-    	this.runningVisual.updateRender(INSTANCE);
+        this.runningVisual.updateRender(INSTANCE);
     }
     
     public void resetMainStroke() {
@@ -1468,36 +1511,36 @@ public final class ArrayVisualizer {
     }
     
     public void setActiveVisual(VisualInfo visual) {
-    	this.runningVisual.pullDown();
-    	this.runningVisual = visual.getFreshInstance();
-    	this.setMainRender();
-    	this.runningVisual.bringUp();
+        this.runningVisual.pullDown();
+        this.runningVisual = visual.getFreshInstance();
+        this.setMainRender();
+        this.runningVisual.bringUp();
         synchronized (this) {
             this.updateNow();
         }
     }
     
     public void setActiveVisual(Visual visual) {
-    	this.runningVisual.pullDown();
-    	this.runningVisual = visual;
-    	this.setMainRender();
-    	this.runningVisual.bringUp();
+        this.runningVisual.pullDown();
+        this.runningVisual = visual;
+        this.setMainRender();
+        this.runningVisual.bringUp();
         synchronized (this) {
             this.updateNow();
         }
     }
     
     public int[] getTopPos(int[] array, int idx) {
-    	return this.runningVisual.getTopPos(array, idx, this, this.renderer);
+        return this.runningVisual.getTopPos(array, idx, this, this.renderer);
     }
     public int[] getTopPosFor(int[] array, double idx, int val) {
-    	return this.runningVisual.getTopPosFor(array, idx, val, this, this.renderer);
+        return this.runningVisual.getTopPosFor(array, idx, val, this, this.renderer);
     }
     public int[] getBottomPos(int[] array, int idx) {
-    	return this.runningVisual.getBottomPos(array, idx, this, this.renderer);
+        return this.runningVisual.getBottomPos(array, idx, this, this.renderer);
     }
     public int[] getBottomPosFor(int[] array, double idx, int val) {
-    	return this.runningVisual.getBottomPosFor(array, idx, val, this, this.renderer);
+        return this.runningVisual.getBottomPosFor(array, idx, val, this, this.renderer);
     }
 
     public int getCurrentGap() {
@@ -1589,7 +1632,7 @@ public final class ArrayVisualizer {
     }
 
     private void drawWindows() {
-    	this.runningVisual = new io.github.arrayv.visuals.bars.BarGraphTiled(this);
+        this.runningVisual = new io.github.arrayv.visuals.bars.BarGraphTiled(this);
         this.category = "Select a Sort";
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

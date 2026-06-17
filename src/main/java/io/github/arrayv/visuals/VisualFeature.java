@@ -1,19 +1,11 @@
 package io.github.arrayv.visuals;
 
 import io.github.arrayv.main.ArrayVisualizer;
-import io.github.arrayv.utils.Highlights;
-import io.github.arrayv.utils.Renderer;
-
-import java.awt.RenderingHints;
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.IdentityHashMap;
-import java.util.Map.Entry;
-import java.awt.*;
 
 public abstract class VisualFeature {
     private boolean featureEnabled;
 
+    private ArrayVisualizer arrayVisualizer;
     private String listName;
     private String listID;
     
@@ -22,7 +14,9 @@ public abstract class VisualFeature {
     private String[] idFlipsUp;
     private String[] idFlipsDown;
 
-    public VisualFeature(ArrayVisualizer arrayVisualizer) {
+    protected VisualFeature(ArrayVisualizer arrayVisualizer) {
+    	this.arrayVisualizer = arrayVisualizer;
+    	
         this.enableFeature(true);
         this.setListID("");
         this.setListName("");
