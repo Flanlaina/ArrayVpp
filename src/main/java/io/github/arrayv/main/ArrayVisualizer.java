@@ -1541,7 +1541,7 @@ public final class ArrayVisualizer {
     }
 
     public void fillVisual() {
-        this.setActiveVisual(new io.github.arrayv.visuals.bars.BarGraphTiled(this));
+        if (this.runningVisual == null) this.setActiveVisual(new io.github.arrayv.visuals.bars.BarGraphTiled(this));
     }
     private void drawWindows() {
         this.category = "Select a Sort";
