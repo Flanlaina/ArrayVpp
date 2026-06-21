@@ -1,17 +1,18 @@
 package io.github.arrayv.sorts.root;
 
 import io.github.arrayv.main.ArrayVisualizer;
+import io.github.arrayv.sorts.esoteric.BogoSort;
 import io.github.arrayv.sorts.insert.InsertionSort;
 import io.github.arrayv.sorts.templates.Sort;
 
-public final class TsrtSort extends Sort {
+public final class HolyHalfSort extends Sort {
    private InsertionSort insertSorter;
 
-   public TsrtSort(ArrayVisualizer arrayVisualizer) {
+   public HolyHalfSort(ArrayVisualizer arrayVisualizer) {
       super(arrayVisualizer);
-      this.setSortListName("Tsrt");
-      this.setRunAllSortsName("Tsrtsort");
-      this.setRunSortName("Tsrtsort");
+      this.setSortListName("Holy Half");
+      this.setRunAllSortsName("Holy Halfsort");
+      this.setRunSortName("Holy Halfsort");
       this.setCategory("Hybrid Sorts");
       this.setBucketSort(false);
       this.setRadixSort(false);
@@ -247,7 +248,7 @@ public final class TsrtSort extends Sort {
       }
    }
 
-   private void sqrtCombineBlocks(int[] arr, int pos, int len, int buildLen, int regBlockLen, int[] tags, boolean auxwrite) {
+   private void sqrtCombineBlocks(int[] arr, int pos, int len, int buildLen, int regBlockLen, boolean auxwrite) {
       int combineLen = len / (2 * buildLen);
       int leftOver = len % (2 * buildLen);
       if (leftOver <= buildLen) {
@@ -261,26 +262,17 @@ public final class TsrtSort extends Sort {
          int blockPos = pos + i * 2 * buildLen;
          int blockCount = (i == combineLen ? leftOver : 2 * buildLen) / regBlockLen;
          int tagIndex = blockCount + (i == combineLen ? 1 : 0);
-
-         for (int j = 0; j <= tagIndex; j++) {
-            this.Writes.write(tags, j, j, 1.0, true, true);
-         }
-
          int midkey = buildLen / regBlockLen;
 
-         for (int var20 = 1; var20 < blockCount; var20++) {
-            leftIndex = var20 - 1;
+         for (int var19 = 1; var19 < blockCount; var19++) {
+            leftIndex = var19 - 1;
 
-            for (int rightIndex = var20; rightIndex < blockCount; rightIndex++) {
-               int rightComp = this.Reads.compareValues(arr[blockPos + leftIndex * regBlockLen], arr[blockPos + rightIndex * regBlockLen]);
-               if (rightComp > 0 || rightComp == 0 && tags[leftIndex] > tags[rightIndex]) {
-                  leftIndex = rightIndex;
-               }
+            for (int rightIndex = var19; rightIndex < blockCount; rightIndex++) {
+               int lastLen = this.Reads.compareValues(arr[blockPos + leftIndex * regBlockLen], arr[blockPos + rightIndex * regBlockLen]);
             }
 
-            if (leftIndex != var20 - 1) {
-               this.sqrtMultiSwap(arr, blockPos + (var20 - 1) * regBlockLen, blockPos + leftIndex * regBlockLen, regBlockLen, auxwrite);
-               this.sqrtSwap(tags, var20 - 1, leftIndex, true);
+            if (leftIndex != var19 - 1) {
+               this.sqrtMultiSwap(arr, blockPos + (var19 - 1) * regBlockLen, blockPos + leftIndex * regBlockLen, regBlockLen, auxwrite);
             }
          }
 
@@ -298,34 +290,39 @@ public final class TsrtSort extends Sort {
                aBlockCount++;
             }
          }
-
-         this.sqrtMergeBuffersLeftWithXBuf(tags, midkey, arr, blockPos, blockCount - aBlockCount, regBlockLen, aBlockCount, lastLen, auxwrite);
       }
 
-      for (int var19 = len - 1; var19 >= 0; var19--) {
-         this.Writes.write(arr, pos + var19, arr[pos + var19 - regBlockLen], 1.0, true, auxwrite);
+      for (int var18 = len - 1; var18 >= 0; var18--) {
+         this.Writes.write(arr, pos + var18, arr[pos + var18 - regBlockLen], 1.0, true, auxwrite);
       }
    }
 
-   public void sqrtCommonSort(int[] arr, int pos, int len, int[] extBuf, int extBufPos, int[] tags, boolean auxwrite) {
-      this.insertSorter = new InsertionSort(this.arrayVisualizer);
-      if (len <= 16) {
-         this.sqrtInsertSort(arr, pos, len, auxwrite);
-         this.Highlights.clearAllMarks();
-      } else {
+   public void sqrtCommonSort(int[] arr, int pos, int len, int[] extBuf, int extBufPos, boolean auxwrite) {
+      BogoSort verify = new BogoSort(this.arrayVisualizer);
+      if (!verify.isRangeSorted(arr, pos, pos + len, true, false)) {
+         this.insertSorter = new InsertionSort(this.arrayVisualizer);
+         if (len <= 2) {
+            this.sqrtInsertSort(arr, pos, len, auxwrite);
+            this.Highlights.clearAllMarks();
+            return;
+         }
+
          int blockLen = 1;
 
-         while (blockLen * blockLen * blockLen * blockLen < len) {
+         while (blockLen * 2 < len) {
             blockLen *= 2;
          }
 
          this.Writes.arraycopy(arr, pos, extBuf, extBufPos, blockLen, 1.0, true, auxwrite);
-         this.sqrtCommonSort(extBuf, extBufPos, blockLen, arr, pos, tags, !auxwrite);
+         if (!verify.isRangeSorted(arr, pos, pos + blockLen, true, false)) {
+            this.sqrtCommonSort(extBuf, extBufPos, blockLen, arr, pos, !auxwrite);
+         }
+
          this.sqrtBuildBlocks(arr, pos + blockLen, len - blockLen, blockLen, auxwrite);
          int buildLen = blockLen;
 
          while (len > (buildLen *= 2)) {
-            this.sqrtCombineBlocks(arr, pos + blockLen, len - blockLen, buildLen, blockLen, tags, auxwrite);
+            this.sqrtCombineBlocks(arr, pos + blockLen, len - blockLen, buildLen, blockLen, auxwrite);
          }
 
          this.sqrtMergeDown(arr, pos + blockLen, extBuf, extBufPos, len - blockLen, blockLen, auxwrite);
@@ -337,15 +334,12 @@ public final class TsrtSort extends Sort {
    public void runSort(int[] array, int len, int bucketCount) {
       int bufferLen = 1;
 
-      while (bufferLen * bufferLen * bufferLen * bufferLen < len) {
+      while (bufferLen * 2 < len) {
          bufferLen *= 2;
       }
 
-      int numKeys = (len - 1) / bufferLen + 2;
       int[] extBuf = this.Writes.createExternalArray(bufferLen);
-      int[] tags = this.Writes.createExternalArray(numKeys);
-      this.sqrtCommonSort(array, 0, len, extBuf, 0, tags, false);
+      this.sqrtCommonSort(array, 0, len, extBuf, 0, false);
       this.Writes.deleteExternalArray(extBuf);
-      this.Writes.deleteExternalArray(tags);
    }
 }

@@ -4,14 +4,14 @@ import io.github.arrayv.main.ArrayVisualizer;
 import io.github.arrayv.sorts.insert.InsertionSort;
 import io.github.arrayv.sorts.templates.Sort;
 
-public final class TsrtSort extends Sort {
+public final class AntiSqrtSort extends Sort {
    private InsertionSort insertSorter;
 
-   public TsrtSort(ArrayVisualizer arrayVisualizer) {
+   public AntiSqrtSort(ArrayVisualizer arrayVisualizer) {
       super(arrayVisualizer);
-      this.setSortListName("Tsrt");
-      this.setRunAllSortsName("Tsrtsort");
-      this.setRunSortName("Tsrtsort");
+      this.setSortListName("AntiSqrt");
+      this.setRunAllSortsName("Anti Sqrtsort");
+      this.setRunSortName("AntiSqrtsort");
       this.setCategory("Hybrid Sorts");
       this.setBucketSort(false);
       this.setRadixSort(false);
@@ -315,7 +315,7 @@ public final class TsrtSort extends Sort {
       } else {
          int blockLen = 1;
 
-         while (blockLen * blockLen * blockLen * blockLen < len) {
+         while (Math.pow(blockLen, 2.0) < len) {
             blockLen *= 2;
          }
 
@@ -337,7 +337,7 @@ public final class TsrtSort extends Sort {
    public void runSort(int[] array, int len, int bucketCount) {
       int bufferLen = 1;
 
-      while (bufferLen * bufferLen * bufferLen * bufferLen < len) {
+      while (Math.pow(bufferLen, 2.0) < len) {
          bufferLen *= 2;
       }
 

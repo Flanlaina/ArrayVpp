@@ -2,7 +2,7 @@ package io.github.arrayv.sorts.field;
 
 import io.github.arrayv.main.ArrayVisualizer;
 import io.github.arrayv.sorts.distribute.MSDRadixSort;
-import io.github.arrayv.sorts.distribute.BogoSort;
+import io.github.arrayv.sorts.esoteric.BogoSort;
 import io.github.arrayv.sorts.hybrid.GrailSort;
 import io.github.arrayv.sorts.insert.InsertionSort;
 import io.github.arrayv.sorts.merge.PanicSort;

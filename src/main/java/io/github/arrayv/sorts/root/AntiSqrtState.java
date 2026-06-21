@@ -1,10 +1,10 @@
 package io.github.arrayv.sorts.root;
 
-final class HalfState {
+final class AntiSqrtState {
    private int leftOverLen;
    private int leftOverFrag;
 
-   protected HalfState(int len, int frag) {
+   protected AntiSqrtState(int len, int frag) {
       this.leftOverLen = len;
       this.leftOverFrag = frag;
    }
