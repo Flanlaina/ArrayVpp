@@ -3,7 +3,7 @@ package io.github.arrayv.sorts.hybrid;
 import io.github.arrayv.main.ArrayVisualizer;
 import io.github.arrayv.sorts.templates.LassoSorting;
 
-
+//i'm_old!
 final public class LassoSort extends LassoSorting {
     public LassoSort(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);

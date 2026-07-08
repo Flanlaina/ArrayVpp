@@ -48,16 +48,6 @@ public final class BarGraphTiled extends Visual {
     	s[a>b?1:0]=a;
     	return s;
     }
-    
-    // 0 = a only, 1 = b only
-    private Color lerp(Color a, Color b, double b1) {
-    	double b2 = 1d - b1;
-    	return new Color(
-    		(int)(a.getRed()*b2+b.getRed()*b1),
-    		(int)(a.getGreen()*b2+b.getGreen()*b1),
-    		(int)(a.getBlue()*b2+b.getBlue()*b1)
-    	);
-    }
 
     public int[] getBoundingBox(int[] array, int index, int length, ArrayVisualizer arrayVisualizer, Renderer renderer) {
     	int top = 39, bottom = arrayVisualizer.currentHeight() - 20,
