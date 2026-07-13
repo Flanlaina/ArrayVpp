@@ -7,6 +7,7 @@ import com.scrtwpns.Mixbox;
 import io.github.arrayv.main.ArrayVisualizer;
 import io.github.arrayv.utils.Highlights;
 import io.github.arrayv.utils.Renderer;
+import io.github.arrayv.visuals.templates.Colorize;
 import io.github.arrayv.visuals.templates.VisualNoAntialiasing;
 
 /*
@@ -43,7 +44,6 @@ public final class ColorCircleAuxified extends VisualNoAntialiasing {
 
         this.setListName("Color Circle (Auxiliary Retool)");
         this.setCategory("Circle Visuals");
-        this.setColorable(stance.ALWAYS);
         this.setOverlayable(true);
         this.setAuxable(true);
         this.setMaximumAuxLists(8);
@@ -150,16 +150,13 @@ public final class ColorCircleAuxified extends VisualNoAntialiasing {
             }
 
             if (x[1] != x[2] || y[1] != y[2]) {
-            	// only change color while rendering
-                if (Highlights.fancyFinishActive() && i < Highlights.getFancyFinishPosition())
-                    this.mainRender.setColor(Color.GREEN);
-                else if (Highlights.hasColor(array, i))
-            		this.mainRender.setColor(new Color(Mixbox.lerp(
-            			getIntColor(array[i], arrayVisualizer.getCurrentLength()).getRGB(),
-	                	Highlights.colorAt(array, i).getRGB(),
-	                	0.5f
-	                )));
-            	else this.mainRender.setColor(getIntColor(array[i], arrayVisualizer.getCurrentLength()));
+        		this.mainRender.setColor(
+        			Colorize.bestFit(array, i, n,
+        				Colorize::fancyFinish,
+        				Colorize::hue,
+        				Colorize::graybright
+        			)
+        		);
             	
             	this.mainRender.fillPolygon(x, y, 3);
             }
