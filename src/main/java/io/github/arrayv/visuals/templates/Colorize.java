@@ -67,6 +67,6 @@ public class Colorize {
 			tmp = opt.apply(array, i, n);
 			if (tmp != null) return tmp;
 		}
-		return (++MISSES & 1) == 1 ? Color.black : Color.magenta;
+		return (MISSES++ & 1) == 1 ? Color.black : Color.magenta;
 	}
 }
