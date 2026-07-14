@@ -405,10 +405,12 @@ public final class UtilFrame extends javax.swing.JFrame {
 
     private void jCheckBox4ActionPerformed() {//GEN-FIRST:event_jButton4ActionPerformed
         Timer.toggleRealTimer(jCheckBox4.isSelected());
+        arrayVisualizer.updateNow();
     }//GEN-LAST:event_jCheckBox4ActionPerformed
 
     private void jButton5ActionPerformed() {//GEN-FIRST:event_jButton4ActionPerformed
         arrayVisualizer.resetAllStatistics();
+        arrayVisualizer.updateNow();
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jCheckBox5ActionPerformed() {//GEN-FIRST:event_jButton4ActionPerformed
@@ -436,6 +438,7 @@ public final class UtilFrame extends javax.swing.JFrame {
 
     private void jCheckBox6ActionPerformed() {//GEN-FIRST:event_jButton4ActionPerformed
         arrayVisualizer.toggleStatistics(jCheckBox6.isSelected());
+        arrayVisualizer.updateNow();
     }//GEN-LAST:event_jCheckBox6ActionPerformed
 
     private void jCheckBox7ActionPerformed() {//GEN-FIRST:event_jButton4ActionPerformed
@@ -444,6 +447,7 @@ public final class UtilFrame extends javax.swing.JFrame {
 
     private void jCheckBox8ActionPerformed() {//GEN-FIRST:event_jButton4ActionPerformed
         arrayVisualizer.toggleColor(jCheckBox8.isSelected());
+        arrayVisualizer.updateNow();
     }//GEN-LAST:event_jCheckBox8ActionPerformed
 
     private void jCheckBox9ActionPerformed() {//GEN-FIRST:event_jButton4ActionPerformed
@@ -463,6 +467,7 @@ public final class UtilFrame extends javax.swing.JFrame {
             jCheckBox9WarningShown = true;
         }
         arrayVisualizer.toggleExternalArrays(jCheckBox9.isSelected());
+        arrayVisualizer.updateNow();
     }//GEN-LAST:event_jCheckBox8ActionPerformed
 
     private void jComboBox1ActionPerformed() {//GEN-FIRST:event_jButton4ActionPerformed

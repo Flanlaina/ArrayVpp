@@ -49,6 +49,7 @@ public final class ShufflePrompt extends javax.swing.JFrame implements AppFrame 
 
     private final DefaultListModel<String> shuffleModel;
     private boolean initializing;
+    private int jList1PrevSelection;
 
     /**
      * Creates new form SortPrompt
@@ -65,6 +66,7 @@ public final class ShufflePrompt extends javax.swing.JFrame implements AppFrame 
         initComponents();
 
         initializing = true;
+        jList1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         jList1.setListData(arrayManager.getDistributionIDs());
         for (int i = 0; i < arrayManager.getDistributions().length; i++) {
             if (arrayManager.getDistribution().equals(arrayManager.getDistributions()[i])) {
@@ -73,6 +75,7 @@ public final class ShufflePrompt extends javax.swing.JFrame implements AppFrame 
             }
         }
         shuffleModel = new DefaultListModel<>();
+        jList2.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         jList2.setModel(shuffleModel);
         Arrays.stream(arrayManager.getShuffleIDs()).forEach(shuffleModel::addElement);
         if (arrayManager.getShuffle().size() > 1) {
@@ -220,16 +223,24 @@ public final class ShufflePrompt extends javax.swing.JFrame implements AppFrame 
     }//GEN-LAST:event_jList1ValueChanged
 
     private void jList1ValueChanged() {//GEN-FIRST:event_jList1ValueChanged
-        if (initializing)
+        if (initializing || jList1.getValueIsAdjusting())
             return;
         int selection = jList1.getSelectedIndex();
         Distributions[] distributions = arrayManager.getDistributions();
-        if (selection >= 0 && selection < distributions.length)
-            arrayManager.setDistribution(distributions[selection]);
+        if (selection >= 0 && selection < distributions.length) {
+            if (arrayManager.setDistribution(distributions[selection])) {
+                jList1PrevSelection = selection;
+            } else {
+                // Selection failed for whatever reason. Need to revert to the previous selection.
+                initializing = true;
+                jList1.setSelectedIndex(jList1PrevSelection);
+                initializing = false;
+            }
+        }
     }//GEN-LAST:event_jList1ValueChanged
 
     private void jList2ValueChanged() {//GEN-FIRST:event_jList1ValueChanged
-        if (initializing)
+        if (initializing || jList2.getValueIsAdjusting())
             return;
         int selection = jList2.getSelectedIndex();
         if (shuffleModel.getElementAt(0).equals("Advanced")) {

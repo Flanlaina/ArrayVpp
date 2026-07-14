@@ -120,6 +120,27 @@ public enum Shuffles {
                 Writes.swap(array, i, random.nextInt(currentLen), delay ? 1 : 0, true, false);
         }
     },
+    NAIVER {
+        public int randInt(int a, int b, Random rng) {
+            return rng.nextInt(b - a) + a;
+        }
+        public String getName() {
+            return "Naiver Randomly";
+        }
+        @Override
+        public void shuffleArray(int[] array, ArrayVisualizer arrayVisualizer, Delays Delays, Highlights Highlights, Writes Writes) {
+            int currentLen = arrayVisualizer.getCurrentLength();
+            double delay = arrayVisualizer.shuffleEnabled() ? 1 : 0;
+            makeRandom(arrayVisualizer);
+
+            for (int i = 0; i < currentLen; i++){
+                int i1 = randInt(0, currentLen, random);
+                int i2 = randInt(0, currentLen - 1, random);
+                if (i2 >= i1) i2++;
+                Writes.swap(array, i1, i2, delay, true, false);
+            }
+        }
+    },
     SHUFFLED_TAIL {
         public String getName() {
             return "Scrambled Tail";
@@ -164,6 +185,68 @@ public enum Shuffles {
             }
             Writes.arraycopy(aux, 0, array, 0, k, delay ? 1 : 0, true, false);
             shuffle(array, 0, j, delay ? 2 : 0, Writes);
+        }
+    },
+    SHUFFLED_TAIL_INDEXSORT { // Scrambled Tail, but always shuffles 1/7th of the array, and moves data in-place
+        public String getName() {
+            return "Scrambled Tail (Indexsort)";
+        }
+        @Override
+        public void shuffleArray(int[] array, ArrayVisualizer arrayVisualizer, Delays Delays, Highlights Highlights, Writes Writes) {
+            int currentLen = arrayVisualizer.getCurrentLength();
+            double delay = arrayVisualizer.shuffleEnabled() ? 1 : 0;
+
+            makeRandom(arrayVisualizer);
+            int[] aux = new int[currentLen];
+            int m = currentLen - (currentLen + 6) / 7;
+
+            for (int i = 0; i < currentLen; ++i) aux[i] = 0;
+            for (int i = m; i < currentLen; ++i) {
+                int j = random.nextInt(i + 1);
+                aux[aux[j] == 1 ? i : j] = 1;
+            }
+
+            int[] ptrs = {0, m};
+            for (int i = 0; i < currentLen; ++i) aux[i] = ptrs[aux[i]]++;
+
+            for (int i = 0; i < currentLen; ++i)
+                while (i != aux[i]) {
+                    Writes.swap(array, i, aux[i], 0, true, false);
+                    Writes.swap(aux, i, aux[i], delay, false, true);
+                }
+
+            shuffle(array, m, currentLen, delay * 2, Writes);
+        }
+    },
+    SHUFFLED_HEAD_INDEXSORT { // Scrambled Head, but always shuffles 1/7th of the array, and moves data in-place
+        public String getName() {
+            return "Scrambled Head (Indexsort)";
+        }
+        @Override
+        public void shuffleArray(int[] array, ArrayVisualizer arrayVisualizer, Delays Delays, Highlights Highlights, Writes Writes) {
+            int currentLen = arrayVisualizer.getCurrentLength();
+            double delay = arrayVisualizer.shuffleEnabled() ? 1 : 0;
+
+            makeRandom(arrayVisualizer);
+            int[] aux = new int[currentLen];
+            int m = (currentLen + 6) / 7;
+
+            for (int i = 0; i < currentLen; ++i) aux[i] = 0;
+            for (int i = m; i < currentLen; ++i) {
+                int j = random.nextInt(i + 1);
+                aux[aux[j] == 1 ? i : j] = 1;
+            }
+
+            int[] ptrs = {0, m};
+            for (int i = 0; i < currentLen; ++i) aux[i] = ptrs[aux[i]]++;
+
+            for (int i = 0; i < currentLen; ++i)
+                while (i != aux[i]) {
+                    Writes.swap(array, i, aux[i], 0, true, false);
+                    Writes.swap(aux, i, aux[i], delay, false, true);
+                }
+
+            shuffle(array, 0, m, delay * 2, Writes);
         }
     },
     MOVED_ELEMENT {

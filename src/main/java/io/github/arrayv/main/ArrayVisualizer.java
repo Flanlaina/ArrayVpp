@@ -543,10 +543,8 @@ public final class ArrayVisualizer {
 
                 io.github.arrayv.utils.Renderer.initializeVisuals(ArrayVisualizer.this);
 
-                Graphics background = ArrayVisualizer.this.window.getGraphics();
-                background.setColor(Color.BLACK);
                 int coltmp = 255;
-
+                
                 while (ArrayVisualizer.this.visualsEnabled) {
                     if (ArrayVisualizer.this.updateVisualsForced.get() == 0) {
                         try {
@@ -569,13 +567,15 @@ public final class ArrayVisualizer {
                                 arrays[count] = ArrayVisualizer.this.arrayVLists.get(v).__internal_array();
                             }
                             ArrayVisualizer.this.renderer.drawVisual(ArrayVisualizer.this.runningVisual, arrays, ArrayVisualizer.this, ArrayVisualizer.this.Highlights);
-
+                            
                             if (ArrayVisualizer.this.showStatistics) {
                                 ArrayVisualizer.this.statSnapshot.updateStats(ArrayVisualizer.this);
                                 ArrayVisualizer.this.updateFontSize();
                                 ArrayVisualizer.this.drawStats(Color.BLACK, true);
                                 ArrayVisualizer.this.drawStats(Color.WHITE, false);
                             }
+                            Graphics background = ArrayVisualizer.this.window.getGraphics();
+                            background.setColor(Color.BLACK);
                             background.drawImage(ArrayVisualizer.this.img, 0, 0, null);
                             Toolkit.getDefaultToolkit().sync();
                         }

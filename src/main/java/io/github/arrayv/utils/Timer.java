@@ -133,6 +133,10 @@ public final class Timer {
         return this.categoricalTimes;
     }
 
+    public void resetCategoricalTimes() {
+        this.categoricalTimes.clear();
+    }
+
     void manualAddTime(long milliseconds) {
         this.realTimer += milliseconds;
     }

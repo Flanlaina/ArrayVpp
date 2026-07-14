@@ -224,8 +224,8 @@ public enum Distributions {
 
             int[] perlinNoise = new int[currentLen];
 
-            float step = 1f / currentLen;
-            float randomStart = (float) (random.nextInt(currentLen));
+            double step = 1f / currentLen;
+            double randomStart = (double) (random.nextInt(currentLen));
             int octave = (int) (Math.log(currentLen) / Math.log(2));
 
             for (int i = 0; i < currentLen; i++) {
@@ -272,7 +272,7 @@ public enum Distributions {
             int currentLen = arrayVisualizer.getCurrentLength();
 
             for (int i = 0; i < currentLen; i++) {
-                int value = -(int)(PerlinNoise.returnNoise((float)i / currentLen) * currentLen);
+                int value = -(int)(PerlinNoise.returnNoise((double)i / currentLen) * currentLen);
                 array[i] = Math.min(value, currentLen-1);
             }
         }
@@ -529,27 +529,43 @@ public enum Distributions {
             return "Custom";
         }
         @Override
-        public void selectDistribution(int[] array, ArrayVisualizer arrayVisualizer) {
+        public boolean selectDistribution(int[] array, ArrayVisualizer arrayVisualizer) {
             LoadCustomDistributionDialog dialog = new LoadCustomDistributionDialog();
             File file = dialog.getFile();
+            if (file == null)
+                return false;
             Scanner scanner;
             try {
                 scanner = new Scanner(file);
             } catch (FileNotFoundException e) {
-                JErrorPane.invokeErrorMessage(e);
-                return;
+                JErrorPane.invokeCustomErrorMessage("File not found: " + e.getMessage());
+                return false;
             }
-            scanner.useDelimiter("\\s+");
-            this.refarray = new int[arrayVisualizer.getMaximumLength()];
-            int current = 0;
-            while (scanner.hasNext()) {
-                this.refarray[current++] = Integer.parseInt(scanner.next());
+            try {
+                scanner.useDelimiter("\\s+");
+                this.refarray = new int[arrayVisualizer.getMaximumLength()];
+                int current = 0;
+                while (scanner.hasNext()) {
+                    // This gives better error messages than scanner.nextInt()
+                    this.refarray[current++] = Integer.parseInt(scanner.next());
+                }
+                this.length = current;
+
+            } catch (NumberFormatException e) {
+                JErrorPane.invokeCustomErrorMessage("Malformed custom sequence: " + e.getMessage());
+                return false;
+            } finally {
+                scanner.close();
             }
-            this.length = current;
-            scanner.close();
+            return true;
         }
         @Override
         public void initializeArray(int[] array, ArrayVisualizer arrayVisualizer) {
+            if (this.refarray == null) {
+                for (int i = 0; i < arrayVisualizer.getCurrentLength(); i++)
+                    array[i] = 0;
+                return;
+            }
             int currentLen = arrayVisualizer.getCurrentLength();
             double scale = (double)this.length / currentLen;
             for (int i = 0; i < currentLen; i++) {
@@ -559,7 +575,8 @@ public enum Distributions {
     };
 
     public abstract String getName();
-    public void selectDistribution(int[] array, ArrayVisualizer arrayVisualizer) {
+    public boolean selectDistribution(int[] array, ArrayVisualizer arrayVisualizer) {
+        return true;
     }
     public abstract void initializeArray(int[] array, ArrayVisualizer arrayVisualizer);
 }
