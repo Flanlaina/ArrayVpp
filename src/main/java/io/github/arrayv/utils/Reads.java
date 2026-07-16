@@ -369,4 +369,8 @@ public final class Reads {
     public ArrayList<Integer> getNetworkIndices() {
         return networkIndices;
     }
+
+    public void dummyCompare() {
+        this.compareOriginalValues(0, 0);
+    }
 }

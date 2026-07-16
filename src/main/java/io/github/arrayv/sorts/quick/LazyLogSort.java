@@ -1,0 +1,365 @@
+package io.github.arrayv.sorts.quick;
+
+import io.github.arrayv.main.ArrayVisualizer;
+import io.github.arrayv.sorts.templates.Sort;
+import io.github.arrayv.utils.IndexedRotations;
+
+/*
+
+Coded for ArrayV by Flanlaina
+in collaboration with aphitorite
+
++---------------------------+
+| Sorting Algorithm Scarlet |
++---------------------------+
+
+ */
+
+/**
+ * @author Flanlaina
+ * @author aphitorite
+ *
+ */
+public class LazyLogSort extends Sort {
+
+    public LazyLogSort(ArrayVisualizer arrayVisualizer) {
+        super(arrayVisualizer);
+        this.setSortListName("Lazy Log");
+        this.setRunAllSortsName("Lazy Log Sort");
+        this.setRunSortName("Lazy Logsort");
+        this.setCategory("Quick Sorts");
+        this.setBucketSort(false);
+        this.setRadixSort(false);
+        this.setUnreasonablySlow(false);
+        this.setUnreasonableLimit(0);
+        this.setBogoSort(false);
+    }
+
+    static final int PARTIAL_INSERT_LIMIT = 8;
+    
+    int productLog(int n) {
+        int r = 1;
+        while ((r << r) + r - 1 < n) r++;
+        return r;
+    }
+
+    protected int medOf3(int[] array, int i0, int i1, int i2) {
+        int tmp;
+        if(Reads.compareIndices(array, i0, i1, 1, true) > 0) {
+            tmp = i1;
+            i1 = i0;
+        } else tmp = i0;
+        if(Reads.compareIndices(array, i1, i2, 1, true) > 0) {
+            if(Reads.compareIndices(array, tmp, i2, 1, true) > 0) return tmp;
+            return i2;
+        }
+        return i1;
+    }
+    
+    public int medP3(int[] array, int a, int b, int d) {
+        if (b - a == 3 || (b - a > 3 && d == 0))
+            return medOf3(array, a, a + (b - a) / 2, b - 1);
+        if (b - a < 3) return a + (b - a) / 2;
+        int t = (b - a) / 3;
+        int l = medP3(array, a, a + t, --d), c = medP3(array, a + t, b - t, d), r = medP3(array, b - t, b, d);
+        // median
+        return medOf3(array, l, c, r);
+    }
+
+    public int medOfMed(int[] array, int a, int b) {
+        int log5 = 0, exp5 = 1, exp5_1 = 0;
+        int[] indices = new int[5];
+        int n = b - a;
+        while (exp5 < n) {
+            exp5_1 = exp5;
+            log5++;
+            exp5 *= 5;
+        }
+        if (log5 < 1) return a;
+        // fill indexes, recursing if required
+        if (log5 == 1) for (int i = a, j = 0; i < b; i++, j++) indices[j] = i;
+        else {
+            n = 0;
+            for (int i = a; i < b; i += exp5_1) {
+                indices[n] = medOfMed(array, i, Math.min(b, i + exp5_1));
+                n++;
+            }
+        }
+        // sort - insertion sort is good enough for 5 elements
+        for (int i = 1; i < n; i++) {
+            for(int j = i; j > 0; j--) {
+                if (Reads.compareIndices(array, indices[j], indices[j - 1], 0.5, true) < 0) {
+                    int t = indices[j];
+                    indices[j] = indices[j - 1];
+                    indices[j - 1] = t;
+                } else break;
+            }
+        }
+        // return median
+        return indices[(n - 1) / 2];
+    }
+    
+    protected void stableSegmentReversal(int[] array, int start, int end) {
+        if (end - start < 3) Writes.swap(array, start, end, 0.75, true, false);
+        else Writes.reversal(array, start, end, 0.75, true, false);
+        int i = start;
+        int left;
+        int right;
+        while (i < end) {
+            left = i;
+            while (i < end && Reads.compareIndices(array, i, i + 1, 0.5, true) == 0) i++;
+            right = i;
+            if (left != right) {
+                if (right - left < 3) Writes.swap(array, left, right, 0.75, true, false);
+                else Writes.reversal(array, left, right, 0.75, true, false);
+            }
+            i++;
+        }
+    }
+
+    protected void blockSwap(int[] array, int a, int b, int len) {
+        if (a == b) return;
+        for (int i = 0; i < len; i++) Writes.swap(array, a + i, b + i, 1, true, false);
+    }
+
+    protected void insertTo(int[] array, int a, int b, double sleep) {
+        Highlights.clearMark(2);
+        int temp = array[a];
+        int d = (a > b) ? -1 : 1;
+        for (int i = a; i != b; i += d)
+            Writes.write(array, i, array[i + d], sleep, true, false);
+        if (a != b)
+            Writes.write(array, b, temp, sleep, true, false);
+    }
+
+    protected void rotate(int[] array, int a, int m, int b) {
+        Highlights.clearAllMarks();
+        IndexedRotations.cycleReverse(array, a, m, b, 1, true, false);
+    }
+
+    protected int expSearch(int[] array, int a, int b, int val) {
+        int i = 1;
+        int a1, b1;
+        if (Reads.compareIndexValue(array, a + (b - a) / 2, val, 0, false) <= 0) {
+            while (b - i >= a && Reads.compareValues(val, array[b - i]) < 0) i *= 2;
+            a1 = Math.max(a, b - i + 1);
+            b1 = b - i / 2;
+        } else {
+            while (a - 1 + i < b && Reads.compareValues(val, array[a - 1 + i]) >= 0) i *= 2;
+            a1 = a + i / 2;
+            b1 = Math.min(b, a - 1 + i);
+        }
+        while (a1 < b1) {
+            int m = a1 + (b1 - a1) / 2;
+            Highlights.markArray(2, m);
+            Delays.sleep(0.25);
+            if (Reads.compareValues(val, array[m]) < 0) b1 = m;
+            else a1 = m + 1;
+        }
+        return a1;
+    }
+
+    public void insertSort(int[] array, int a, int b) {
+        if (b - a < 2) return;
+        int i = a + 1;
+        if (Reads.compareIndices(array, i - 1, i++, 0.5, true) > 0) {
+            while (i < b && Reads.compareIndices(array, i - 1, i, 0.5, true) > 0) i++;
+            if (i - a < 4) Writes.swap(array, a, i - 1, 1.0, true, false);
+            else Writes.reversal(array, a, i - 1, 1.0, true, false);
+        } else while (i < b && Reads.compareIndices(array, i - 1, i, 0.5, true) <= 0) i++;
+        Highlights.clearMark(2);
+        for (; i < b; i++) insertTo(array, i, expSearch(array, a, i, array[i]), 0.25);
+    }
+
+    //Refactored from PDQSorting.java
+    protected boolean partialInsert(int[] array, int a, int b) {
+        if (a == b) return true;
+        double sleep = 0.25;
+        int c = 0;
+        for (int i = a + 1; i < b; i++) {
+            if (c > PARTIAL_INSERT_LIMIT) return false;
+            if (Reads.compareIndices(array, i - 1, i, sleep, true) > 0) {
+                int t = array[i];
+                int j = i;
+                do {
+                    Writes.write(array, j, array[j - 1], sleep, true, false);
+                    j--;
+                } while (j - 1 >= a && Reads.compareValues(array[j - 1], t) > 0);
+                Writes.write(array, j, t, sleep, true, false);
+                c += i - j;
+            }
+        }
+        return true;
+    }
+
+    boolean pivCmp(int v, int piv, boolean eqLower) {
+        int c = Reads.compareValues(v, piv);
+        return c < 0 || (eqLower && c == 0);
+    }
+
+    void pivBufXor(int[] array, int pa, int pb, int v, int wLen) {
+        while (wLen-- > 0) {
+            if ((v & 1) == 1) Writes.swap(array, pa + wLen, pb + wLen, 1, true, false);
+            v >>= 1;
+        }
+    }
+
+    // @param bit - < pivot means this bit
+    int pivBufGet(int[] array, int pa, int piv, boolean eqLower, int wLen, int bit) {
+        int r = 0;
+        while (wLen-- > 0) {
+            r <<= 1;
+            r |= (this.pivCmp(array[pa++], piv, eqLower) ? 0 : 1) ^ bit;
+        }
+        return r;
+    }
+    
+    protected void blockCycle(int[] array, int a, int n, int tagStart, int bLen, int wLen, int piv, boolean eqLower,
+            int bit) {
+        for (int i = 0, aPtr = a, tPtr = tagStart; i < n; i++, aPtr += bLen, tPtr += bLen) {
+            int dest = this.pivBufGet(array, aPtr, piv, eqLower, wLen, bit);
+            while (dest != i) {
+                this.blockSwap(array, aPtr, a + dest * bLen, bLen);
+                dest = this.pivBufGet(array, aPtr, piv, eqLower, wLen, bit);
+            }
+            this.pivBufXor(array, aPtr, tPtr, i, wLen);
+        }
+    }
+
+    protected int[] partition(int[] array, int a, int b, int bLen, int piv, boolean eqLower) {
+        // determines which elements do not need to be moved
+        for(; a < b; a++) {
+            Highlights.markArray(1, a);
+            Delays.sleep(0.25);
+            if(!this.pivCmp(array[a], piv, eqLower)) break;
+        }
+        for(; b > a; b--) {
+            Highlights.markArray(1, b-1);
+            Delays.sleep(0.25);
+            if(this.pivCmp(array[b-1], piv, eqLower)) break;
+        }
+        boolean alreadyParted = b == a;
+        if (b - a <= bLen) {
+            int j = a;
+            for (int i = a; i < b; i++) {
+                int cmp = Reads.compareIndexValue(array, i, piv, 0.25, true);
+                if (cmp < 0 || eqLower && cmp == 0)
+                    insertTo(array, i, j++, 0.25);
+            }
+            return new int[] {j, alreadyParted ? 1 : 0};
+        }
+
+        // sort blocks and type blocks
+        int p = a;
+        int l = 0, r = 0;
+        int lb = 0, rb = 0;
+        for (int i = a; i < b; i++) {
+            int cmp = Reads.compareIndexValue(array, i, piv, 0.25, true);
+            if (cmp < 0 || eqLower && cmp == 0) {
+                insertTo(array, i, p + l++, 0.25);
+                if (l == bLen) {
+                    l = 0;
+                    lb++;
+                    p += bLen;
+                }
+            } else {
+                r++;
+                if (r == bLen) {
+                    rotate(array, p, p + l, p + l + bLen);
+                    r = 0;
+                    rb++;
+                    p += bLen;
+                }
+            }
+        }
+
+        // sort blocks
+        int min = Math.min(lb, rb);
+        int m = a + lb * bLen;
+        if (min > 0) {
+            //int bCnt = lb + rb;
+            int wLen = 32 - Integer.numberOfLeadingZeros(min - 1); // ceil(log2(min))
+            for (int i = 0, j = a, k = a; i < min; i++) { // set bit buffers
+                while (!this.pivCmp(array[j + wLen], piv, eqLower)) j += bLen;
+                while (this.pivCmp(array[k + wLen], piv, eqLower)) k += bLen;
+                this.pivBufXor(array, j, k, i, wLen);
+                j += bLen; k += bLen;
+            }
+            if (lb < rb) {
+                for (int i = p - bLen, j = p; i >= a; i -= bLen) { // swap right to left
+                    if (!pivCmp(array[i + wLen], piv, eqLower)) {
+                        j -= bLen;
+                        blockSwap(array, i, j, bLen);
+                    }
+                }
+                this.blockCycle(array, a, lb, m, bLen, wLen, piv, eqLower, 0);
+            } else {
+                for (int i = a, j = a; i < p; i += bLen) { // swap left to right
+                    if (pivCmp(array[i + wLen], piv, eqLower)) {
+                        blockSwap(array, i, j, bLen);
+                        j += bLen;
+                    }
+                }
+                this.blockCycle(array, m, rb, a, bLen, wLen, piv, eqLower, 1);
+            }
+        }
+
+        // handle leftover
+        rotate(array, m, b - r - l, b - r);
+
+        return new int[] {m + l, alreadyParted ? 1 : 0};
+    }
+
+    protected void sortHelper(int[] array, int a, int b, int bLen, boolean bad) {
+        while (b - a > 32) {
+            int pIdx;
+            if (bad) pIdx = medOfMed(array, a, b);
+            else pIdx = medP3(array, a, b, 1);
+            int[] pr = partition(array, a, b, bLen, array[pIdx], false);
+            int m = pr[0];
+            if (m == a) {
+                pr = partition(array, a, b, bLen, array[pIdx], true);
+                m = pr[0];
+                bad = (b - m) / 8 > m - a;
+                if (!bad && pr[1] != 0 && partialInsert(array, m, b)) return;
+                a = m;
+                continue;
+            }
+            int lLen = m - a, rLen = b - m;
+            bad = rLen / 8 > lLen || lLen / 8 > rLen;
+            if (!bad && pr[1] != 0 && partialInsert(array, a, m) && partialInsert(array, m, b)) return;
+            if (lLen > rLen) {
+                sortHelper(array, m, b, bLen, bad);
+                b = m;
+            } else {
+                sortHelper(array, a, m, bLen, bad);
+                a = m;
+            }
+        }
+        insertSort(array, a, b);
+    }
+
+    public void quickSort(int[] array, int a, int b) {
+        int z = 0, e = 0;
+        for (int i = a; i < b - 1; i++) {
+            int cmp = Reads.compareIndices(array, i, i + 1, 0.5, true);
+            z += cmp > 0 ? 1 : 0;
+            e += cmp == 0 ? 1 : 0;
+        }
+        if (z == 0) return;
+        if (z + e == b - a - 1) {
+            if (e > 0) stableSegmentReversal(array, a, b - 1);
+            else if (b - a < 4) Writes.swap(array, a, b - 1, 0.75, true, false);
+            else Writes.reversal(array, a, b - 1, 0.75, true, false);
+            return;
+        }
+        sortHelper(array, a, b, productLog(b - a), false);
+    }
+
+    @Override
+    public void runSort(int[] array, int sortLength, int bucketCount) {
+        quickSort(array, 0, sortLength);
+
+    }
+
+}
