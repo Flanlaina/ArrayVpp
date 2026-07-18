@@ -150,15 +150,12 @@ public class PeachSort extends Sort {
                 this.medOf3(array, m6, m7, m8));
     }
 
-    public void segmentReversal(int[] array, int start, int end, double delay, boolean mark, boolean aux) {
+    public void segmentReversal(int[] array, int start, int end, double cSleep, double wSleep, boolean mark, boolean aux) {
         for (int i = start; i < end; i++) {
             int left = i;
-            while (i < end && Reads.compareIndices(array, i, i + 1, delay, true) == 0) i++;
+            while (i < end && Reads.compareIndices(array, i, i + 1, cSleep, true) == 0) i++;
             int right = i;
-            if (left != right) {
-                if (right - left < 3) Writes.swap(array, left, right, delay * 2, mark, aux);
-                else Writes.reversal(array, left, right, delay * 2, mark, aux);
-            }
+            if (left != right) Writes.reversal(array, left, right, wSleep, mark, aux);
         }
     }
 
@@ -237,8 +234,7 @@ public class PeachSort extends Sort {
         while (i < b) {
             if (Reads.compareIndices(array, i - 1, i++, 1, true) > 0) {
                 while (i < b && Reads.compareIndices(array, i - 1, i, 1, true) > 0) i++;
-                if (i - j < 4) Writes.swap(array, j, i - 1, 1.0, true, false);
-                else Writes.reversal(array, j, i - 1, 1.0, true, false);
+                Writes.reversal(array, j, i - 1, 1.0, true, false);
             } else while (i < b && Reads.compareIndices(array, i - 1, i, 1, true) <= 0) i++;
             if (i < b) {
                 noSort = false;
@@ -316,7 +312,7 @@ public class PeachSort extends Sort {
         int wLen = log2((b-a)/bLen-1)+1, t = 1;
         int i = a, j = m, l = a, r = m;
         int pc = p + bLen;
-        
+
         for(int c = 0; c < bLen; c++) {
             if(Reads.compareIndices(array, i, j, 0.5, true) <= 0) {
                 Writes.write(swap, c, array[i++], 1, true, true);
@@ -343,7 +339,7 @@ public class PeachSort extends Sort {
         }
         Highlights.clearMark(2);
         Highlights.clearMark(3);
-        
+
         int pr = l < m ? l : r;
         Writes.arraycopy(swap, 0, array, pr, bLen, 0.5, true, false);
         pivBufXor(array, pr, p, 0, wLen);
@@ -572,7 +568,7 @@ public class PeachSort extends Sort {
 
     /**
      * Sorts the range {@code [a, b)} of {@code array} using Peach Sort.
-     * 
+     *
      * @param array the array
      * @param a     the start of the range, inclusive
      * @param b     the end of the range, exclusive
@@ -606,9 +602,8 @@ public class PeachSort extends Sort {
         }
         if (balance == 0) return;
         if (balance + eq == len - 1) {
-            if (b - a < 4) Writes.swap(array, a, b - 1, 0.75, true, false);
-            else Writes.reversal(array, a, b - 1, 0.75, true, false);
-            if (eq > 0) segmentReversal(array, a, b - 1, 0.75, true, false);
+            Writes.reversal(array, a, b - 1, 0.75, true, false);
+            if (eq > 0) segmentReversal(array, a, b - 1, 0.5, 0.75, true, false);
             return;
         }
         bLen = Math.max(productLog(len), Math.min(bLen, len));
