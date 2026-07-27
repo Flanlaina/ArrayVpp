@@ -13,6 +13,7 @@ public final class ClusterSelectionSort extends Sort {
       this.setRunAllSortsName("Cluster Selection Sort");
       this.setRunSortName("Cluster Selection Sort");
       this.setCategory("Hybrid Sorts");
+      this.setAuthors("Potassium");
       this.setBucketSort(false);
       this.setRadixSort(false);
       this.setUnreasonablySlow(false);

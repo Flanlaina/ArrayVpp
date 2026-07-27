@@ -12,6 +12,7 @@ public final class PiaeSort extends PiaeSorting {
 		this.setRunAllSortsName("Piae Sort");
 		this.setRunSortName("Piae Sort");
 		this.setCategory("Hybrid Sorts");
+        this.setAuthors("Distray");
 		this.setBucketSort(false);
 		this.setRadixSort(false);
 		this.setUnreasonablySlow(false);

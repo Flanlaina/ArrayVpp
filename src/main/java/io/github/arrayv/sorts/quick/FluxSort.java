@@ -41,6 +41,8 @@ final public class FluxSort extends Sort {
         this.setRunAllSortsName("Flux Sort");
         this.setRunSortName("Fluxsort");
         this.setCategory("Quick Sorts");
+  	    this.setAuthors("Scandum");
+  	    this.setConstant("n log n");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

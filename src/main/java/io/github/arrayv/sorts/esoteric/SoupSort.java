@@ -12,6 +12,7 @@ public final class SoupSort extends BogoSorting
 		this.setRunAllSortsName("Soup Sort");
 		this.setRunSortName("Soupsort");
 		this.setCategory("Exchange Sorts");
+		this.setConstant("n");
 		this.setBucketSort(false);
 		this.setRadixSort(false);
 		this.setUnreasonablySlow(false);

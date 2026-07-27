@@ -13,6 +13,7 @@ public final class SingleSort extends Sort {
       this.setRunAllSortsName("Singlesort");
       this.setRunSortName("Singlesort");
       this.setCategory("Block Merge Sorts");
+	  this.setAuthors("Potassium");
       this.setBucketSort(false);
       this.setRadixSort(false);
       this.setUnreasonablySlow(false);

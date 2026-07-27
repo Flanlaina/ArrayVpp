@@ -13,6 +13,8 @@ public final class AntiSqrtSort extends Sort {
       this.setRunAllSortsName("Anti Sqrtsort");
       this.setRunSortName("AntiSqrtsort");
       this.setCategory("Block Merge Sorts");
+	  this.setAuthors("Potassium");
+	  this.setConstant("n log n");
       this.setBucketSort(false);
       this.setRadixSort(false);
       this.setUnreasonablySlow(false);

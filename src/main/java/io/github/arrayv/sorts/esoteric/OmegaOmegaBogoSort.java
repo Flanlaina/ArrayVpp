@@ -40,6 +40,7 @@ public final class OmegaOmegaBogoSort extends BogoSorting {
         this.setRunAllSortsName("Omega Omega Bogo Sort");
         this.setRunSortName("\u03A9 \u03A9 Bogosort");
         this.setCategory("Bogo Sorts");
+        this.setAuthors("Distray");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(true);

@@ -37,6 +37,7 @@ final public class VanadiumSort extends Sort {
 		this.setRunAllSortsName("Vanadium Sort");
 		this.setRunSortName("Vanadium Sort");
 		this.setCategory("Block Merge Sorts");
+        this.setAuthors("Distray");
 		this.setConstant("n log n");
 		this.setBucketSort(false);
 		this.setRadixSort(false);

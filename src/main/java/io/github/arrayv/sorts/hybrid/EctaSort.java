@@ -38,6 +38,7 @@ public final class EctaSort extends Sort {
         this.setRunAllSortsName("Ecta Sort");
         this.setRunSortName("Ectasort");
         this.setCategory("Block Merge Sorts");
+	    this.setAuthors("aphitorite");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

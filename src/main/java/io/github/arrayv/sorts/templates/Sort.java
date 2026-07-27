@@ -31,7 +31,7 @@ public abstract class Sort {
     private void initDeprecatedMetadataTable() {
         if (deprecatedMetadataTable != null) return;
         deprecatedMetadataTable = new Object[] {
-            true, "", "", "", "", (UnaryOperator<Long>) (n -> -1L), false, false, false, 0, null, 0
+            true, "", "", "", "", (UnaryOperator<Long>) (n -> -1L), false, false, false, 0, null, 0, ""
         };
     }
 
@@ -66,9 +66,15 @@ public abstract class Sort {
         return (String)deprecatedMetadataTable[4];
     }
 
-    public UnaryOperator<Long> getConstant() {
+    public String getAuthors() {
         initDeprecatedMetadataTable();
-        return (UnaryOperator)deprecatedMetadataTable[5];
+        return (String)deprecatedMetadataTable[12];
+    }
+
+    @SuppressWarnings("unchecked")
+	public UnaryOperator<Long> getConstant() {
+        initDeprecatedMetadataTable();
+        return (UnaryOperator<Long>)deprecatedMetadataTable[5];
     }
 
     /**
@@ -139,6 +145,11 @@ public abstract class Sort {
     protected void setCategory(String category) {
         initDeprecatedMetadataTable();
         deprecatedMetadataTable[4] = category;
+    }
+
+    protected void setAuthors(String authors) {
+        initDeprecatedMetadataTable();
+        deprecatedMetadataTable[12] = authors;
     }
 
     protected void setConstant(String alias) {

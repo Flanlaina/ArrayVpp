@@ -13,6 +13,7 @@ public final class CbrtSort extends Sort {
       this.setRunAllSortsName("Cbrtsort");
       this.setRunSortName("Cbrtsort");
       this.setCategory("Block Merge Sorts");
+	  this.setAuthors("Potassium");
       this.setBucketSort(false);
       this.setRadixSort(false);
       this.setUnreasonablySlow(false);

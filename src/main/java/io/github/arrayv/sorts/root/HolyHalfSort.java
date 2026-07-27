@@ -14,6 +14,7 @@ public final class HolyHalfSort extends Sort {
       this.setRunAllSortsName("Holy Halfsort");
       this.setRunSortName("Holy Halfsort");
       this.setCategory("Block Merge Sorts");
+	  this.setAuthors("Potassium");
       this.setBucketSort(false);
       this.setRadixSort(false);
       this.setUnreasonablySlow(false);

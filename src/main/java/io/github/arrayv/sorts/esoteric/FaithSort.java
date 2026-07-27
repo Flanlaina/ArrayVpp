@@ -10,6 +10,7 @@ public final class FaithSort extends Sort {
       this.setRunAllSortsName("Faith Sort");
       this.setRunSortName("Faithsort");
       this.setCategory("Esoteric Sorts"); // formerly Holy Sorts
+      this.setAuthors("Potassium");
       this.setBucketSort(false);
       this.setRadixSort(false);
       this.setUnreasonablySlow(false);

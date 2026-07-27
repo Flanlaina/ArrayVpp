@@ -13,6 +13,7 @@ public final class TsrtSort extends Sort {
       this.setRunAllSortsName("Tsrtsort");
       this.setRunSortName("Tsrtsort");
       this.setCategory("Block Merge Sorts");
+	  this.setAuthors("Potassium");
       this.setBucketSort(false);
       this.setRadixSort(false);
       this.setUnreasonablySlow(false);
