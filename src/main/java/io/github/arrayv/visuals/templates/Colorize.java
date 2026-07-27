@@ -45,7 +45,7 @@ public class Colorize {
 	public static Color hueAlways(int[] array, int idx, int actinglen) {
 		if (HIGHLIGHTS.containsPosition(array, idx))
 			return ARRAYVISUALIZER.getHighlightColor();
-        Color ret = Color.getHSBColor(((float) trueval(array, idx) / actinglen), 0.8F, 0.8F);
+        Color ret = Color.getHSBColor(((float) trueval(array, idx) / actinglen), 1.0F, 1.0F);
 		return HIGHLIGHTS.hasColor(array, idx) ? new Color(Mixbox.lerp(ret.getRGB(), HIGHLIGHTS.colorAt(array, idx).getRGB(), 0.5f)) : ret;
 	}
 	public static Color hue(int[] array, int idx, int actinglen) {
@@ -62,7 +62,7 @@ public class Colorize {
 		if (HIGHLIGHTS.containsPosition(array, idx))
 			return ARRAYVISUALIZER.getHighlightColor();
 		int c = (int)(255 * (double)Math.max(0, Math.min(array[idx], actinglen))/actinglen);
-        Color ret = multx2(Color.getHSBColor(((float) trueval(array, idx) / (float)Math.floor(Math.sqrt(actinglen))), 0.8F, 0.8F), new Color(c, c, c));
+        Color ret = multx2(Color.getHSBColor(((float) trueval(array, idx) / (float)Math.floor(Math.sqrt(actinglen))), 1.0F, 1.0F), new Color(c, c, c));
 		return HIGHLIGHTS.hasColor(array, idx) ? new Color(Mixbox.lerp(ret.getRGB(), HIGHLIGHTS.colorAt(array, idx).getRGB(), 0.5f)) : ret;
 	}
 	public static Color heatmap(int[] array, int idx, int actinglen) {

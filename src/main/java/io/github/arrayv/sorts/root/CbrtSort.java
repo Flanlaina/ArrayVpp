@@ -12,7 +12,7 @@ public final class CbrtSort extends Sort {
       this.setSortListName("Cbrt");
       this.setRunAllSortsName("Cbrtsort");
       this.setRunSortName("Cbrtsort");
-      this.setCategory("Hybrid Sorts");
+      this.setCategory("Block Merge Sorts");
       this.setBucketSort(false);
       this.setRadixSort(false);
       this.setUnreasonablySlow(false);

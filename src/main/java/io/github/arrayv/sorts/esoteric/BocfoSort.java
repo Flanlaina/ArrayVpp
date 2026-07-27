@@ -39,7 +39,7 @@ public final class BocfoSort extends BogoSorting {
         this.setSortListName("Bocfo");
         this.setRunAllSortsName("Bocfo Sort");
         this.setRunSortName("Bocfosort");
-        this.setCategory("Esoteric Sorts");
+        this.setCategory("Bogo Sorts");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(true);

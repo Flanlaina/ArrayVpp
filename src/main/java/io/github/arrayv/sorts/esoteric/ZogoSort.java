@@ -19,7 +19,7 @@ public final class ZogoSort extends BogoSorting {
         this.setSortListName("Zogo");
         this.setRunAllSortsName("Zogo Sort");
         this.setRunSortName("Zogosort");
-        this.setCategory("Esoteric Sorts");
+        this.setCategory("Bogo Sorts");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(true);

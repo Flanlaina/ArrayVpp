@@ -71,7 +71,7 @@ public final class SqrtSort extends Sort {
         //this.setRunAllSortsName("Square Root Sort [Block Merge Sort]");
         this.setRunAllSortsName("Sqrtsort");
         this.setRunSortName("Sqrtsort");
-        this.setCategory("Hybrid Sorts");
+        this.setCategory("Block Merge Sorts");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

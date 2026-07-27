@@ -12,7 +12,7 @@ public final class AntiSqrtSort extends Sort {
       this.setSortListName("AntiSqrt");
       this.setRunAllSortsName("Anti Sqrtsort");
       this.setRunSortName("AntiSqrtsort");
-      this.setCategory("Hybrid Sorts");
+      this.setCategory("Block Merge Sorts");
       this.setBucketSort(false);
       this.setRadixSort(false);
       this.setUnreasonablySlow(false);
