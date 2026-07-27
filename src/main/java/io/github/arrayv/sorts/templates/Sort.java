@@ -8,7 +8,6 @@ import io.github.arrayv.utils.Delays;
 import io.github.arrayv.utils.Highlights;
 import io.github.arrayv.utils.Reads;
 import io.github.arrayv.utils.Writes;
-import io.github.arrayv.sortdata.SortMeta;
 
 public abstract class Sort {
     private Object[] deprecatedMetadataTable = null;
