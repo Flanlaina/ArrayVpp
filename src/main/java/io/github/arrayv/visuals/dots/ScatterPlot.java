@@ -2,8 +2,6 @@ package io.github.arrayv.visuals.dots;
 
 import java.awt.Color;
 
-import com.scrtwpns.Mixbox;
-
 import io.github.arrayv.main.ArrayVisualizer;
 import io.github.arrayv.utils.Highlights;
 import io.github.arrayv.utils.Renderer;
@@ -44,7 +42,7 @@ public final class ScatterPlot extends Visual {
         this.setCategory("Dot Visuals");
         this.setAuxable(true);
         this.setOverlayable(true);
-        this.addSupportedFeatures("linkeddots");
+        this.addSupportedFeatures("linkeddots", "heat");
     }
 
     public int[] getTopPosFor(int[] array, double idx, int val, ArrayVisualizer ArrayVisualizer, Renderer Renderer) {
