@@ -58,6 +58,7 @@ public class SegmentTreeSort extends Sort {
         this.setRunAllSortsName("Segment Tree Sort");
         this.setRunSortName("Segment Treesort");
         this.setCategory("Selection Sorts");
+        this.setAuthors("arctic, Flanlaina");
         this.setConstant("n log n");
         this.setBucketSort(false);
         this.setRadixSort(false);

@@ -28,6 +28,8 @@ public class NitroConeSortRecursive extends Sort {
         this.setRunAllSortsName("Recursive Nitro Cone Sort");
         this.setRunSortName("Nitro Conesort");
         this.setCategory("Hybrid Sorts");
+        this.setAuthors("aphitorite, Flanlaina, gooflang");
+        this.setConstant("n log^2 n");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

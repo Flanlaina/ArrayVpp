@@ -30,6 +30,7 @@ public class NitroSort extends Sort {
         this.setRunAllSortsName("Nitro Sort");
         this.setRunSortName("Nitrosort");
         this.setCategory("Hybrid Sorts");
+        this.setAuthors("gooflang, Flanlaina, Musicombo");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

@@ -43,15 +43,17 @@ public class AdaptiveKotaSort extends Sort {
 
     public AdaptiveKotaSort(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
-        setSortListName("Adaptive Kota");
-        setRunAllSortsName("Adaptive Kota Sort");
-        setRunSortName("Adaptive Kotasort");
-        setCategory("Hybrid Sorts");
-        setBucketSort(false);
-        setRadixSort(false);
-        setUnreasonablySlow(false);
-        setUnreasonableLimit(0);
-        setBogoSort(false);
+        this.setSortListName("Adaptive Kota");
+        this.setRunAllSortsName("Adaptive Kota Sort");
+        this.setRunSortName("Adaptive Kotasort");
+        this.setCategory("Hybrid Sorts");
+        this.setAuthors("aphitorite, Flanlaina");
+        this.setConstant("n log n");
+        this.setBucketSort(false);
+        this.setRadixSort(false);
+        this.setUnreasonablySlow(false);
+        this.setUnreasonableLimit(0);
+        this.setBogoSort(false);
     }
 
     int tLenCalc(int n, int bLen) {

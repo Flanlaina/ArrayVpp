@@ -74,7 +74,7 @@ public class PeachSort extends Sort {
 
     public static int productLog(int n) {
         int r = 1;
-        while((r<<r)+r-1 < n) r++;
+        while((r<<r) < n) r++;
         return r;
     }
 
@@ -150,6 +150,39 @@ public class PeachSort extends Sort {
         int m8 = this.pseudomo27(array, a + 8 * d, b);
         return this.medOf3(array, this.medOf3(array, m0, m1, m2), this.medOf3(array, m3, m4, m5),
                 this.medOf3(array, m6, m7, m8));
+    }
+
+    // get rank of r between [a,a+g...b)
+    private int gaprank(int[] array, int a, int b, int g, int r) {
+        int re = 0;
+        while (a < b) {
+            if (a != r) {
+                if (Reads.compareIndices(array, a, r, 0.25, true) < 0) re++;
+            }
+            a += g;
+        }
+        return re;
+    }
+
+    // hopefully better "rank of 243s" median selector
+    private int rankof243s(int[] array, int a, int b) {
+        // 2^(log(b-a)/2)
+        int s = 1;
+        while (s * s < b - a) s *= 2;
+
+        // low n: return ninther
+        if ((s /= 2) < 2) return ninther(array, a, b);
+        int mid = (b - a - 1) / (2 * s) + 1, e = (b - a) / 8, cm = a + (b - a) / 2, cr = 0;
+
+        // select pmo243 with gapped rank closest to middle
+        for (int i = 0; i < e; i += s) {
+            int p = pseudomo243(array, a + i, b - e + i), r = gaprank(array, a, b, s, p);
+            if (i == 0 || Math.abs(cr - mid) > Math.abs(r - mid)) {
+                cm = p;
+                cr = r;
+            }
+        }
+        return cm;
     }
 
     public void segmentReversal(int[] array, int start, int end, double cSleep, double wSleep, boolean mark, boolean aux) {
@@ -533,7 +566,6 @@ public class PeachSort extends Sort {
         return m + l;
     }
 
-
     protected void sortHelper(int[] array, int[] buf, int a, int b, int bLen, int depth, boolean bad) {
         while (b - a > INSERT_THRESHOLD) {
             if (depth == 0) {
@@ -543,7 +575,7 @@ public class PeachSort extends Sort {
             depth--;
             int pIdx;
             if(bad) {
-                pIdx = pseudomo243(array, a, b);
+                pIdx = rankof243s(array, a, b);
                 bad = false;
             } else pIdx = ninther(array, a, b);
             Highlights.clearMark(2);

@@ -27,6 +27,8 @@ public class NitroCircloidSortRecursive extends Sort {
         this.setRunAllSortsName("Recursive Nitro Circloid Sort");
         this.setRunSortName("Nitro Circloid Sort");
         this.setCategory("Hybrid Sorts");
+        this.setAuthors("Flanlaina, yuji");
+        this.setConstant("n log^2 n");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

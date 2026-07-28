@@ -28,6 +28,8 @@ public class NitroCircloidSortIterative extends Sort {
         this.setRunAllSortsName("Iterative Nitro Circloid Sort");
         this.setRunSortName("Iterative Nitro Circloid Sort");
         this.setCategory("Hybrid Sorts");
+        this.setAuthors("Flanlaina, yuji");
+        this.setConstant("n log^2 n");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

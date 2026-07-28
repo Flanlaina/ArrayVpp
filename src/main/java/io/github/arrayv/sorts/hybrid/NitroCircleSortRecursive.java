@@ -25,6 +25,8 @@ public class NitroCircleSortRecursive extends Sort {
         this.setRunAllSortsName("Recursive Nitro Circle Sort");
         this.setRunSortName("Nitro Circlesort");
         this.setCategory("Hybrid Sorts");
+        this.setAuthors("Flanlaina");
+        this.setConstant("n log^2 n");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

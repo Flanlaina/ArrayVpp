@@ -2,6 +2,7 @@ package io.github.arrayv.sorts.quick;
 
 import io.github.arrayv.main.ArrayVisualizer;
 import io.github.arrayv.sorts.templates.Sort;
+import io.github.arrayv.utils.IndexedRotations;
 
 /*
 
@@ -119,6 +120,39 @@ public final class AyakoSort extends Sort {
                 this.medOf3(array, m6, m7, m8));
     }
 
+    // get rank of r between [a,a+g...b)
+    private int gaprank(int[] array, int a, int b, int g, int r) {
+        int re = 0;
+        while (a < b) {
+            if (a != r) {
+                if (Reads.compareIndices(array, a, r, 0.25, true) < 0) re++;
+            }
+            a += g;
+        }
+        return re;
+    }
+
+    // hopefully better "rank of 243s" median selector
+    private int rankof243s(int[] array, int a, int b) {
+        // 2^(log(b-a)/2)
+        int s = 1;
+        while (s * s < b - a) s *= 2;
+
+        // low n: return ninther
+        if ((s /= 2) < 2) return ninther(array, a, b);
+        int mid = (b - a - 1) / (2 * s) + 1, e = (b - a) / 8, cm = a + (b - a) / 2, cr = 0;
+
+        // select pmo243 with gapped rank closest to middle
+        for (int i = 0; i < e; i += s) {
+            int p = pseudomo243(array, a + i, b - e + i), r = gaprank(array, a, b, s, p);
+            if (i == 0 || Math.abs(cr - mid) > Math.abs(r - mid)) {
+                cm = p;
+                cr = r;
+            }
+        }
+        return cm;
+    }
+
     public void segmentReversal(int[] array, int start, int end, double delay, boolean mark, boolean aux) {
         for (int i = start; i < end; i++) {
             int left = i;
@@ -137,33 +171,7 @@ public final class AyakoSort extends Sort {
 
     void rotate(int[] array, int a, int m, int b) {
         Highlights.clearMark(2);
-        if (a == m || m == b) return;
-        int p0 = a, p1 = m - 1, p2 = m, p3 = b - 1;
-        int tmp;
-        while (p0 < p1 && p2 < p3) {
-            tmp = array[p1];
-            Writes.write(array, p1--, array[p0], 0.5, true, false);
-            Writes.write(array, p0++, array[p2], 0.5, true, false);
-            Writes.write(array, p2++, array[p3], 0.5, true, false);
-            Writes.write(array, p3--, tmp, 0.5, true, false);
-        }
-        while (p0 < p1) {
-            tmp = array[p1];
-            Writes.write(array, p1--, array[p0], 0.5, true, false);
-            Writes.write(array, p0++, array[p3], 0.5, true, false);
-            Writes.write(array, p3--, tmp, 0.5, true, false);
-        }
-        while (p2 < p3) {
-            tmp = array[p2];
-            Writes.write(array, p2++, array[p3], 0.5, true, false);
-            Writes.write(array, p3--, array[p0], 0.5, true, false);
-            Writes.write(array, p0++, tmp, 0.5, true, false);
-        }
-        if (p0 < p3) { // don't count reversals that don't do anything
-            if (p3 - p0 >= 3) Writes.reversal(array, p0, p3, 1, true, false);
-            else Writes.swap(array, p0, p3, 1, true, false);
-            Highlights.clearMark(2);
-        }
+        IndexedRotations.cycleReverse(array, a, m, b, 1, true, false);
     }
 
     // not at all a true rotation method, but the concept is similar
@@ -221,8 +229,7 @@ public final class AyakoSort extends Sort {
         while (i < b) {
             if (Reads.compareIndices(array, i - 1, i++, 1, true) > 0) {
                 while (i < b && Reads.compareIndices(array, i - 1, i, 1, true) > 0) i++;
-                if (i - j < 4) Writes.swap(array, j, i - 1, 1.0, true, false);
-                else Writes.reversal(array, j, i - 1, 1.0, true, false);
+                Writes.reversal(array, j, i - 1, 1.0, true, false);
             } else while (i < b && Reads.compareIndices(array, i - 1, i, 1, true) <= 0) i++;
             if (i < b) {
                 noSort = false;
@@ -521,7 +528,7 @@ public final class AyakoSort extends Sort {
             depth--;
             int pIdx;
             if(bad) {
-                pIdx = pseudomo243(array, a, b);
+                pIdx = rankof243s(array, a, b);
                 bad = false;
             } else pIdx = ninther(array, a, b);
             int[] pr = partition(array, buf, tags, a, b, bLen, array[pIdx]);

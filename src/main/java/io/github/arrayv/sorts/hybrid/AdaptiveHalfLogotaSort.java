@@ -75,7 +75,7 @@ public class AdaptiveHalfLogotaSort extends Sort {
 
     private static int productLog(int n) {
         int r = 1;
-        while((r<<r)+r-1 < n) r++;
+        while((r<<r) < n) r++;
         return r;
     }
 
