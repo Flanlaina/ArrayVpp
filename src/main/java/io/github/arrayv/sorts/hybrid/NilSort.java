@@ -1,7 +1,6 @@
 package io.github.arrayv.sorts.hybrid;
 
 import io.github.arrayv.main.ArrayVisualizer;
-import io.github.arrayv.sorts.hybrid.LazicciSort;
 import io.github.arrayv.sorts.insert.BlockInsertionSortNeon;
 import io.github.arrayv.sorts.templates.GrailSorting;
 import io.github.arrayv.utils.IndexedRotations;

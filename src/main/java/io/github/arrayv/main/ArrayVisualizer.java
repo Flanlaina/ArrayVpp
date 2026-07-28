@@ -1554,7 +1554,7 @@ public final class ArrayVisualizer {
         title.append(" Sorts, ");
         title.append(this.visuals.length);
         title.append(" Visual Styles, and Infinite Inputs to Sort");
-        title.append(" (v5.2");
+        title.append(" (v5.3");
         String versionSha = buildInfo.getProperty("commitId");
         if (!versionSha.equals("${git.commit.id.abbrev}") && !versionSha.equals("unknown")) // Hash not loaded
             title.append(", commit ").append(versionSha);

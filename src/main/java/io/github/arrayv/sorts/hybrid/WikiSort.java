@@ -61,6 +61,7 @@ public class WikiSort extends Sort {
         this.setRunAllSortsName("Wikisort");
         this.setRunSortName("Wikisort");
         this.setCategory("Block Merge Sorts");
+        this.setAuthors("MikeBonzai");
         this.setConstant("n log n");
         this.setBucketSort(false);
         this.setRadixSort(false);

@@ -12,6 +12,8 @@ final public class DupeSort extends Sort {
         this.setRunAllSortsName("Dupe Sorting Network");
         this.setRunSortName("Dupe Sorting Network");
         this.setCategory("Concurrent Sorts");
+        this.setAuthors("Distray");
+        this.setConstant("n log^2 n");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);
