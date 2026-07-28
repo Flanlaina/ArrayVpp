@@ -33,16 +33,22 @@ SOFTWARE.
 
 /*
 
-Coded for ArrayV by Flanlaina
-in collaboration with aphitorite
-
 +---------------------------+
-| Sorting Algorithm Scarlet |
+| SORTING ALGORITHM SCARLET |
++---------------------------+
+|    A sorting algorithm    |
+|    studio by Flanlaina    |
+|    (a.k.a Ayako-chan)     |
 +---------------------------+
 
  */
 
 /**
+ * An adaptive stable block merge sort with O(log(n)) dynamic external buffer.
+ * <p>
+ * To use this algorithm in another, use {@code blockMergeSort()} from a
+ * reference instance.
+ * 
  * @author Flanlaina
  * @author aphitorite
  *
@@ -119,8 +125,7 @@ public class AdaptiveHalfLogotaSort extends Sort {
         while (i < b) {
             if (Reads.compareIndices(array, i - 1, i++, 1, true) > 0) {
                 while (i < b && Reads.compareIndices(array, i - 1, i, 1, true) > 0) i++;
-                if (i - j < 4) Writes.swap(array, j, i - 1, 1.0, true, false);
-                else Writes.reversal(array, j, i - 1, 1.0, true, false);
+                Writes.reversal(array, j, i - 1, 1.0, true, false);
             } else while (i < b && Reads.compareIndices(array, i - 1, i, 1, true) <= 0) i++;
             if (i < b) {
                 noSort = false;
@@ -142,18 +147,18 @@ public class AdaptiveHalfLogotaSort extends Sort {
     }
 
     private void pivBufXor(int[] array, int pa, int pb, int v, int wLen) {
+        int i = 0;
         while(wLen-- > 0) {
-            if((v&1) == 1) Writes.swap(array, pa+wLen, pb+wLen, 1, true, false);
-            v >>= 1;
+            if((v&1) == 1) Writes.swap(array, pa+i, pb+i, 1, true, false);
+            v >>= 1; i++;
         }
     }
     //@param bit - < pivot means this bit
     private int pivBufGet(int[] array, int pa, int piv, int pCmp, int wLen, int bit) {
         int r = 0;
-
-        while(wLen-- > 0) {
+        while (wLen-- > 0) {
             r <<= 1;
-            r |= (this.pivCmp(array[pa++], piv, pCmp) ? 0 : 1) ^ bit;
+            r |= (this.pivCmp(array[pa + wLen], piv, pCmp) ? 0 : 1) ^ bit;
         }
         return r;
     }
@@ -377,6 +382,15 @@ public class AdaptiveHalfLogotaSort extends Sort {
             this.blockMergeEasy(array, swap, m2 - ms2, m2, b, a, bLen, med, 1, 1);
     }
 
+    /**
+     * Sorts the range {@code [left, right)} of {@code array} using Adaptive Half Logota Sort.
+     *
+     * @param array the array
+     * @param left  the start of the range, inclusive
+     * @param right the end of the range, exclusive
+     * @param bLen  the block size (automatically set to the minimum block size if
+     *              it is lower than that value)
+     */
     public void blockMergeSort(int[] array, int left, int right, int bLen) {
         int j = MIN_INSERT, length = right - left;
         bLen = Math.max(productLog(length), Math.min(bLen, length));

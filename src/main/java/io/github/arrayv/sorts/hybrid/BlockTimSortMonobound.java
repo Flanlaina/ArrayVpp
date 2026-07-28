@@ -32,7 +32,7 @@ SOFTWARE.
  */
 
 /**
- * An adaptive stable merge sort with O(sqrt(n)) dynamic external buffer.
+ * An adaptive stable block merge sort with O(sqrt(n)) dynamic external buffer.
  * <p>
  * To use this algorithm in another, use {@code blockMergeSort()} from a
  * reference instance.
