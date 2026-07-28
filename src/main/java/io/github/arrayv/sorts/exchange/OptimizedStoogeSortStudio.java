@@ -22,7 +22,7 @@ public final class OptimizedStoogeSortStudio extends Sort {
         this.setRunAllSortsName("Optimized Stooge Sort");
         this.setRunSortName("Optistooge Sort");
         this.setCategory("Exchange Sorts");
-        this.setAuthors("Anonymoous0726, aphitorite, EilrahcF");
+        this.setAuthors("Anonymous0726, aphitorite, EilrahcF");
         this.setConstant("n^2");
         this.setBucketSort(false);
         this.setRadixSort(false);
