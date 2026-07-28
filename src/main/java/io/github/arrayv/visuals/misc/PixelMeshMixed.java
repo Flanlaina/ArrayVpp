@@ -46,7 +46,7 @@ final public class PixelMeshMixed extends Visual {
 	}
 	
 	private int multx2i(int a, int b) {
-		return b<64?(a*b)/127:b<128?(a*(b+1))/127:255-(((255-a)*(255-b))/128);
+		return Math.clamp(b<64?(a*b)/127:b<128?(a*(b+1))/127:255-(((255-a)*(255-b))/128), 0, 255);
 	}
 	private Color multx2(Color a, Color b) {
 		return new Color(multx2i(a.getRed(), b.getRed()), multx2i(a.getGreen(), b.getGreen()), multx2i(a.getBlue(), b.getBlue()));
