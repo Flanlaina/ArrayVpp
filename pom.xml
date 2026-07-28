@@ -10,7 +10,7 @@
 
   <name>ArrayV++</name>
   <description>Sorting algorithm visualizer written in Java, with a whole bunch of edits</description>
-  <url>https://github.com/Gaming32/ArrayV</url>
+  <url>https://github.com/Flanlaina/ArrayVpp</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

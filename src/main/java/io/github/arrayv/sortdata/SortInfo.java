@@ -23,6 +23,7 @@ public final class SortInfo {
     private final String listName;
     private final String runName;
     private final String runAllName;
+    private final String authors;
     private final String category;
     private final UnaryOperator<Long> constant;
     private final boolean bogoSort;
@@ -43,6 +44,7 @@ public final class SortInfo {
         this.runName = sort.runName;
         this.runAllName = sort.runAllName;
         this.category = sort.category;
+        this.authors = sort.authors;
         this.constant = sort.constant;
         this.bogoSort = sort.bogoSort;
         this.radixSort = sort.radixSort;
@@ -53,7 +55,6 @@ public final class SortInfo {
         this.fromExtra = sort.fromExtra;
     }
 
-    @SuppressWarnings("deprecation")
     public SortInfo(int id, Class<? extends Sort> sortClass) {
         this.id = id;
         this.internalName = sortClass.getSimpleName();
@@ -72,6 +73,7 @@ public final class SortInfo {
             this.runName = sort.getRunSortName();
             this.runAllName = sort.getRunAllSortsName();
             this.category = sort.getCategory();
+            this.authors = sort.getAuthors();
             this.constant = sort.getConstant();
             this.bogoSort = sort.isBogoSort();
             this.radixSort = sort.isRadixSort();
@@ -92,6 +94,7 @@ public final class SortInfo {
                 ? requireName(name) + " Sort"
                 : metaAnnotation.showcaseName();
             this.category = metaAnnotation.category().isEmpty() ? findSortCategory(sortClass) : metaAnnotation.category();
+            this.authors = metaAnnotation.authors();
             this.constant = Constants.constants.getOrDefault(metaAnnotation.constantName(), n -> -1L);
             this.bogoSort = metaAnnotation.bogoSort();
             this.radixSort = metaAnnotation.radixSort();
@@ -102,7 +105,6 @@ public final class SortInfo {
         this.fromExtra = ArrayVisualizer.getInstance().getSortAnalyzer().didSortComeFromExtra(sortClass);
     }
 
-    @SuppressWarnings("deprecation")
     public SortInfo(int id, Sort sort) {
         this.id = id;
         this.internalName = sort.getClass().getSimpleName();
@@ -120,6 +122,7 @@ public final class SortInfo {
             this.runName = sort.getRunSortName();
             this.runAllName = sort.getRunAllSortsName();
             this.category = sort.getCategory();
+            this.authors = sort.getAuthors();
             this.constant = sort.getConstant();
             this.bogoSort = sort.isBogoSort();
             this.radixSort = sort.isRadixSort();
@@ -140,6 +143,7 @@ public final class SortInfo {
                 ? requireName(name) + " Sort"
                 : metaAnnotation.showcaseName();
             this.category = metaAnnotation.category().isEmpty() ? findSortCategory(sort.getClass()) : metaAnnotation.category();
+            this.authors = metaAnnotation.authors();
             this.constant = Constants.constants.getOrDefault(metaAnnotation.constantName(), n -> -1L);
             this.bogoSort = metaAnnotation.bogoSort();
             this.radixSort = metaAnnotation.radixSort();
@@ -160,6 +164,7 @@ public final class SortInfo {
         String runName,
         String runAllName,
         String category,
+        String authors,
         UnaryOperator<Long> constant,
         boolean slowSort,
         boolean bogoSort,
@@ -178,6 +183,7 @@ public final class SortInfo {
         this.runName = runName;
         this.runAllName = runAllName;
         this.category = category;
+        this.authors = authors;
         this.constant = constant;
         this.bogoSort = bogoSort;
         this.radixSort = radixSort;
@@ -259,6 +265,10 @@ public final class SortInfo {
 
     public String getCategory() {
         return category;
+    }
+
+    public String getAuthors() {
+        return authors;
     }
 
     public UnaryOperator<Long> getConstant() {
@@ -439,6 +449,7 @@ public final class SortInfo {
         private String runName = null;
         private String runAllName = null;
         private String category; // Required
+        private String authors = null;
         private UnaryOperator<Long> constant = n -> -1L;
         private boolean slowSort = false;
         private boolean bogoSort = false;
@@ -462,6 +473,7 @@ public final class SortInfo {
                 runName != null ? runName : (listName + "sort"),
                 runAllName != null ? runAllName : (listName + " Sort"),
                 Objects.requireNonNull(category, "category"),
+                authors,
                 constant,
                 slowSort,
                 bogoSort,
@@ -515,6 +527,11 @@ public final class SortInfo {
 
         public Builder category(String category) {
             this.category = category;
+            return this;
+        }
+
+        public Builder authors(String authors) {
+            this.authors = authors;
             return this;
         }
 

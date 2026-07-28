@@ -13,7 +13,7 @@ public final class BozoSort extends BogoSorting {
         this.setSortListName("Bozo");
         this.setRunAllSortsName("Bozo Sort");
         this.setRunSortName("Bozosort");
-        this.setCategory("Impractical Sorts");
+        this.setCategory("Bogo Sorts");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(true);

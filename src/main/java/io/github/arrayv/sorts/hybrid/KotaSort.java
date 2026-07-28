@@ -39,6 +39,7 @@ public final class KotaSort extends Sort {
 		this.setRunAllSortsName("Kota Sort");
 		this.setRunSortName("Kotasort");
 		this.setCategory("Block Merge Sorts");
+	    this.setAuthors("aphitorite");
 		this.setConstant("n log n");
 		this.setBucketSort(false);
 		this.setRadixSort(false);

@@ -14,6 +14,7 @@ final public class CbrtGrailSort extends GrailSorting {
         this.setRunAllSortsName("Cube Root Grail Sort");
         this.setRunSortName("Cbrt Grail");
         this.setCategory("Hybrid Sorts");
+        this.setAuthors("Distray");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

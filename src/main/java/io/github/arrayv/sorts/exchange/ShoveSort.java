@@ -16,6 +16,7 @@ public final class ShoveSort extends Sort {
         setRunAllSortsName("Shove Sort");
         setRunSortName("Shove Sort");
         setCategory("Impractical Sorts");
+        setAuthors("PiotrGrochowski");
         setBucketSort(false);
         setRadixSort(false);
         setUnreasonablySlow(true);

@@ -15,6 +15,7 @@ final public class ControlKMergeSort extends Sort {
         this.setRunAllSortsName("Control's Kmerge Sort");
         this.setRunSortName("Control's Kmerge Sort (WIP)");
         this.setCategory("Hybrid Sorts");
+        this.setAuthors("Control");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

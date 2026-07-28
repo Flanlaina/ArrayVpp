@@ -17,6 +17,7 @@ public final class NevermoreSort extends BogoSorting {
       this.setRunAllSortsName("Nevermore Sort");
       this.setRunSortName("Nevermoresort");
       this.setCategory("Grossly Impractical Sorts");
+      this.setAuthors("Potassium");
       this.setBucketSort(false);
       this.setRadixSort(false);
       this.setUnreasonablySlow(false);

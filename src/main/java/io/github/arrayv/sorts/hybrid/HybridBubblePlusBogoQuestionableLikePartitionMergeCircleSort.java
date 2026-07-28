@@ -10,6 +10,7 @@ public final class HybridBubblePlusBogoQuestionableLikePartitionMergeCircleSort 
       this.setRunAllSortsName("Hybrid Bubble + Bogo Questionable-Like Partition-Merge Circle Sort");
       this.setRunSortName("Hybrid Bubble + Bogo Questionable-Like Partition-Merge Circlesort");
       this.setCategory("Exchange Sorts");
+      this.setAuthors("Potassium");
       this.setBucketSort(false);
       this.setRadixSort(false);
       this.setUnreasonablySlow(false);

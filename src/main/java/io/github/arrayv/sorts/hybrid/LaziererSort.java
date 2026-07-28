@@ -12,6 +12,7 @@ final public class LaziererSort extends Sort {
         this.setRunAllSortsName("Lazierer Stable Sort");
         this.setRunSortName("Lazierer Sort");
         this.setCategory("Hybrid Sorts");
+        this.setAuthors("Distray");
         this.setConstant("n^1.75");
         this.setBucketSort(false);
         this.setRadixSort(false);

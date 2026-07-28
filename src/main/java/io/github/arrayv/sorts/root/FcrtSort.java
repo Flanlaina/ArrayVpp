@@ -12,7 +12,8 @@ public final class FcrtSort extends Sort {
       this.setSortListName("Fcrt");
       this.setRunAllSortsName("Fcrtsort");
       this.setRunSortName("Fcrtsort");
-      this.setCategory("Hybrid Sorts");
+      this.setCategory("Block Merge Sorts");
+	  this.setAuthors("Potassium");
       this.setBucketSort(false);
       this.setRadixSort(false);
       this.setUnreasonablySlow(false);

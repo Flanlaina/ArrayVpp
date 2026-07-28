@@ -14,7 +14,8 @@ public class NilSort extends GrailSorting {
         this.setRunAllSortsName("Nil Sort");
         this.setRunSortName("Nilsort");
         this.setCategory("Golf Sorts");
-        this.setConstant("n log n log log n");
+        this.setAuthors("Distray");
+        this.setConstant("n sqrt n");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

@@ -33,15 +33,6 @@ final public class DupeSort extends Sort {
     	}
     	return v;
     }
-    
-    private void ccs(int[] array, int a, int q, int p, int n) {
-    	if((a^q)<n && (a^q)-a > 1<<p) {
-		//if((a^q)<n)
-			//compSwap(array, a, a|q);
-			//compSwap(array, a&q, a);
-			compSwap(array, a, a^q);
-    	}
-    }
 	
     @Override
     public void runSort(int[] array, int length, int bucketCount) throws Exception {
@@ -50,7 +41,7 @@ final public class DupeSort extends Sort {
 			if(i==((1<<p)|(1<<(p-q)))){if(q--!=p)continue;}
 			int k = bitreverse(i, p);
 			for(int j = 0; j < length; j++) {
-				ccs(array, j, k, q, length);
+				if((j^k)<length && (j^k)-j == 1<<q) compSwap(array, j, j^k);
 			}
 		}
     }

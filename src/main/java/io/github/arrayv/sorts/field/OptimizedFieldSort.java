@@ -27,6 +27,8 @@ public final class OptimizedFieldSort extends BogoSorting {
 		this.setRunAllSortsName("Optimized Field Sort"); 
 		this.setRunSortName("Optimized Fieldsort"); 
 		this.setCategory("Hybrid Sorts");
+		this.setAuthors("Potassium");
+		this.setConstant("n log n");
 		this.setBucketSort(false);
 		this.setRadixSort(false);
 		this.setUnreasonablySlow(false);

@@ -28,6 +28,8 @@ final public class SumSeededPDQSort extends Sort {
         this.setRunAllSortsName("Sum-Seeded Pattern-Defeating Quick Sort");
         this.setRunSortName("Sum-Seeded Pattern-Defeating Quicksort");
         this.setCategory("Quick/Hybrid Sorts");
+        this.setAuthors("Orson Peters, Potassium");
+        this.setConstant("n log n");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

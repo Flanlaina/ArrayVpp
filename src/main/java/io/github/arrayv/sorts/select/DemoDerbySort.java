@@ -13,6 +13,7 @@ final public class DemoDerbySort extends Sort {
         this.setRunAllSortsName("Demolition Derby Sort");
         this.setRunSortName("Demolition Derby Sort");
         this.setCategory("Selection Sorts");
+  	    this.setAuthors("Distray");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

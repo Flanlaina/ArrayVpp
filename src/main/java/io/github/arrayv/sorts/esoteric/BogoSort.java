@@ -39,7 +39,9 @@ public final class BogoSort extends BogoSorting {
         this.setSortListName("Bogo");
         this.setRunAllSortsName("Bogo Sort");
         this.setRunSortName("Bogosort");
-        this.setCategory("Impractical Sorts");
+        this.setCategory("Bogo Sorts"); // The reason why is left as an exercise for the reader.
+        this.setAuthors("w0rthy");
+        this.setConstant("bogo");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(true);

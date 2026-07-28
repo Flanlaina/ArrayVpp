@@ -60,7 +60,8 @@ public class WikiSort extends Sort {
         //this.setRunAllSortsName("Wiki Sort [Block Merge Sort]");
         this.setRunAllSortsName("Wikisort");
         this.setRunSortName("Wikisort");
-        this.setCategory("Hybrid Sorts");
+        this.setCategory("Block Merge Sorts");
+        this.setConstant("n log n");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

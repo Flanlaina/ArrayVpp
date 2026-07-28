@@ -1,9 +1,9 @@
 package io.github.arrayv.sorts.hybrid;
 
 import io.github.arrayv.main.ArrayVisualizer;
-import io.github.arrayv.sorts.templates.KotaSorting;
+import io.github.arrayv.sorts.templates.KotaSortingLegacy;
 
-final public class EctaSortLegacy extends KotaSorting {
+final public class EctaSortLegacy extends KotaSortingLegacy {
     public EctaSortLegacy(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
         
@@ -11,6 +11,7 @@ final public class EctaSortLegacy extends KotaSorting {
         this.setRunAllSortsName("Ecta Sort (Legacy)");
         this.setRunSortName("Ectasort (Legacy)");
         this.setCategory("Block Merge Sorts");
+	    this.setAuthors("aphitorite");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

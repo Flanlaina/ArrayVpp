@@ -37,6 +37,7 @@ public final class MergeInsertionSort extends Sort {
 		this.setRunAllSortsName("Merge-Insertion Sort");
 		this.setRunSortName("Merge-Insertsort");
 		this.setCategory("Insertion Sorts");
+		this.setAuthors("aphitorite");
 		this.setBucketSort(false);
 		this.setRadixSort(false);
 		this.setUnreasonablySlow(false);

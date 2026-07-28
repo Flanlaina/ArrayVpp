@@ -10,6 +10,7 @@ public final class SusSort extends BogoSorting {
       this.setRunAllSortsName("Suspicious Sort");
       this.setRunSortName("Sussort");
       this.setCategory("Esoteric Sorts");
+      this.setAuthors("Potassium");
       this.setBucketSort(false);
       this.setRadixSort(false);
       this.setUnreasonablySlow(false);

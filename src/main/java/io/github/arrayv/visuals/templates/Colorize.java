@@ -31,7 +31,7 @@ public class Colorize {
 	public static Color graybright(int[] array, int idx, int actinglen) {
 		if (HIGHLIGHTS.containsPosition(array, idx))
 			return ARRAYVISUALIZER.getHighlightColor();
-		int c = (int)(240 * (double)Math.max(0, Math.min(array[idx], actinglen))/actinglen) + 15;
+		int c = (int)(232 * (double)Math.max(0, Math.min(array[idx], actinglen))/actinglen) + 23;
 		Color ret = new Color(c, c, c);
 		return HIGHLIGHTS.hasColor(array, idx) ? new Color(Mixbox.lerp(ret.getRGB(), HIGHLIGHTS.colorAt(array, idx).getRGB(), 0.5f)) : ret;
 	}
@@ -45,12 +45,25 @@ public class Colorize {
 	public static Color hueAlways(int[] array, int idx, int actinglen) {
 		if (HIGHLIGHTS.containsPosition(array, idx))
 			return ARRAYVISUALIZER.getHighlightColor();
-        Color ret = Color.getHSBColor(((float) trueval(array, idx) / actinglen), 0.8F, 0.8F);
+        Color ret = Color.getHSBColor(((float) trueval(array, idx) / actinglen), 1.0F, 1.0F);
 		return HIGHLIGHTS.hasColor(array, idx) ? new Color(Mixbox.lerp(ret.getRGB(), HIGHLIGHTS.colorAt(array, idx).getRGB(), 0.5f)) : ret;
 	}
 	public static Color hue(int[] array, int idx, int actinglen) {
 		if (!ARRAYVISUALIZER.colorEnabled()) return null;
 		return hueAlways(array, idx, actinglen);
+	}
+	private static int multx2i(int a, int b) {
+		return b<64?(a*b)/127:b<128?(a*(b+1))/127:255-(((255-a)*(255-b))/128);
+	}
+	private static Color multx2(Color a, Color b) {
+		return new Color(multx2i(a.getRed(), b.getRed()), multx2i(a.getGreen(), b.getGreen()), multx2i(a.getBlue(), b.getBlue()));
+	}
+	public static Color hueMixed(int[] array, int idx, int actinglen) {
+		if (HIGHLIGHTS.containsPosition(array, idx))
+			return ARRAYVISUALIZER.getHighlightColor();
+		int c = (int)(255 * (double)Math.max(0, Math.min(array[idx], actinglen))/actinglen);
+        Color ret = multx2(Color.getHSBColor(((float) trueval(array, idx) / (float)Math.floor(Math.sqrt(actinglen))), 1.0F, 1.0F), new Color(c, c, c));
+		return HIGHLIGHTS.hasColor(array, idx) ? new Color(Mixbox.lerp(ret.getRGB(), HIGHLIGHTS.colorAt(array, idx).getRGB(), 0.5f)) : ret;
 	}
 	public static Color heatmap(int[] array, int idx, int actinglen) {
 		if (ARRAYVISUALIZER.queryFeatureState("heat") < 1) return null;
@@ -67,6 +80,6 @@ public class Colorize {
 			tmp = opt.apply(array, i, n);
 			if (tmp != null) return tmp;
 		}
-		return (++MISSES & 1) == 1 ? Color.black : Color.magenta;
+		return (MISSES++ & 1) == 1 ? Color.black : Color.magenta;
 	}
 }

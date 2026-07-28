@@ -8,6 +8,7 @@ import io.github.arrayv.main.ArrayVisualizer;
 import io.github.arrayv.utils.Highlights;
 import io.github.arrayv.utils.Renderer;
 import io.github.arrayv.visuals.Visual;
+import io.github.arrayv.visuals.templates.Colorize;
 
 /*
  *
@@ -83,30 +84,24 @@ public final class SpiralDots extends Visual {
             this.mainRender.setStroke(arrayVisualizer.getCustomStroke(2));
 
             for (int i = 0; i < n; i++) {
-                if (Highlights.fancyFinishActive() && i < Highlights.getFancyFinishPosition())
-                    this.mainRender.setColor(Color.GREEN);
-
-                if (Highlights.containsPosition(i)) {
-                    this.mainRender.setColor(arrayVisualizer.getHighlightColor());
+        		this.mainRender.setColor(
+        			Colorize.bestFit(array, i, n,
+        				Colorize::heatmap,
+        				Colorize::fancyFinish,
+        				Colorize::hue,
+        				Colorize::snow
+        			)
+        		);
+                if ((Highlights.fancyFinishActive() && i < Highlights.getFancyFinishPosition()) || Highlights.containsPosition(i))
                     this.mainRender.setStroke(arrayVisualizer.getCustomStroke(4));
-                } else if (arrayVisualizer.colorEnabled()) {
-                	if (Highlights.hasColor(array, i))
-                		this.mainRender.setColor(new Color(Mixbox.lerp(
-                			getIntColor(array[i], arrayVisualizer.getCurrentLength()).getRGB(),
-    	                	Highlights.colorAt(array, i).getRGB(),
-    	                	0.5f
-    	                )));
-                	else this.mainRender.setColor(getIntColor(array[i], arrayVisualizer.getCurrentLength()));
-                } else if (Highlights.hasColor(array, i)) {
-                    this.mainRender.setColor(Highlights.colorAt(array, i));
-                } else  this.mainRender.setColor(Color.WHITE);
+                else
+                    this.mainRender.setStroke(arrayVisualizer.getCustomStroke(2));
 
                 mult = (double) array[i] / arrayVisualizer.getCurrentLength();
                 int x =  width/2 + (int)(mult * r * Math.cos(Math.PI * (2d*i / n - 0.5)));
                 int y = height/2 + (int)(mult * r * Math.sin(Math.PI * (2d*i / n - 0.5)));
 
                 this.mainRender.drawLine(lastX, lastY, x, y);
-                this.mainRender.setStroke(arrayVisualizer.getCustomStroke(2));
 
                 lastX = x;
                 lastY = y;
@@ -116,19 +111,15 @@ public final class SpiralDots extends Visual {
             int dotS = renderer.getDotDimensions();
 
             for (int i = 0; i < n; i++) {
-                if (Highlights.fancyFinishActive() && i < Highlights.getFancyFinishPosition())
-                    this.mainRender.setColor(Color.GREEN);
-                else if (arrayVisualizer.colorEnabled()) {
-                	if (Highlights.hasColor(array, i))
-                		this.mainRender.setColor(new Color(Mixbox.lerp(
-                			getIntColor(array[i], arrayVisualizer.getCurrentLength()).getRGB(),
-    	                	Highlights.colorAt(array, i).getRGB(),
-    	                	0.5f
-    	                )));
-                	else this.mainRender.setColor(getIntColor(array[i], arrayVisualizer.getCurrentLength()));
-                } else if (Highlights.hasColor(array, i)) {
-                    this.mainRender.setColor(Highlights.colorAt(array, i));
-                } else  this.mainRender.setColor(Color.WHITE);
+                if (Highlights.containsPosition(i)) continue;
+        		this.mainRender.setColor(
+        			Colorize.bestFit(array, i, n,
+        				Colorize::heatmap,
+        				Colorize::fancyFinish,
+        				Colorize::hue,
+        				Colorize::snow
+        			)
+        		);
 
                 double mult = (double) array[i] / arrayVisualizer.getCurrentLength();
                 int x =  width/2 + (int)(mult * r * Math.cos(Math.PI * (2d*i / n - 0.5)));
