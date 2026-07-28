@@ -28,6 +28,8 @@ public class LazyLogSort extends Sort {
         this.setRunAllSortsName("Lazy Log Sort");
         this.setRunSortName("Lazy Logsort");
         this.setCategory("Quick Sorts");
+        this.setAuthors("aphitorite, Flanlaina");
+        this.setConstant("n log^2 n");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

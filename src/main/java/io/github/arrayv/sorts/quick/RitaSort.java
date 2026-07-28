@@ -35,6 +35,8 @@ public final class RitaSort extends Sort {
         this.setRunAllSortsName("Rita Sort");
         this.setRunSortName("Ritasort");
         this.setCategory("Quick Sorts");
+        this.setAuthors("aphitorite, Flanlaina");
+        this.setConstant("n log n");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

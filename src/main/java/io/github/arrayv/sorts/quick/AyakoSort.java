@@ -34,6 +34,8 @@ public final class AyakoSort extends Sort {
         this.setRunAllSortsName("Ayako Sort");
         this.setRunSortName("Ayakosort");
         this.setCategory("Quick Sorts");
+        this.setAuthors("aphitorite, Flanlaina, Scandum");
+        this.setConstant("n log n");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

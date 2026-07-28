@@ -48,6 +48,8 @@ public class NewAdaptiveGrailSort extends Sort {
         this.setRunAllSortsName("Adaptive Grail Sort");
         this.setRunSortName("Adaptive Grailsort");
         this.setCategory("Hybrid Sorts");
+        this.setAuthors("aphitorite, Flanlaina");
+        this.setConstant("n log n");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

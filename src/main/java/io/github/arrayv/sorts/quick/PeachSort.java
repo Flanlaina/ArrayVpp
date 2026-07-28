@@ -60,6 +60,8 @@ public class PeachSort extends Sort {
         this.setRunAllSortsName("Peach Sort");
         this.setRunSortName("Peachsort");
         this.setCategory("Quick Sorts");
+        this.setAuthors("aphitorite, Flanlaina, Scandum");
+        this.setConstant("n log n");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

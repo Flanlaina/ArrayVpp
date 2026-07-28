@@ -47,15 +47,17 @@ public class BlockTimSortMonobound extends Sort {
     public BlockTimSortMonobound(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
         //enableSort(false);
-        setSortListName("Block Tim (Monobound Binary Search)");
-        setRunAllSortsName("Block Tim Sort (Monobound Binary Search)");
-        setRunSortName("Block Timsort (Monobound Binary Search)");
-        setCategory("Hybrid Sorts");
-        setBucketSort(false);
-        setRadixSort(false);
-        setUnreasonablySlow(false);
-        setUnreasonableLimit(0);
-        setBogoSort(false);
+        this.setSortListName("Block Tim (Monobound Binary Search)");
+        this.setRunAllSortsName("Block Tim Sort (Monobound Binary Search)");
+        this.setRunSortName("Block Timsort (Monobound Binary Search)");
+        this.setCategory("Hybrid Sorts");
+        this.setAuthors("aphitorite, Flanlaina");
+        this.setConstant("n log n");
+        this.setBucketSort(false);
+        this.setRadixSort(false);
+        this.setUnreasonablySlow(false);
+        this.setUnreasonableLimit(0);
+        this.setBogoSort(false);
     }
 
     // adaptive stable merge sort with O(sqrt(n)) dynamic external buffer

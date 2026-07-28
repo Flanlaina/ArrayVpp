@@ -28,6 +28,8 @@ public class AdaptiveStacklessRotateMergeSort extends Sort {
         this.setRunAllSortsName("Adaptive Stackless Rotate Merge Sort");
         this.setRunSortName("Adaptive Stackless Rotate Mergesort");
         this.setCategory("Merge Sorts");
+        this.setAuthors("Flanlaina, Distray");
+        this.setConstant("n log^2 n");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

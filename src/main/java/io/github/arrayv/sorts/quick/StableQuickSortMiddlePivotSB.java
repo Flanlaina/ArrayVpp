@@ -53,6 +53,8 @@ public class StableQuickSortMiddlePivotSB extends Sort {
         this.setRunAllSortsName("Stable Quick Sort (Middle Pivot, Single Buffer)");
         this.setRunSortName("Stable Quicksort (Middle Pivot, Single Buffer)");
         this.setCategory("Quick Sorts");
+        this.setAuthors("Flanlaina");
+        this.setConstant("n log n");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

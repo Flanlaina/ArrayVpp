@@ -37,6 +37,8 @@ public final class ReimuSort extends Sort {
         this.setRunAllSortsName("Reimu Sort");
         this.setRunSortName("Reimusort");
         this.setCategory("Quick Sorts");
+        this.setAuthors("aphitorite, Flanlaina");
+        this.setConstant("n log n");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

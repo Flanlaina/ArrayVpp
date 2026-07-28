@@ -59,6 +59,8 @@ public class AdaptiveEctaSort extends Sort {
         this.setRunAllSortsName("Adaptive Ecta Sort");
         this.setRunSortName("Adaptive Ectasort");
         this.setCategory("Hybrid Sorts");
+        this.setAuthors("aphitorite, Flanlaina");
+        this.setConstant("n log n");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

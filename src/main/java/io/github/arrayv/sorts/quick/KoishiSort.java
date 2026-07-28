@@ -60,6 +60,7 @@ public final class KoishiSort extends Sort {
         this.setRunAllSortsName("Koishi Sort");
         this.setRunSortName("Koishisort");
         this.setCategory("Quick Sorts");
+        this.setAuthors("aphitorite, Flanlaina, Distray, Scandum");
         this.setConstant("n log n");
         this.setBucketSort(false);
         this.setRadixSort(false);

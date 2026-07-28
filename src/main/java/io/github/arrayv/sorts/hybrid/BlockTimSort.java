@@ -59,6 +59,8 @@ public class BlockTimSort extends Sort {
         setRunAllSortsName("Block Tim Sort");
         setRunSortName("Block Timsort");
         setCategory("Hybrid Sorts");
+        this.setAuthors("aphitorite, Flanlaina");
+        this.setConstant("n log n");
         setBucketSort(false);
         setRadixSort(false);
         setUnreasonablySlow(false);
