@@ -206,7 +206,7 @@ public final class SortPrompt extends javax.swing.JFrame implements AppFrame {
         );
         installExtraSortPackButton.addActionListener(e -> {
             utilFrame.jButton1ResetText();
-            utilFrame.jButton1Disable();
+            utilFrame.sortButtonDisable();
             dispose();
             new Thread(() -> {
                 ProgressMonitor installProgress = new ProgressMonitor(
@@ -234,7 +234,7 @@ public final class SortPrompt extends javax.swing.JFrame implements AppFrame {
                     analyzer.analyzeSortsExtrasOnly();
                     analyzer.sortSorts();
                     arrayVisualizer.refreshTables();
-                    utilFrame.jButton1Enable();
+                    utilFrame.sortButtonEnable();
                     JOptionPane.showMessageDialog(
                         arrayVisualizer.getMainWindow(),
                         "Successfully installed and loaded extra sorts pack!",
@@ -242,7 +242,7 @@ public final class SortPrompt extends javax.swing.JFrame implements AppFrame {
                         JOptionPane.INFORMATION_MESSAGE
                     );
                 } else {
-                    utilFrame.jButton1Enable();
+                    utilFrame.sortButtonEnable();
                 }
             }, "ExtraSortsInstall").start();
         });

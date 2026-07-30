@@ -13,7 +13,7 @@ public final class JErrorPane extends JOptionPane {
     private static volatile boolean errorMessageActive = false;
 
     private static JTextArea createTextArea(String errorMsg) {
-        JTextArea error = new JTextArea();
+        JTextArea error = new JTextArea(10, 80);
         error.setText(errorMsg);
         error.setCaretPosition(0);
         error.setEditable(false);
@@ -23,7 +23,7 @@ public final class JErrorPane extends JOptionPane {
     public static void invokeMonospaceErrorMessage(String body, String title) {
         errorMessageActive = true;
 
-        JTextArea error = createTextArea(body);
+        JScrollPane error = new JScrollPane(createTextArea(body));
 
         JOptionPane.showMessageDialog(null, error, title, JOptionPane.ERROR_MESSAGE);
         errorMessageActive = false;

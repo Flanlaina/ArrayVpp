@@ -99,8 +99,8 @@ public final class UtilFrame extends javax.swing.JFrame {
         this.jButton2 = new javax.swing.JButton();
         JButton jButton3 = new JButton();
         this.jCheckBox1 = new javax.swing.JCheckBox();
-        JButton jButton4 = new JButton();
-        JButton jButton7 = new JButton();
+        jButton4 = new JButton();
+        jButton7 = new JButton();
         this.jCheckBox3 = new javax.swing.JCheckBox();
         this.jCheckBox4 = new javax.swing.JCheckBox();
         JButton jButton5 = new JButton();
@@ -127,9 +127,11 @@ public final class UtilFrame extends javax.swing.JFrame {
 
         jButton4.setText("Cancel Delays");
         jButton4.addActionListener(evt -> jButton4ActionPerformed());
+        jButton4.setEnabled(false);
 
         jButton7.setText("Cancel Sort");
         jButton7.addActionListener(evt -> jButton7ActionPerformed());
+        jButton7.setEnabled(false);
 
         jCheckBox1.setSelected(true);
         jCheckBox1.setText("Show Shuffle");
@@ -331,12 +333,16 @@ public final class UtilFrame extends javax.swing.JFrame {
         jButton1.setText("Choose Sort");
     }
 
-    public void jButton1Enable() {
+    public void sortButtonEnable() {
         jButton1.setEnabled(true);
+        jButton4.setEnabled(false);
+        jButton7.setEnabled(false);
     }
 
-    public void jButton1Disable() {
+    public void sortButtonDisable() {
         jButton1.setEnabled(false);
+        jButton4.setEnabled(true);
+        jButton7.setEnabled(true);
     }
 
     private void jButton2ActionPerformed() {//GEN-FIRST:event_jButton2ActionPerformed
@@ -541,4 +547,8 @@ public final class UtilFrame extends javax.swing.JFrame {
     private javax.swing.JCheckBox jCheckBox9;
     @SuppressWarnings("rawtypes")
     private javax.swing.JComboBox jComboBox1;
+
+    private JButton jButton4;
+
+    private JButton jButton7;
 }
