@@ -5,63 +5,30 @@ import io.github.arrayv.sorts.templates.Sort;
 import io.github.arrayv.utils.IndexedRotations;
 
 /*
- *
-MIT License
 
-Copyright (c) 2023 aphitorite
-Copyright (c) 2026 Flanlaina, Sorting Algorithm Scarlet
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
- *
- */
-
-/*
+Coded for ArrayV by Flanlaina
+in collaboration with aphitorite
 
 +---------------------------+
-| SORTING ALGORITHM SCARLET |
-+---------------------------+
-|    A sorting algorithm    |
-|    studio by Flanlaina    |
-|    (a.k.a Ayako-chan)     |
+| Sorting Algorithm Scarlet |
 +---------------------------+
 
  */
 
 /**
- * An adaptive stable block merge sort with O(log(n)) dynamic external buffer.
- * <p>
- * To use this algorithm in another, use {@code blockMergeSort()} from a
- * reference instance.
- * 
  * @author Flanlaina
  * @author aphitorite
  *
  */
-public class AdaptiveHalfLogotaSort extends Sort {
-
-    public AdaptiveHalfLogotaSort(ArrayVisualizer arrayVisualizer) {
+public class AdaptiveLograilSort extends Sort {
+    public AdaptiveLograilSort(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
-        this.setSortListName("Adaptive Half Logota");
-        this.setRunAllSortsName("Adaptive Half Logota Sort");
-        this.setRunSortName("Adaptive Half Logotasort");
+        // enableSort(false);
+        this.setSortListName("Adaptive Lograil");
+        this.setRunAllSortsName("Adaptive Lograil Sort");
+        this.setRunSortName("Adaptive Lograilsort");
         this.setCategory("Hybrid Sorts");
-        this.setAuthors("Flanlaina, aphitorite");
+        this.setAuthors("aphitorite, Flanlaina");
         this.setConstant("n log n");
         this.setBucketSort(false);
         this.setRadixSort(false);
@@ -85,13 +52,11 @@ public class AdaptiveHalfLogotaSort extends Sort {
 
     protected void insertTo(int[] array, int a, int b) {
         Highlights.clearMark(2);
-        if (a != b) {
-            int temp = array[a];
-            int d = (a > b) ? -1 : 1;
-            for (int i = a; i != b; i += d)
-                Writes.write(array, i, array[i + d], 0.5, true, false);
-            Writes.write(array, b, temp, 0.5, true, false);
-        }
+        int temp = array[a];
+        int d = (a > b) ? -1 : 1;
+        for (int i = a; i != b; i += d)
+            Writes.write(array, i, array[i + d], 0.5, true, false);
+        if (a != b) Writes.write(array, b, temp, 0.5, true, false);
     }
 
     protected int binSearch(int[] array, int a, int b, int val, boolean left) {
@@ -126,7 +91,8 @@ public class AdaptiveHalfLogotaSort extends Sort {
         while (i < b) {
             if (Reads.compareIndices(array, i - 1, i++, 1, true) > 0) {
                 while (i < b && Reads.compareIndices(array, i - 1, i, 1, true) > 0) i++;
-                Writes.reversal(array, j, i - 1, 1.0, true, false);
+                if (i - j < 4) Writes.swap(array, j, i - 1, 1.0, true, false);
+                else Writes.reversal(array, j, i - 1, 1.0, true, false);
             } else while (i < b && Reads.compareIndices(array, i - 1, i, 1, true) <= 0) i++;
             if (i < b) {
                 noSort = false;
@@ -156,24 +122,25 @@ public class AdaptiveHalfLogotaSort extends Sort {
     }
     //@param bit - < pivot means this bit
     private int pivBufGet(int[] array, int pa, int piv, int pCmp, int wLen, int bit) {
-        int r = 0;
-        while (wLen-- > 0) {
-            r <<= 1;
-            r |= (this.pivCmp(array[pa + wLen], piv, pCmp) ? 0 : 1) ^ bit;
+        int r = 0, i = 0;
+        while(wLen-- > 0) {
+            r |= ((this.pivCmp(array[pa++], piv, pCmp) ? 0 : 1) ^ bit) << i;
+            i++;
         }
         return r;
     }
 
-    protected void blockCycle(int[] array, int a, int n, int tagStart, int bLen, int wLen, int piv, int eqLower,
-            int bit) {
-        for (int i = 0, aPtr = a, tPtr = tagStart; i < n; i++, aPtr += bLen, tPtr += bLen) {
-            int dest = this.pivBufGet(array, aPtr, piv, eqLower, wLen, bit);
-            while (dest != i) {
-                this.blockSwap(array, aPtr, a + dest * bLen, bLen);
-                dest = this.pivBufGet(array, aPtr, piv, eqLower, wLen, bit);
+    private void blockCycle(int[] array, int p, int n, int p1, int bLen, int wLen, int piv, int pCmp, int bit) {
+        for(int i = 0; i < n; i++) {
+            int dest = this.pivBufGet(array, p+i*bLen, piv, pCmp, wLen, bit);
+
+            while(dest != i) {
+                this.blockSwap(array, p+i*bLen, p+dest*bLen, bLen);
+                dest = this.pivBufGet(array, p+i*bLen, piv, pCmp, wLen, bit);
             }
-            this.pivBufXor(array, aPtr, tPtr, i, wLen);
+            this.pivBufXor(array, p+i*bLen, p1+i*bLen, i, wLen);
         }
+        Highlights.clearMark(2);
     }
 
     private void blockSwap(int[] array, int a, int b, int s) {
@@ -229,66 +196,96 @@ public class AdaptiveHalfLogotaSort extends Sort {
             this.mergeFWExt(array, swap, a, m, b);
             return;
         }
-        if(b-m <= bLen) {
-            this.mergeBWExt(array, swap, a, m, b);
-            return;
-        }
-
-        int wLen = log2((b-a)/bLen-1)+1, t = 1;
-
-        int i = a, j = m, l = a, r = m;
-        int pc = p + bLen;
+        Writes.arraycopy(array, m-bLen, swap, 0, bLen, 1, true, true);
         
-        for(int c = 0; c < bLen; c++) {
-            if(Reads.compareIndices(array, i, j, 0.5, true) <= 0) {
-                Writes.write(swap, c, array[i++], 1, true, true);
+        int bCnt = 0, wLen = log2((b-a)/bLen-2)+1;
+        
+        int i = a, j = m, k = 0, pc = p;
+        
+        while(i < m-bLen && j+bLen-1 < b) {
+            if (Reads.compareIndices(array, i + bLen - 1, j + bLen - 1, 0.5, true) <= 0) {
+                this.pivBufXor(array, i, pc, k, wLen);
+                i += bLen;
+            } else {
+                this.pivBufXor(array, j, pc, k | (1 << wLen), wLen + 1);
+                j += bLen;
             }
-            else {
-                Writes.write(swap, c, array[j++], 1, true, true);
-            }
-        }
-
-        while (l < m && r < b) {
-            boolean left = i-l > 0 && (i-l == bLen || Reads.compareIndices(array, l+bLen-1, r+bLen-1, 1, true) <= 0);
-            int k = left ? l : r;
-            for(int c = 0; c < bLen; c++) {
-                int tmp;
-                if(i < m && (j == b || Reads.compareIndices(array, i, j, 0.5, true) <= 0)) tmp = array[i++];
-                else tmp = array[j++];
-                Highlights.markArray(3, k);
-                Writes.write(array, k++, tmp, 1, false, false);
-            }
-            if(left) l = k;
-            else     r = k;
-
-            pivBufXor(array, k - bLen, pc, t++, wLen);
             pc += bLen;
+            bCnt++; k++;
+        }
+        while(i < m-bLen) {
+            this.pivBufXor(array, i, pc, k++, wLen);
+            i += bLen;
+            pc += bLen;
+            bCnt++;
         }
         Highlights.clearMark(2);
-        Highlights.clearMark(3);
+        Writes.arraycopy(array, a, array, m-bLen, bLen, 1, true, false);
         
-        int pr = l < m ? l : r;
-
-        Writes.arraycopy(swap, 0, array, pr, bLen, 0.5, true, false);
-        pivBufXor(array, pr, p, 0, wLen);
-
-        if (l < m) {
-            l += bLen;
-            while (l < m) {
-                pivBufXor(array, l, pc, t++, wLen);
-                pc += bLen; l += bLen;
+        int a1 = a+bLen;
+        this.blockCycle(array, a1, bCnt, p, bLen, wLen, piv, pCmp, bit);
+        
+        int f = a1;
+        boolean left = this.pivCmp(array[a1+wLen], piv, pCmp) ^ (bit != 0);
+        
+        if(!left) Writes.swap(array, a1+wLen, p+wLen, 1, true, false);
+        
+        for(k = 1, j = a; k < bCnt; k++) {
+            int nxt = a1 + k*bLen;
+            boolean frag = this.pivCmp(array[nxt+wLen], piv, pCmp) ^ (bit != 0);
+            
+            if(!frag) Writes.swap(array, nxt+wLen, p+(nxt+wLen-a1), 1, true, false);
+            
+            if(left ^ frag) {
+                i = f; f = nxt;
+                
+                while(i < nxt) {
+                    int cmp = Reads.compareValues(array[i], array[f]);
+                    Highlights.markArray(2, f);
+                    
+                    if(cmp < 0 || (left && cmp == 0))
+                        Writes.write(array, j++, array[i++], 1, true, false);
+                    else
+                        Writes.write(array, j++, array[f++], 1, true, false);
+                }
+                left = !left;
             }
         }
-        if (r < b) {
-            r += bLen;
-            while (r < b) {
-                pivBufXor(array, r, pc, t++, wLen);
-                pc += bLen; r += bLen;
+        if(left) {
+            k = a1 + bCnt*bLen;
+            i = f; f = k;
+                    
+            while(i < k && f < b) {
+                Highlights.markArray(2, f);
+                
+                if(Reads.compareValues(array[i], array[f]) <= 0)
+                    Writes.write(array, j++, array[i++], 1, true, false);
+                else
+                    Writes.write(array, j++, array[f++], 1, true, false);
+            }
+            Highlights.clearMark(2);
+            
+            if(f == b) {
+                while(i < k) Writes.write(array, j++, array[i++], 1, true, false);
+                Writes.arraycopy(swap, 0, array, b-bLen, bLen, 1, true, false);
+                return;
             }
         }
-
-        this.blockCycle(array, a, (b - a) / bLen, p, bLen, wLen, piv, pCmp, bit);
+        i = 0;
+        
+        while(i < bLen && f < b) {
+            Highlights.markArray(2, f);
+            
+            if(Reads.compareValues(swap[i], array[f]) <= 0)
+                Writes.write(array, j++, swap[i++], 1, true, false);
+            else
+                Writes.write(array, j++, array[f++], 1, true, false);
+        }
+        Highlights.clearMark(2);
+        
+        while(i < bLen) Writes.write(array, j++, swap[i++], 1, true, false);
     }
+
     private void blockMergeEasy(int[] array, int[] swap, int a, int m, int b, int p, int bLen, int piv, int pCmp, int bit) {
         if (Reads.compareIndices(array, m - 1, m, 0.5, true) <= 0) return;
         b = maxExpSearch(array, m, b, array[m - 1], true);
@@ -302,10 +299,9 @@ public class AdaptiveHalfLogotaSort extends Sort {
             return;
         }
 
-        int a1 = a+(m-a)%bLen, b1 = b-(b-m)%bLen;
+        int a1 = a+(m-a)%bLen;
 
-        this.blockMergeHelper(array, swap, a1, m, b1, p, bLen, piv, pCmp, bit);
-        this.mergeBWExt(array, swap, a1, b1, b);
+        this.blockMergeHelper(array, swap, a1, m, b, p, bLen, piv, pCmp, bit);
         this.mergeFWExt(array, swap, a, a1, b);
     }
 
@@ -339,8 +335,8 @@ public class AdaptiveHalfLogotaSort extends Sort {
             if (la == 0)
                 med = array[a + lCnt - 1];
             else
-                med = Reads.compareIndices(array, m + la - 1, a + (lCnt - la) - 1, 0.25, true) > 0
-                    ? array[m + la - 1] : array[a + (lCnt - la) - 1];
+                med = Reads.compareIndices(array, m + la - 1, a + (lCnt - la) - 1, 0.25, true) > 0 ? array[m + la - 1]
+                        : array[a + (lCnt - la) - 1];
         } else {
             if (l <= bLen) {
                 this.mergeFWExt(array, swap, a, m, b);
@@ -361,8 +357,8 @@ public class AdaptiveHalfLogotaSort extends Sort {
             else if (la == 0)
                 med = array[m + lCnt - 1];
             else
-                med = Reads.compareIndices(array, a + la - 1, m + (lCnt - la) - 1, 0.25, true) >= 0
-                    ? array[a + la - 1] : array[m + (lCnt - la) - 1];
+                med = Reads.compareIndices(array, a + la - 1, m + (lCnt - la) - 1, 0.25, true) >= 0 ? array[a + la - 1]
+                        : array[m + (lCnt - la) - 1];
         }
         Highlights.clearMark(2);
 
@@ -383,17 +379,6 @@ public class AdaptiveHalfLogotaSort extends Sort {
             this.blockMergeEasy(array, swap, m2 - ms2, m2, b, a, bLen, med, 1, 1);
     }
 
-    /**
-     * Sorts the range {@code [left, right)} of {@code array} using Adaptive Half Logota Sort.
-     *
-     * @param array the array
-     * @param left  the start of the range, inclusive
-     * @param right the end of the range, exclusive
-     * @param bLen  the block size, automatically clamped to {@code [u, n]} where u
-     *              is the smallest integer such that u&Cross;2<sup>u</sup> &ge; n.
-     *              A value of 1 can be used to have the block size calculated
-     *              automatically.
-     */
     public void blockMergeSort(int[] array, int left, int right, int bLen) {
         int j = MIN_INSERT, length = right - left;
         bLen = Math.max(productLog(length), Math.min(bLen, length));
@@ -408,7 +393,5 @@ public class AdaptiveHalfLogotaSort extends Sort {
     @Override
     public void runSort(int[] array, int sortLength, int bucketCount) {
         blockMergeSort(array, 0, sortLength, bucketCount);
-
     }
-
 }

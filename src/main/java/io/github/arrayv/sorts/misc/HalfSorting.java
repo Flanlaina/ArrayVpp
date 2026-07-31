@@ -15,10 +15,11 @@ public final class HalfSorting extends Sort {
     public HalfSorting(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
 
-        this.setSortListName("Half");
+        this.setSortListName("Half-access");
         this.setRunAllSortsName("Half-access Sorting");
         this.setRunSortName("Halfsorting");
         this.setCategory("Miscellaneous Sorts");
+        this.setAuthors("Ishu100");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);
@@ -70,7 +71,7 @@ public final class HalfSorting extends Sort {
             int kp = 0;
             boolean swapped = false;
             if (hp > half) {
-                for (int k = hp; k > half; k = k) {
+                for (int k = hp; k > half;) {
                     Highlights.clearMark(2);
                     Highlights.markArray(1, k);
                     Delays.sleep(0.025);

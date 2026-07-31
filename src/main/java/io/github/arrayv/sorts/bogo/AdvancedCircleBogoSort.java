@@ -30,6 +30,7 @@ public class AdvancedCircleBogoSort extends BogoSorting {
         this.setRunAllSortsName("Advanced Circle Bogo Sort");
         this.setRunSortName("Advanced Circle Bogosort");
         this.setCategory("Bogo Sorts");
+        this.setAuthors("Flanlaina, gooflang");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

@@ -15,10 +15,11 @@ public final class CircleBogoSort extends BogoSorting {
         this.setRunAllSortsName("Circle Bogo Sort");
         this.setRunSortName("Circle Bogosort");
         this.setCategory("Bogo Sorts");
+        this.setAuthors("Flanlaina, yuji");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(true);
-        this.setUnreasonableLimit(512);
+        this.setUnreasonableLimit(1024);
         this.setBogoSort(true);
     }
 

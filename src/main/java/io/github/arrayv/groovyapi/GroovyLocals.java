@@ -266,6 +266,7 @@ public final class GroovyLocals {
             );
 
         Sounds.toggleSound(true);
+        arrayVisualizer.getUtilFrame().sortButtonDisable();
         Thread sortingThread = new Thread(() -> {
             RunGroupContext.CONTEXT.set(new RunGroupContext(sortCount, arrayVisualizer.getCurrentLength()));
             try {
@@ -281,7 +282,7 @@ public final class GroovyLocals {
                     arrayVisualizer.setHeading("Done");
                 }
                 arrayVisualizer.updateNow();
-
+                arrayVisualizer.getUtilFrame().sortButtonEnable();
                 arrayManager.toggleMutableLength(true);
             } catch (Exception e) {
                 JErrorPane.invokeErrorMessage(e);

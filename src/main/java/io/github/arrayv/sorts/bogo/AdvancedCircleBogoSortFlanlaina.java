@@ -28,6 +28,7 @@ public class AdvancedCircleBogoSortFlanlaina extends BogoSorting {
         this.setRunAllSortsName("Flanlaina's Advanced Circle Bogo Sort");
         this.setRunSortName("Flanlaina's Advanced Circle Bogosort");
         this.setCategory("Bogo Sorts");
+        this.setAuthors("Flanlaina, gooflang");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

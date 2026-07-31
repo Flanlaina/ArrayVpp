@@ -606,8 +606,10 @@ public class PeachSort extends Sort {
      * @param array the array
      * @param a     the start of the range, inclusive
      * @param b     the end of the range, exclusive
-     * @param bLen  the block size (automatically set to the minimum block size if
-     *              it is lower than that value)
+     * @param bLen  the block size, automatically clamped to {@code [u, n]} where u
+     *              is the smallest integer such that u&Cross;2<sup>u</sup> &ge; n.
+     *              A value of 1 can be used to have the block size calculated
+     *              automatically.
      */
     public void quickSort(int[] array, int a, int b, int bLen) {
         int len = b - a;
