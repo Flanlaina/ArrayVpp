@@ -125,13 +125,15 @@ public final class UtilFrame extends javax.swing.JFrame {
         jButton3.setText("Change Speed");
         jButton3.addActionListener(evt -> jButton3ActionPerformed());
 
-        jButton4.setText("Cancel Delays");
+        jButton4.setText("\u25B6\u25B6");
+        jButton4.setToolTipText("Cancel Delays");
         jButton4.addActionListener(evt -> jButton4ActionPerformed());
-        jButton4.setEnabled(false);
+        // jButton4.setEnabled(false);
 
-        jButton7.setText("Cancel Sort");
+        jButton7.setText("\u23F9");
+        jButton7.setToolTipText("Cancel Sort");
         jButton7.addActionListener(evt -> jButton7ActionPerformed());
-        jButton7.setEnabled(false);
+        // jButton7.setEnabled(false);
 
         jCheckBox1.setSelected(true);
         jCheckBox1.setText("Show Shuffle");
@@ -335,14 +337,10 @@ public final class UtilFrame extends javax.swing.JFrame {
 
     public void sortButtonEnable() {
         jButton1.setEnabled(true);
-        jButton4.setEnabled(false);
-        jButton7.setEnabled(false);
     }
 
     public void sortButtonDisable() {
         jButton1.setEnabled(false);
-        jButton4.setEnabled(true);
-        jButton7.setEnabled(true);
     }
 
     private void jButton2ActionPerformed() {//GEN-FIRST:event_jButton2ActionPerformed
@@ -402,11 +400,13 @@ public final class UtilFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jCheckBox3ActionPerformed
 
     private void jButton4ActionPerformed() {//GEN-FIRST:event_jButton4ActionPerformed
-        Delays.changeSkipped(true);
+        if (arrayVisualizer.isActive()) Delays.changeSkipped(true);
+        else JOptionPane.showMessageDialog(null, "Cannot cancel delays while no sort is running", "Error", JOptionPane.ERROR_MESSAGE);
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton7ActionPerformed() {//GEN-FIRST:event_jButton4ActionPerformed
-        arrayVisualizer.setCanceled(true);
+        if (arrayVisualizer.isActive()) arrayVisualizer.setCanceled(true);
+        else JOptionPane.showMessageDialog(null, "There is no running sort to stop", "Error", JOptionPane.ERROR_MESSAGE);
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jCheckBox4ActionPerformed() {//GEN-FIRST:event_jButton4ActionPerformed

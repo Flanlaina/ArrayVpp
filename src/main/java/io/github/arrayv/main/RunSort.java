@@ -116,8 +116,6 @@ public final class RunSort {
             delayOps.changeSkipped(false);
         }
 
-        arrayVisualizer.getUtilFrame().sortButtonDisable();
-
         double storeVol = sounds.getVolume();
         sounds.toggleSound(true);
         Thread sortThread = new Thread("ComparisonSorting") {
@@ -242,19 +240,17 @@ public final class RunSort {
                 sounds.changeVolume(storeVol);
                 sounds.toggleSound(false);
                 System.gc(); // Reduce RAM usage from any high-memory tasks (e.g. visualizing a sorting network)
-                arrayVisualizer.getUtilFrame().sortButtonEnable();
             }
         };
         sortThread.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
             public void uncaughtException(Thread t, Throwable e) {
-                JErrorPane.invokeErrorMessage(e, "Error in sorting thread");
+                JErrorPane.invokeErrorMessage(e, "Fatal error in sorting thread");
                 arrayVisualizer.endSort();
                 arrayManager.toggleMutableLength(true);
                 sounds.changeVolume(storeVol);
                 sounds.toggleSound(false);
                 System.gc(); // Reduce RAM usage from any high-memory tasks (e.g. visualizing a sorting network)
-                arrayVisualizer.getUtilFrame().sortButtonEnable();
             }
         });
         arrayVisualizer.setSortingThread(sortThread);
