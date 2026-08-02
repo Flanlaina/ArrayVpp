@@ -281,7 +281,7 @@ public final class Renderer {
         if (arrayVisualizer.externalArraysEnabled()) {
             this.auxActive = true;
             for (int i = vis_count; i > 0; i--) {
-                if (arrays[i] != null) {
+                if (arrays[i] != null && arrays[i].length > 0) {
                     this.updateVisualsPerArray(arrayVisualizer, arrays[i], i >= arrays_count ? arrayVisualizer.getArrayVLists().get(i - arrays_count).size() : arrays[i].length);
                     box = activeVisual.getBoundingBox(arrays, vis_count - i, i, vis_count, arrayVisualizer, this);
                     for (VisualFeature f : arrayVisualizer.getVisualFeatures()) {
