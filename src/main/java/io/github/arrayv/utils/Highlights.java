@@ -406,12 +406,12 @@ public final class Highlights {
         int[] thisHL = highlights.get(array);
         byte[] thisMC = markCounts.get(array);
         if(thisHL == null) return;
-        for (int i = 0; i < this.maxHighlightMarked; i++) {
+        for (int i = 0; i < Math.min(this.maxHighlightMarked, thisHL.length); i++) {
             if (thisHL[i] != -1) {
                 thisMC[thisHL[i]] = 0;
             }
     	}
-        Arrays.fill(thisHL, 0, this.maxHighlightMarked, -1);
+        Arrays.fill(thisHL, 0, Math.min(this.maxHighlightMarked, thisHL.length), -1);
         this.markCount.put(array, 0);
 
       decMax:
