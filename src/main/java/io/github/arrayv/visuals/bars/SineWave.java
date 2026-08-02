@@ -67,7 +67,7 @@ public final class SineWave extends Visual {
     public void drawVisual(int[] array, int[] boundingBox, ArrayVisualizer arrayVisualizer, Renderer renderer, Highlights Highlights) {
         for (int i = 0, j = 0; i < renderer.getArrayLength(); i++) {
     		this.mainRender.setColor(
-    			Colorize.bestFit(array, i, renderer.getArrayLength(),
+    			Colorize.bestFit(array, i, arrayVisualizer.getCurrentLength(),
     				Colorize::heatmap,
     				Colorize::fancyFinish,
     				Colorize::hue,

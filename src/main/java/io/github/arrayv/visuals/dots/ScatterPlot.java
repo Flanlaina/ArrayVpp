@@ -62,7 +62,7 @@ public final class ScatterPlot extends Visual {
 
     @Override
     public void drawVisual(int[] array, int[] boundingBox, ArrayVisualizer arrayVisualizer, Renderer renderer, Highlights Highlights) {
-        int offset = 20 + (int) (renderer.getXScale()/2), n = renderer.getArrayLength();
+        int offset = 20 + (int) (renderer.getXScale()/2), n = renderer.getArrayLength(), nmain = arrayVisualizer.getCurrentLength();
 
         if (arrayVisualizer.queryFeatureState("linkeddots") > 0) {
             int lastX = 0;
@@ -71,7 +71,7 @@ public final class ScatterPlot extends Visual {
 
             for (int i = 1, j = (int) renderer.getXScale(); i < n; i++) {
         		this.mainRender.setColor(
-        			Colorize.bestFit(array, i, n,
+        			Colorize.bestFit(array, i, nmain,
         				Colorize::heatmap,
         				Colorize::fancyFinish,
         				Colorize::hue,
@@ -100,7 +100,7 @@ public final class ScatterPlot extends Visual {
 
             for (int i = 0, j = 0; i < n; i++) {
         		this.mainRender.setColor(
-        			Colorize.bestFit(array, i, n,
+        			Colorize.bestFit(array, i, nmain,
         				Colorize::heatmap,
         				Colorize::fancyFinish,
         				Colorize::hue,

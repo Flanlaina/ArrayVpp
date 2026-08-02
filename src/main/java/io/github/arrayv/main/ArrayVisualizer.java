@@ -561,7 +561,15 @@ public final class ArrayVisualizer {
                             ArrayVisualizer.this.updateVisualsForced.decrementAndGet();
                             ArrayVisualizer.this.renderer.updateVisualsStart(ArrayVisualizer.this);
                             int ttl = ArrayVisualizer.this.arrays.size() + ArrayVisualizer.this.arrayVLists.size();
-                            int[][] arrays = ArrayVisualizer.this.arrays.toArray(new int[ttl][]);
+                            int[][] arrays = null;
+                            // hacky
+                            while(arrays == null) {
+	                            try {
+	                                arrays = ArrayVisualizer.this.arrays.toArray(new int[ttl][]);
+	                            } catch(ArrayIndexOutOfBoundsException e) {
+	                            	ttl = ArrayVisualizer.this.arrays.size() + ArrayVisualizer.this.arrayVLists.size();
+	                            }
+                            }
                             int count = ArrayVisualizer.this.arrays.size();
                             for(int v = 0; count < ttl; v++, count++) {
                                 arrays[count] = ArrayVisualizer.this.arrayVLists.get(v).__internal_array();

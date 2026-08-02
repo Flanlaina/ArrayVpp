@@ -2170,7 +2170,7 @@ public enum Shuffles {
     },
     SHELL_WORST_BASE {
     	public String getName() {
-    		return "Base Shell Killer";
+    		return "Shell Killer";
     	}
     	public void shuffleArray(int[] array, ArrayVisualizer arrayVisualizer, Delays Delays, Highlights Highlights, Writes Writes) {
             int n = arrayVisualizer.getCurrentLength();
@@ -2212,7 +2212,7 @@ public enum Shuffles {
     		Writes.deleteExternalArrays(tmp);
     	}
     },
-    SHELL_WORST_NEUE {
+    /*SHELL_WORST_NEUE {
     	public String getName() {
     		return "Shell Killer";
     	}
@@ -2260,7 +2260,7 @@ public enum Shuffles {
     		Writes.arraycopy(tmp, 0, array, 0, n, 1, true, false);
     		Writes.deleteExternalArrays(tmp);
     	}
-    },
+    },*/
     RANDOM_RUNS {
         public String getName() {
             return "Random Runs";

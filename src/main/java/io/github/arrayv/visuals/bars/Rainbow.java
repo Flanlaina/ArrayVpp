@@ -64,7 +64,7 @@ public final class Rainbow extends Visual {
             int width = (int) (renderer.getXScale() * (i + 1)) - j;
             if (width == 0) continue;
     		this.mainRender.setColor(
-    			Colorize.bestFit(array, i, renderer.getArrayLength(),
+    			Colorize.bestFit(array, i, arrayVisualizer.getCurrentLength(),
     				Colorize::heatmap,
     				Colorize::fancyFinish,
     				Colorize::hueAlways
