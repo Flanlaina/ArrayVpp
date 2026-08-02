@@ -51,7 +51,7 @@ public final class DisparityBarGraph extends Visual {
     		top = boundingBox[2], bottom = boundingBox[3];
     	double xScale = (double) (right - left) / (double) (renderer.getArrayLength());
 		// get lengths
-		int n = renderer.getArrayLength();
+		int n = renderer.getArrayLength(), nmain = arrayVisualizer.getCurrentLength();
 		// keep booleans we're accessing here
     	boolean fancy = Highlights.fancyFinishActive(),
     			color = arrayVisualizer.colorEnabled(),
@@ -73,7 +73,7 @@ public final class DisparityBarGraph extends Visual {
     		int hm = Highlights.containsMax(array, i, n, scl[0]), v = hm < 0 ? ~hm : hm;
     		boolean hl = hm >= 0;
     		this.mainRender.setColor(
-    			Colorize.bestFit(array, v, n,
+    			Colorize.bestFit(array, v, nmain,
     				Colorize::heatmap,
     				Colorize::fancyFinish,
     				Colorize::hue,

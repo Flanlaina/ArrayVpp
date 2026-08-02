@@ -47,7 +47,7 @@ public final class BarGraph extends Visual {
     	double yScale = (double) (boundingBox[3] - boundingBox[2]) / (double) (arrayVisualizer.getCurrentLength());
     	double xScale = (double) (boundingBox[1] - boundingBox[0]) / (double) (renderer.getArrayLength());
 		// get lengths
-		int n = renderer.getArrayLength();
+		int n = renderer.getArrayLength(), nmain = arrayVisualizer.getCurrentLength();
 		// keep booleans we're accessing here
     	boolean fancy = Highlights.fancyFinishActive(),
     			color = arrayVisualizer.colorEnabled(),
@@ -67,7 +67,7 @@ public final class BarGraph extends Visual {
     		int hm = Highlights.containsMax(array, i, n, scl[0]), v = hm < 0 ? ~hm : hm;
     		boolean hl = hm >= 0;
     		this.mainRender.setColor(
-    			Colorize.bestFit(array, v, n,
+    			Colorize.bestFit(array, v, nmain,
     				Colorize::heatmap,
     				Colorize::fancyFinish,
     				Colorize::hue,

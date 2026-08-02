@@ -60,7 +60,7 @@ public final class WaveDots extends Visual {
     @Override
     public void drawVisual(int[] array, int[] boundingBox, ArrayVisualizer arrayVisualizer, Renderer renderer, Highlights Highlights) {
         int offset = 20 + (int) (renderer.getXScale()/2),
-            n = renderer.getArrayLength();
+            n = renderer.getArrayLength(), nmain = arrayVisualizer.getCurrentLength();
 
         if (arrayVisualizer.queryFeatureState("linkeddots") > 0) {
             int lastX = 0;
@@ -73,7 +73,7 @@ public final class WaveDots extends Visual {
                 else
                     this.mainRender.setStroke(arrayVisualizer.getCustomStroke(2));
         		this.mainRender.setColor(
-        			Colorize.bestFit(array, i, n,
+        			Colorize.bestFit(array, i, nmain,
         				Colorize::heatmap,
         				Colorize::fancyFinish,
         				Colorize::hue,
@@ -98,7 +98,7 @@ public final class WaveDots extends Visual {
             for (int i = 0, j = 0; i < n; i++) {
             	if (Highlights.containsPosition(i)) continue;
         		this.mainRender.setColor(
-        			Colorize.bestFit(array, i, n,
+        			Colorize.bestFit(array, i, nmain,
         				Colorize::heatmap,
         				Colorize::fancyFinish,
         				Colorize::hue,

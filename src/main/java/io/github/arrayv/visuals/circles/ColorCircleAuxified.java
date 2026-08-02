@@ -2,7 +2,6 @@ package io.github.arrayv.visuals.circles;
 
 import java.awt.Color;
 
-import com.scrtwpns.Mixbox;
 
 import io.github.arrayv.main.ArrayVisualizer;
 import io.github.arrayv.utils.Highlights;
@@ -151,7 +150,7 @@ public final class ColorCircleAuxified extends VisualNoAntialiasing {
 
             if (x[1] != x[2] || y[1] != y[2]) {
         		this.mainRender.setColor(
-        			Colorize.bestFit(array, i, n,
+        			Colorize.bestFit(array, i, arrayVisualizer.getCurrentLength(),
         				Colorize::fancyFinish,
         				Colorize::hue,
         				Colorize::graybright
