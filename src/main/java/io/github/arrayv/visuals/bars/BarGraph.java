@@ -49,8 +49,7 @@ public final class BarGraph extends Visual {
 		// get lengths
 		int n = renderer.getArrayLength(), nmain = arrayVisualizer.getCurrentLength();
 		// keep booleans we're accessing here
-    	boolean fancy = Highlights.fancyFinishActive(),
-    			color = arrayVisualizer.colorEnabled(),
+    	boolean color = arrayVisualizer.colorEnabled(),
     			useAltVals = arrayVisualizer.doingStabilityCheck() && color;
 
     	// calculate the min and max of the scales
@@ -77,7 +76,8 @@ public final class BarGraph extends Visual {
             try {
             	val = useAltVals ? arrayVisualizer.getStabilityValue(array[v]) : array[v];
             } catch(ArrayIndexOutOfBoundsException e) {
-            	// fuck you
+            	// address it next render
+            	// it is not within my scope to make it magically adapt to concurrent length modifications
             	val = 0;
             }
             int h = (int) ((val + 1) * yScale);
