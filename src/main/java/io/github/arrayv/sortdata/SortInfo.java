@@ -31,7 +31,7 @@ public final class SortInfo {
     private final boolean bucketSort;
     private final String question;
     private final int defaultAnswer;
-    private final IntUnaryOperator answerValidator;
+    private final UnaryOperator<Integer> answerValidator;
     private final boolean fromExtra;
 
     private SortInfo(int id, SortInfo sort) {
@@ -172,7 +172,7 @@ public final class SortInfo {
         boolean bucketSort,
         String question,
         int defaultAnswer,
-        IntUnaryOperator answerValidator
+        UnaryOperator<Integer> answerValidator
     ) {
         this.id = id;
         this.internalName = internalName;
@@ -299,7 +299,7 @@ public final class SortInfo {
         return defaultAnswer;
     }
 
-    public IntUnaryOperator getAnswerValidator() {
+    public UnaryOperator<Integer> getAnswerValidator() {
         return answerValidator;
     }
 
@@ -308,7 +308,7 @@ public final class SortInfo {
     }
 
     public int validateAnswer(int answer) {
-        return answerValidator.applyAsInt(answer);
+        return answerValidator.apply(answer);
     }
 
     public boolean isFromExtra() {
@@ -457,7 +457,7 @@ public final class SortInfo {
         private boolean bucketSort = false;
         private String question = null;
         private int defaultAnswer = 0;
-        private IntUnaryOperator answerValidator = IntUnaryOperator.identity();
+        private UnaryOperator<Integer> answerValidator = UnaryOperator.identity();
 
         private Builder() {
         }
@@ -570,7 +570,7 @@ public final class SortInfo {
             return this;
         }
 
-        public Builder answerValidator(IntUnaryOperator answerValidator) {
+        public Builder answerValidator(UnaryOperator<Integer> answerValidator) {
             this.answerValidator = Objects.requireNonNull(answerValidator, "answerValidator");
             return this;
         }

@@ -14,6 +14,9 @@ public class Colorize {
 	
 	private static int MISSES = 0;
 
+	private static int __clamp(int v, int mi, int ma) {
+		return Math.max(mi, Math.min(v, ma));
+	}
 	public static interface ColSampler {
 		Color apply(int[] array, int idx, int actinglen);
 	}
@@ -76,6 +79,7 @@ public class Colorize {
 	}
 	public static Color bestFit(int[] array, int i, int n, ColSampler... opts) {
 		Color tmp;
+		i = __clamp(i, 0, array.length - 1);
 		for (ColSampler opt : opts) {
 			tmp = opt.apply(array, i, n);
 			if (tmp != null) return tmp;

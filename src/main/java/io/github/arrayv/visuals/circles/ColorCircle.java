@@ -7,7 +7,6 @@ import io.github.arrayv.utils.Highlights;
 import io.github.arrayv.utils.Renderer;
 import io.github.arrayv.visuals.templates.Colorize;
 import io.github.arrayv.visuals.templates.VisualNoAntialiasing;
-import com.scrtwpns.Mixbox;
 
 /*
  *

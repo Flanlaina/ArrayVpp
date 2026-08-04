@@ -315,7 +315,6 @@ public final class Renderer {
 	        		if (i < renderables.size() && renderables.get(i) != null)
 	        			((Renderable) renderables.get(i)).render(arrays[0], arrayVisualizer, this, Highlights);
 	        	} catch(Exception e) {
-	        		System.out.println(e);
 	        	}
 	        }
         }
