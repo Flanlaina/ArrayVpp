@@ -116,7 +116,6 @@ public final class BarGraphTiled extends Visual {
             try {
             	val = useAltVals ? arrayVisualizer.getStabilityValue(array[v]) : array[v];
             } catch(ArrayIndexOutOfBoundsException e) {
-            	// fuck you
             	val = 0;
             }
             int h = (int) ((val + 1) * yScale);

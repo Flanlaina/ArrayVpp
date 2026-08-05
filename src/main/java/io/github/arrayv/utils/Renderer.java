@@ -312,9 +312,9 @@ public final class Renderer {
         if(visualSupportsRenderables()) {
 	        for(int i = 0; i < renderables.size(); i++) {
 	        	try {
-	        		((Renderable) renderables.get(i)).render(arrays[0], arrayVisualizer, this, Highlights);
+	        		if (i < renderables.size() && renderables.get(i) != null)
+	        			((Renderable) renderables.get(i)).render(arrays[0], arrayVisualizer, this, Highlights);
 	        	} catch(Exception e) {
-	        		System.out.println(e);
 	        	}
 	        }
         }
