@@ -2390,6 +2390,10 @@ public enum Shuffles {
     	}
     }
 
+    public Random getRng() {
+        return ArrayVisualizer.getInstance().isSeeded() ? new Random(1337) : new Random();
+    }
+
     public abstract String getName();
     public abstract void shuffleArray(int[] array, ArrayVisualizer arrayVisualizer, Delays Delays, Highlights Highlights, Writes Writes);
 }

@@ -6,16 +6,22 @@ import io.github.arrayv.utils.IndexedRotations;
 
 /*
 
-Coded for ArrayV by Flanlaina
-in collaboration with Distray
-
 +---------------------------+
-| Sorting Algorithm Scarlet |
+| SORTING ALGORITHM SCARLET |
++---------------------------+
+|    A sorting algorithm    |
+|    studio by Flanlaina    |
+|    (a.k.a Ayako-chan)     |
 +---------------------------+
 
  */
 
 /**
+ * A variant of Rotate Merge Sort that uses O(1) stack space and has O(n) best case.
+ * <p>
+ * To use this algorithm in another, use {@code mergeSort()} from a reference
+ * instance.
+ * 
  * @author Flanlaina
  * @author Distray
  *
@@ -78,9 +84,23 @@ public class AdaptiveStacklessRotateMergeSort extends Sort {
         }
     }
 
-    /*
-     * Returns: the end point of the first segment after the partition, exclusive,
-     * and whether we need to continue partitioning
+    /**
+     * Does a single round of the partitioning in Rotate Partition Merge Sort.
+     * 
+     * @param array the array
+     * @param a     the start of the first range, inclusive
+     * @param m     the start of the second range, inclusive. Since the ranges are
+     *              consecutive, it is also the end of the first range, exclusive.
+     * @param b     the end of the second range, exclusive
+     * @return An {@code int[]} with two values:
+     *         <ul>
+     *         <li>{@code [0]}: the end point of the first segment after the
+     *         partition, exclusive.</li>
+     *         <li>{@code [1]}: 0 if we have to continue partitioning, 1
+     *         otherwise.</li>
+     *         </ul>
+     *         </li>
+     *         </ul>
      */
     public int[] partitionMerge(int[] array, int a, int m, int b) {
         int lenA = m - a, lenB = b - m;
@@ -118,6 +138,17 @@ public class AdaptiveStacklessRotateMergeSort extends Sort {
         return new int[] { first, 0 };
     }
 
+    /**
+     * Merges the sorted range {@code [a, m)} with the sorted range {@code [m, b)},
+     * putting the result into the combined sorted range {@code [a, b)}. This method
+     * preserves the relative order of equal elements.
+     * 
+     * @param array the array
+     * @param a     the start of the first range, inclusive
+     * @param m     the start of the second range, inclusive. Since the ranges are
+     *              consecutive, it is also the end of the first range, exclusive.
+     * @param b     the end of the second range, exclusive
+     */
     public void merge(int[] array, int a, int m, int b) {
         if (a == m || m == b) return;
         if (Reads.compareIndices(array, m-1, m, 0.5, true) <= 0) return;
@@ -156,6 +187,13 @@ public class AdaptiveStacklessRotateMergeSort extends Sort {
         }
     }
 
+    /**
+     * Sorts the range {@code [a, b)} of {@code array} using Adaptive Stackless Rotate Merge Sort.
+     * 
+     * @param array the array
+     * @param a     the start of the range, inclusive
+     * @param b     the end of the range, exclusive
+     */
     public void mergeSort(int[] array, int a, int b) {
         for (int j = 1; j < b - a; j *= 2)
             for (int i = a; i + j < b; i += 2 * j)
