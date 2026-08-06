@@ -125,8 +125,8 @@ public final class ArrayVisualizer {
     final int[] validateArray;
     final int[] stabilityTable;
     final int[] indexTable;
-    final ArrayList<int[]> arrays;
-    final ArrayList<ArrayVList> arrayVLists;
+    final List<int[]> arrays;
+    final List<ArrayVList> arrayVLists;
     private final StatisticType[] statsConfig;
     
     private UnaryOperator<Long> constant;
@@ -344,8 +344,8 @@ public final class ArrayVisualizer {
 
         this.sortLength = this.maxArrayVal;
 
-        this.arrays = new ArrayList<>();
-        this.arrayVLists = new ArrayList<>();
+        this.arrays = Collections.synchronizedList(new ArrayList<>());
+        this.arrayVLists = Collections.synchronizedList(new ArrayList<>());
         this.arrays.add(this.array);
 
         this.fontSelection = "Times New Roman";
@@ -560,19 +560,21 @@ public final class ArrayVisualizer {
                         if (ArrayVisualizer.this.updateVisualsForced.get() > 0) {
                             ArrayVisualizer.this.updateVisualsForced.decrementAndGet();
                             ArrayVisualizer.this.renderer.updateVisualsStart(ArrayVisualizer.this);
-                            int ttl = ArrayVisualizer.this.arrays.size() + ArrayVisualizer.this.arrayVLists.size();
-                            int[][] arrays = null;
-                            // hacky
-                            while(arrays == null) {
-	                            try {
-	                                arrays = ArrayVisualizer.this.arrays.toArray(new int[ttl][]);
-	                            } catch(ArrayIndexOutOfBoundsException e) {
-	                            	ttl = ArrayVisualizer.this.arrays.size() + ArrayVisualizer.this.arrayVLists.size();
-	                            }
-                            }
-                            int count = ArrayVisualizer.this.arrays.size();
-                            for(int v = 0; count < ttl; v++, count++) {
-                                arrays[count] = ArrayVisualizer.this.arrayVLists.get(v).__internal_array();
+                            
+                            int[][] arrays;
+                            synchronized (ArrayVisualizer.this.arrays) {
+                            	synchronized (ArrayVisualizer.this.arrayVLists) {
+                            		int count, ttl;
+                            		do {
+                            			count = ArrayVisualizer.this.arrays.size();
+                            			ttl = count + ArrayVisualizer.this.arrayVLists.size();
+                            		} while (ttl == 0);
+                                    arrays = ArrayVisualizer.this.arrays.toArray(new int[ttl][]);
+                                    Iterator<ArrayVList> it = ArrayVisualizer.this.arrayVLists.iterator();
+                                    while (it.hasNext()) {
+                                    	arrays[count++] = it.next().__internal_array();
+                                    }
+                            	}
                             }
                             ArrayVisualizer.this.renderer.drawVisual(ArrayVisualizer.this.runningVisual, arrays, ArrayVisualizer.this, ArrayVisualizer.this.Highlights);
                             
@@ -845,10 +847,10 @@ public final class ArrayVisualizer {
         return this.array;
     }
 
-    public ArrayList<int[]> getArrays() {
+    public List<int[]> getArrays() {
         return this.arrays;
     }
-    public ArrayList<ArrayVList> getArrayVLists() {
+    public List<ArrayVList> getArrayVLists() {
         return this.arrayVLists;
     }
 
@@ -1314,8 +1316,12 @@ public final class ArrayVisualizer {
         this.Highlights.resetFancyFinish();
         this.Highlights.clearColorList();
         this.Highlights.clearAllColorsReferenced();
-        this.Writes.deleteAllExternalArrays();
-        this.arrayVLists.clear();
+        synchronized (this.arrays) {
+        	this.Writes.deleteAllExternalArrays();
+        }
+        synchronized (this.arrayVLists) {
+        	this.arrayVLists.clear();
+        }
         Renderer.unregisterAllRenderables();
 
         this.Delays.setSleepRatio(1);

@@ -20,7 +20,7 @@ ArrayV++ is based on the master branch of ArrayV 5.2-SNAPSHOT, taking features a
 ### Public ArrayV strains
 - [PCBoyGames' ArrayV 4.0 fork](https://github.com/PCBoyGames/ArrayV-v4.0)
 - [Flanlaina's ArrayV 4.0 fork](https://github.com/Flanlaina/ArrayV-v4.0)
-#### Upstream
+#### Downstream
 - [Flanlaina's ArrayV++ fork](https://github.com/Flanlaina/ArrayVpp)
 - [aphitorite's ArrayV++ fork](https://github.com/aphitorite/ArrayVpp)
 

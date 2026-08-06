@@ -4,8 +4,11 @@ import io.github.arrayv.main.ArrayVisualizer;
 import io.github.arrayv.visuals.Visual;
 import io.github.arrayv.visuals.VisualFeature;
 
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /*
@@ -74,7 +77,7 @@ public final class Renderer {
     private int dots; //TODO: Change name to dotDims/dotDimensions
     
     private static ArrayVisualizer ownArrayVisualizer;
-    private static ArrayList<? super Renderable> renderables;
+    private static List<? super Renderable> renderables;
     private static volatile int[][] arraysLast = new int[0][];
     private static volatile int countLast = 0;
 
@@ -82,7 +85,7 @@ public final class Renderer {
     	ownArrayVisualizer = arrayVisualizer;
         arrayVisualizer.setWindowHeight();
         arrayVisualizer.setWindowWidth();
-        renderables = new ArrayList<>();
+        renderables = Collections.synchronizedList(new ArrayList<>());
     }
 
     public double getXScale() {
@@ -310,13 +313,12 @@ public final class Renderer {
         		f.localPostrender(arrays[0], this.length);
         }
         if(visualSupportsRenderables()) {
-	        for(int i = 0; i < renderables.size(); i++) {
-	        	try {
-	        		if (i < renderables.size() && renderables.get(i) != null)
-	        			((Renderable) renderables.get(i)).render(arrays[0], arrayVisualizer, this, Highlights);
-	        	} catch(Exception e) {
-	        	}
-	        }
+        	synchronized (renderables) {
+        		Iterator<? super Renderable> it = renderables.iterator();
+		        while(it.hasNext()) {
+		        	((Renderable)it.next()).render(arrays[0], arrayVisualizer, this, Highlights);
+		        }
+        	}
         }
         for (VisualFeature f : arrayVisualizer.getVisualFeatures()) {
         	if (arrayVisualizer.queryFeatureState(f.getListID()) > 0)
