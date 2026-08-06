@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /*
@@ -313,8 +314,9 @@ public final class Renderer {
         }
         if(visualSupportsRenderables()) {
         	synchronized (renderables) {
-		        for(int i = 0; i < renderables.size(); i++) {
-		        	((Renderable) renderables.get(i)).render(arrays[0], arrayVisualizer, this, Highlights);
+        		Iterator<? super Renderable> it = renderables.iterator();
+		        while(it.hasNext()) {
+		        	((Renderable)it.next()).render(arrays[0], arrayVisualizer, this, Highlights);
 		        }
         	}
         }
