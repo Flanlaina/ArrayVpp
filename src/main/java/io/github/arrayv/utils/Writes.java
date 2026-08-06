@@ -93,7 +93,7 @@ public final class Writes {
     public String getReversals() {
         if (this.reversals.get() < 0) {
             this.reversals.set(Long.MIN_VALUE);
-            return "Over " + this.formatter.format(Long.MAX_VALUE);
+            return "Over " + this.formatter.format(Long.MAX_VALUE) + " Reversals";
         } else {
             if (reversals.get() == 1) return this.reversals + " Reversal";
             else                      return this.formatter.format(this.reversals) + " Reversals";
@@ -103,7 +103,7 @@ public final class Writes {
     public String getSwaps() {
         if (this.swaps.get() < 0) {
             this.swaps.set(Long.MIN_VALUE);
-            return "Over " + this.formatter.format(Long.MAX_VALUE);
+            return "Over " + this.formatter.format(Long.MAX_VALUE) + " Swaps";
         } else {
             if (swaps.get() == 1) return this.swaps + " Swap";
             else                  return this.formatter.format(this.swaps) + " Swaps";
@@ -113,7 +113,7 @@ public final class Writes {
     public String getAuxWrites() {
         if (this.auxWrites.get() < 0) {
             this.auxWrites.set(Long.MIN_VALUE);
-            return "Over " + this.formatter.format(Long.MAX_VALUE);
+            return "Over " + this.formatter.format(Long.MAX_VALUE) + " Writes to Auxiliary Array(s)";
         } else {
             if (auxWrites.get() == 1) return this.auxWrites + " Write to Auxiliary Array(s)";
             else                      return this.formatter.format(this.auxWrites) + " Writes to Auxiliary Array(s)";
@@ -123,7 +123,7 @@ public final class Writes {
     public String getMainWrites() {
         if (this.writes.get() < 0) {
             this.writes.set(Long.MIN_VALUE);
-            return "Over " + this.formatter.format(Long.MAX_VALUE);
+            return "Over " + this.formatter.format(Long.MAX_VALUE) + " Writes to Main Array";
         } else {
             if (writes.get() == 1) return this.writes + " Write to Main Array";
             else                   return this.formatter.format(this.writes) + " Writes to Main Array";
@@ -133,7 +133,7 @@ public final class Writes {
     public String getAllocAmount() {
         if (this.allocAmount.get() < 0) {
             this.allocAmount.set(Long.MIN_VALUE);
-            return "Over " + this.formatter.format(Long.MAX_VALUE);
+            return "Over " + this.formatter.format(Long.MAX_VALUE) + " Items in External Arrays";
         } else {
             if (allocAmount.get() == 1) return this.allocAmount + " Item in External Arrays";
             else                        return this.formatter.format(this.allocAmount) + " Items in External Arrays";
@@ -153,7 +153,7 @@ public final class Writes {
 	public String getRecursionDepth() {
 	    if(this.recDepth.get() < 0) {
 	        this.recDepth.set(Long.MIN_VALUE);
-	        return "WTF (Over " + this.formatter.format(Long.MAX_VALUE) + " depth)";
+	        return "why (Over " + this.formatter.format(Long.MAX_VALUE) + " depth)";
 	    } else {
 	        return this.formatter.format(this.recDepth) + " Max Call Depth";
 	    }
