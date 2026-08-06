@@ -73,13 +73,7 @@ public final class BarGraph extends Visual {
     				Colorize::snow
     			)
     		);
-            try {
-            	val = useAltVals ? arrayVisualizer.getStabilityValue(array[v]) : array[v];
-            } catch(ArrayIndexOutOfBoundsException e) {
-            	// address it next render
-            	// it is not within my scope to make it magically adapt to concurrent length modifications
-            	val = 0;
-            }
+            val = useAltVals ? arrayVisualizer.getStabilityValue(array[v]) : array[v];
             int h = (int) ((val + 1) * yScale);
             int nw = hl && width == 1 ? 1 : 0;
 

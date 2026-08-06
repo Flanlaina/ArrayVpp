@@ -88,8 +88,7 @@ public final class BarGraphTiled extends Visual {
 		// get lengths
 		int n = renderer.getArrayLength(), nmain = arrayVisualizer.getCurrentLength();
 		// keep booleans we're accessing here
-    	boolean fancy = Highlights.fancyFinishActive(),
-    			color = arrayVisualizer.colorEnabled(),
+    	boolean color = arrayVisualizer.colorEnabled(),
     			useAltVals = arrayVisualizer.doingStabilityCheck() && color;
 
     	// calculate the min and max of the scales
@@ -113,11 +112,7 @@ public final class BarGraphTiled extends Visual {
     				Colorize::snow
     			)
     		);
-            try {
-            	val = useAltVals ? arrayVisualizer.getStabilityValue(array[v]) : array[v];
-            } catch(ArrayIndexOutOfBoundsException e) {
-            	val = 0;
-            }
+            val = useAltVals ? arrayVisualizer.getStabilityValue(array[v]) : array[v];
             int h = (int) ((val + 1) * yScale);
             int nw = hl && width == 1 ? 1 : 0;
 
