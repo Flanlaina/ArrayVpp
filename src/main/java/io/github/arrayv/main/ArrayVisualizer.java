@@ -566,11 +566,15 @@ public final class ArrayVisualizer {
                             int[][] arrays;
                             synchronized (ArrayVisualizer.this.arrays) {
                             	synchronized (ArrayVisualizer.this.arrayVLists) {
-                                    int ttl = ArrayVisualizer.this.arrays.size() + ArrayVisualizer.this.arrayVLists.size();
+                            		int count, ttl;
+                            		do {
+                            			count = ArrayVisualizer.this.arrays.size();
+                            			ttl = count + ArrayVisualizer.this.arrayVLists.size();
+                            		} while (ttl == 0);
                                     arrays = ArrayVisualizer.this.arrays.toArray(new int[ttl][]);
-                                    int count = ArrayVisualizer.this.arrays.size();
-                                    for(int v = 0; count < ttl; v++, count++) {
-                                        arrays[count] = ArrayVisualizer.this.arrayVLists.get(v).__internal_array();
+                                    Iterator<ArrayVList> it = ArrayVisualizer.this.arrayVLists.iterator();
+                                    while (it.hasNext()) {
+                                    	arrays[count++] = it.next().__internal_array();
                                     }
                             	}
                             }
