@@ -25,6 +25,7 @@ public class SinkingMergeSortParallel extends Sort {
         this.setRunAllSortsName("Parallel Sinking Merge Sort");
         this.setRunSortName("Parallel Sinking Mergesort");
         this.setCategory("Hybrid Sorts");
+        this.setAuthors("Flanlaina");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

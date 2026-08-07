@@ -28,6 +28,7 @@ public class MinTrulyNaturalSort extends Sort {
         this.setRunAllSortsName("Min Truly Natural Sort");
         this.setRunSortName("Min Truly Natural Sort");
         this.setCategory("Selection Sorts");
+        this.setAuthors("Flanlaina");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

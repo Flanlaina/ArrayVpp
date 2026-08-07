@@ -28,6 +28,7 @@ public class SatoriSort extends Sort {
         this.setRunAllSortsName("Satori Sort");
         this.setRunSortName("Satorisort");
         this.setCategory("Hybrid Sorts");
+        this.setAuthors("aphitorite, Flanlaina");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

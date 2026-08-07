@@ -25,6 +25,7 @@ public final class SwaplessHeadPullSelectionSort extends Sort {
         this.setRunAllSortsName("Swapless Head Pull Selection Sort");
         this.setRunSortName("Swapless Head Pull Selection Sort");
         this.setCategory("Selection Sorts");
+        this.setAuthors("Flanlaina");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

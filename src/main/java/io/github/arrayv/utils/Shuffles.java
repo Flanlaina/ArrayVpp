@@ -2304,16 +2304,17 @@ public enum Shuffles {
     /**
      * Places a sorted copy of the range {@code [start, end)} of {@code array} into
      * the range starting at {@code dest_start} of {@code dest_array}. Uses
-     * Optimized Pigeonhole Sort.
+     * Pigeonhole Sort.
      * 
      * @param array      the source array
      * @param dest_array the destination array. Can be the same as {@code array}.
-     * @param dest_start the start of the destination range. A value of -1 can be
-     *                   used to equate the destination range to the source range.
+     * @param dest_start the start of the destination range, inclusive. A value of
+     *                   -1 can be used to equate the destination range to the
+     *                   source range.
      * @param start      the start of the source range, inclusive
      * @param end        the end of the source range, exclusive
      * @param sleep      the visualization delay
-     * @param Writes     the {@link Writes} instance
+     * @param Writes     the {@link io.github.arrayv.utils.Writes Writes} instance
      * @see #sort(int[], int, int, double, Writes)
      */
     public void sort(int[] array, int[] dest_array, int dest_start, int start, int end, double sleep, Writes Writes) {
@@ -2339,23 +2340,56 @@ public enum Shuffles {
     }
 
     /**
-     * Sorts the range {@code [start, end)} of {@code array} using Optimized
-     * Pigeonhole Sort.
+     * Sorts the range {@code [start, end)} of {@code array} using Pigeonhole Sort.
      * 
      * @param array  the array
      * @param start  the start of the range, inclusive
      * @param end    the end of the range, exclusive
      * @param sleep  the visualization delay
-     * @param writes the {@link Writes} instance
+     * @param writes the {@link io.github.arrayv.utils.Writes Writes} instance
      * @see #sort(int[], int[], int, int, int, double, Writes)
      */
     void sort(int[] array, int start, int end, double sleep, Writes writes) {
         sort(array, array, -1, start, end, sleep, writes);
     }
 
+    /**
+     * Randomly shuffles the range {@code [start, end)} of {@code array}, using
+     * {@link #random Shuffles.random} as the random generator.
+     * <p>
+     * Uses the Fisher&ndash;Yates shuffle.
+     * 
+     * @param array  the array
+     * @param start  the start of the range, inclusive
+     * @param end    the end of the range, exclusive
+     * @param sleep  the visualization delay
+     * @param Writes the {@link io.github.arrayv.utils.Writes Writes} instance
+     * @see #shuffle(int[], int, int, double, Random, Writes)
+     */
     public void shuffle(int[] array, int start, int end, double sleep, Writes Writes) {
         for (int i = start; i < end; i++){
             int randomIndex = random.nextInt(end - i) + i;
+            Writes.swap(array, i, randomIndex, sleep, true, false);
+        }
+    }
+
+    /**
+     * Randomly shuffles the range {@code [start, end)} of {@code array}, using
+     * {@code rng} as the random generator.
+     * <p>
+     * Uses the Fisher&ndash;Yates shuffle.
+     * 
+     * @param array  the array
+     * @param start  the start of the range, inclusive
+     * @param end    the end of the range, exclusive
+     * @param sleep  the visualization delay
+     * @param rng    the {@link java.util.Random Random} instance
+     * @param Writes the {@link io.github.arrayv.utils.Writes Writes} instance
+     * @see #shuffle(int[], int, int, double, Writes)
+     */
+    public void shuffle(int[] array, int start, int end, double sleep, Random rng, Writes Writes) {
+        for (int i = start; i < end; i++){
+            int randomIndex = rng.nextInt(end - i) + i;
             Writes.swap(array, i, randomIndex, sleep, true, false);
         }
     }
@@ -2390,8 +2424,22 @@ public enum Shuffles {
     	}
     }
 
-    public Random getRng() {
-        return ArrayVisualizer.getInstance().isSeeded() ? new Random(1337) : new Random();
+    /**
+     * Returns a {@link java.util.Random Random} instance that respects ArrayV's
+     * "Seeded Shuffles" setting.
+     * 
+     * @param arrayVisualizer the {@link io.github.arrayv.main.ArrayVisualizer
+     *                        ArrayVisualizer} instance
+     * @return a {@link java.util.Random Random} instance created by
+     *         {@link java.util.Random#Random(long) new Random(long)} with
+     *         {@code 1337} as the seed if
+     *         {@link io.github.arrayv.main.ArrayVisualizer#isSeeded()
+     *         ArrayVisualizer.isSeeded()} returns true, a {@link java.util.Random
+     *         Random} instance created by {@link java.util.Random#Random() new
+     *         Random()} otherwise.
+     */
+    public Random getRng(ArrayVisualizer arrayVisualizer) {
+        return arrayVisualizer.isSeeded() ? new Random(1337) : new Random();
     }
 
     public abstract String getName();

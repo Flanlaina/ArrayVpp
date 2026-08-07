@@ -17,6 +17,7 @@ public final class RotatePartitionMergeSortParallel extends Sort {
         this.setRunAllSortsName("Parallel Rotate Partition Merge Sort");
         this.setRunSortName("Parallel Rotate Partition Mergesort");
         this.setCategory("Merge Sorts");
+        this.setAuthors("aphitorite, Flanlaina");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(true);

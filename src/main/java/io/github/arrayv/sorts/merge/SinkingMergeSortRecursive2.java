@@ -25,6 +25,7 @@ public class SinkingMergeSortRecursive2 extends Sort {
         this.setRunAllSortsName("Recursive Sinking Merge Sort");
         this.setRunSortName("Recursive Sinking Mergesort");
         this.setCategory("Merge Sorts");
+        this.setAuthors("Flanlaina");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

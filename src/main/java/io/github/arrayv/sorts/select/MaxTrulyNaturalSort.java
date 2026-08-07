@@ -28,6 +28,7 @@ public class MaxTrulyNaturalSort extends Sort {
         this.setRunAllSortsName("Max Truly Natural Sort");
         this.setRunSortName("Max Truly Natural Sort");
         this.setCategory("Selection Sorts");
+        this.setAuthors("Flanlaina");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

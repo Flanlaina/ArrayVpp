@@ -28,6 +28,7 @@ public final class SanaeSort extends Sort {
         this.setRunAllSortsName("Sanae Sort");
         this.setRunSortName("Sanaesort");
         this.setCategory("Hybrid Sorts");
+        this.setAuthors("aphitorite, Flanlaina");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

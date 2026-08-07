@@ -17,10 +17,11 @@ import io.github.arrayv.utils.IndexedRotations;
  */
 
 /**
- * A variant of Rotate Merge Sort that uses O(1) stack space and has O(n) best case.
+ * A variant of Rotate Merge Sort that uses O(1) stack space and has O(n) best
+ * case.
  * <p>
- * To use this algorithm in another, use {@code mergeSort()} from a reference
- * instance.
+ * To use this algorithm in another, use {@link #mergeSort(int[], int, int)}
+ * from a reference instance.
  * 
  * @author Flanlaina
  * @author Distray

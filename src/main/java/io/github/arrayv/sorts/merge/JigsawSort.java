@@ -22,8 +22,8 @@ import io.github.arrayv.sorts.templates.Sort;
 /**
  * A variant of Merge Sort that shuffles the sorted runs after each iterations.
  * <p>
- * To use this algorithm in another, use {@code mergeSort()} from a reference
- * instance.
+ * To use this algorithm in another, use {@link #mergeSort(int[], int, int)}
+ * from a reference instance.
  * 
  * @author 666666t
  * @author Flanlaina

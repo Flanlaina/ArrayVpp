@@ -15,6 +15,7 @@ public final class SmartLazyStableSort extends Sort {
         this.setRunAllSortsName("Smart Lazy Stable Sort");
         this.setRunSortName("Smart Lazy Stable Sort");
         this.setCategory("Hybrid Sorts");
+        this.setAuthors("Flanlaina");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

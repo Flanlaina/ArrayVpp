@@ -25,6 +25,7 @@ public final class HeadPullSelectionSort extends Sort {
         this.setRunAllSortsName("Head Pull Selection Sort");
         this.setRunSortName("Head Pull Selection Sort");
         this.setCategory("Selection Sorts");
+        this.setAuthors("Flanlaina");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);

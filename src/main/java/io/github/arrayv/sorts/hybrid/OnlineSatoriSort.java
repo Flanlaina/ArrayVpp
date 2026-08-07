@@ -12,7 +12,8 @@ import io.github.arrayv.utils.IndexedRotations;
  */
 @SortMeta(
     name = "Online Satori",
-    category = "Hybrid Sorts"
+    category = "Hybrid Sorts",
+    authors = "aphitorite, Flanlaina"
 )
 public class OnlineSatoriSort extends Sort {
     public OnlineSatoriSort(ArrayVisualizer arrayVisualizer) {

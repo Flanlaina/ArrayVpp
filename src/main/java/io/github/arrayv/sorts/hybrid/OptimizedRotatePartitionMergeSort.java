@@ -35,6 +35,7 @@ public class OptimizedRotatePartitionMergeSort extends Sort {
         this.setRunAllSortsName("Optimized Rotate Partition Merge Sort");
         this.setRunSortName("Optimized Rotate Partition Mergesort");
         this.setCategory("Hybrid Sorts");
+        this.setAuthors("aphitorite, Control, Flanlaina");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);
