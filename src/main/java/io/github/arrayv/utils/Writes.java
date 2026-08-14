@@ -536,10 +536,14 @@ public final class Writes {
     	synchronized (arrs) {
     		// ConcurrentModificationException if done as before
     		Iterator<int[]> nyon = arrs.iterator();
+    		ArrayList<int[]> marked = new ArrayList<>();
     		int[] v;
 	    	while(nyon.hasNext()) {
 	    		if((v = nyon.next()) != arrayVisualizer.getArray())
-	    			this.deleteExternalArray(v);
+	    			marked.add(v);
+	    	}
+	    	for (int[] A : marked) {
+	    		this.deleteExternalArray(A);
 	    	}
     	}
     }
