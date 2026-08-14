@@ -348,7 +348,7 @@ public final class ArrayVisualizer {
         this.arrayVLists = Collections.synchronizedList(new ArrayList<>());
         this.arrays.add(this.array);
 
-        this.fontSelection = "Times New Roman";
+        this.fontSelection = System.getProperty("os.name").startsWith("Windows") ? "Times New Roman" : "Liberation Serif";
         this.fontSelectionScale = 25;
         List<StatisticType> statsInfoList = new ArrayList<>();
         Throwable statsLoadException = null;
