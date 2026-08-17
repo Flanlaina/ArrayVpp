@@ -6,11 +6,11 @@ import io.github.arrayv.sorts.templates.BogoSorting;
 /**
  * Exchange Bogosort randomly sorts in shuffle order until the array is sorted.
  */
-public class ExchangeBogoSortPotassium extends BogoSorting {
-    public ExchangeBogoSortPotassium(ArrayVisualizer arrayVisualizer) {
+public class ExchangeBogoSort extends BogoSorting {
+    public ExchangeBogoSort(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
 
-        this.setSortListName("Exchange Bogo (Potassium)");
+        this.setSortListName("Exchange Bogo");
         this.setRunAllSortsName("Exchange Bogo Sort");
         this.setRunSortName("Exchange Bogosort");
         this.setCategory("Bogo Sorts");
