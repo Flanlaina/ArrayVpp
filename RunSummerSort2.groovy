@@ -3,7 +3,7 @@ import io.github.arrayv.utils.Distributions
 
 def runSorts(shuffleName) {
     setCategory(shuffleName)
-    run NewPatienceSort go 4096.numbers, 4.speed
+    run SegmentTreeSort go 4096.numbers, 4.speed
 }
 
 runGroup(25) {

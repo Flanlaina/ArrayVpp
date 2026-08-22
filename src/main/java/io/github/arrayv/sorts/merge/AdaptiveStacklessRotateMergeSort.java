@@ -44,6 +44,11 @@ public class AdaptiveStacklessRotateMergeSort extends Sort {
         this.setBogoSort(false);
     }
 
+    /**
+     * Tuning parameter: size of the smaller partition for rotate merging at or
+     * below which Lazy Stable merging will be used in preference to Rotate Merge
+     * merging.
+     */
     private static final int SMALL_MERGE_THRESHOLD = 4;
 
     public void rotate(int[] array, int a, int m, int b) {
@@ -97,8 +102,7 @@ public class AdaptiveStacklessRotateMergeSort extends Sort {
      *         <ul>
      *         <li>{@code [0]}: the end point of the first segment after the
      *         partition, exclusive.</li>
-     *         <li>{@code [1]}: 0 if we have to continue partitioning, 1
-     *         otherwise.</li>
+     *         <li>{@code [1]}: {@code 0} if we have to continue partitioning, {@code 1} otherwise.</li>
      *         </ul>
      *         </li>
      *         </ul>
@@ -142,7 +146,7 @@ public class AdaptiveStacklessRotateMergeSort extends Sort {
     /**
      * Merges the sorted range {@code [a, m)} with the sorted range {@code [m, b)},
      * putting the result into the combined sorted range {@code [a, b)}. This method
-     * preserves the relative order of equal elements.
+     * is stable (i.e. it preserves the relative order of equal elements).
      * 
      * @param array the array
      * @param a     the start of the first range, inclusive

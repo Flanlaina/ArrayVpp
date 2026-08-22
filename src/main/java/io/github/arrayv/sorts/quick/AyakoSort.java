@@ -153,15 +153,12 @@ public final class AyakoSort extends Sort {
         return cm;
     }
 
-    public void segmentReversal(int[] array, int start, int end, double delay, boolean mark, boolean aux) {
+    public void segmentReversal(int[] array, int start, int end, double cSleep, double wSleep, boolean mark, boolean aux) {
         for (int i = start; i < end; i++) {
             int left = i;
-            while (i < end && Reads.compareIndices(array, i, i + 1, delay, true) == 0) i++;
+            while (i < end && Reads.compareIndices(array, i, i + 1, cSleep, true) == 0) i++;
             int right = i;
-            if (left != right) {
-                if (right - left < 3) Writes.swap(array, left, right, delay * 2, mark, aux);
-                else Writes.reversal(array, left, right, delay * 2, mark, aux);
-            }
+            if (left != right) Writes.reversal(array, left, right, wSleep, mark, aux);
         }
     }
 
@@ -592,7 +589,7 @@ public final class AyakoSort extends Sort {
         if (balance + eq == len - 1) {
             if (b - a < 4) Writes.swap(array, a, b - 1, 0.75, true, false);
             else Writes.reversal(array, a, b - 1, 0.75, true, false);
-            if (eq > 0) segmentReversal(array, a, b - 1, 0.75, true, false);
+            if (eq > 0) segmentReversal(array, a, b - 1, 0.5, 0.75, true, false);
             return;
         }
         int bLen = 1;

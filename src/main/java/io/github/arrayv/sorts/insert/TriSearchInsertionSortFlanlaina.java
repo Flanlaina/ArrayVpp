@@ -4,6 +4,29 @@ import io.github.arrayv.main.ArrayVisualizer;
 import io.github.arrayv.sorts.templates.Sort;
 
 /*
+ * TriSearchInsertionSortFlanlaina.java
+ *
+ * Stackless implementation of thatsOven's TriSearch Insertion Sort.
+ *
+ ******************************************************************************
+ * Copyright (C) 2021 thatsOven (Amari)
+ * Copyright (C) 2024 Quang Lam (Flanlaina)
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/*
 
 Coded for ArrayV by Flanlaina
 extending code by Amari (thatsOven)
@@ -15,6 +38,10 @@ extending code by Amari (thatsOven)
  */
 
 /**
+ * To use this algorithm in another, use
+ * {@link #triInsertSort(int[], int, int, double, double)} from a reference
+ * instance.
+ * 
  * @author Flanlaina
  * @author Amari (thatsOven)
  * 
@@ -58,7 +85,16 @@ public class TriSearchInsertionSortFlanlaina extends Sort {
         Highlights.clearAllMarks();
         return a;
     }
-    
+
+    /**
+     * Sorts the range {@code [a, b)} of {@code array} using Tri-Search Insertion Sort.
+     * 
+     * @param array the array
+     * @param a the start of the range, inclusive
+     * @param b the end of the range, exclusive
+     * @param rSleep the comparison delay
+     * @param wSleep the write delay
+     */
     public void triInsertSort(int[] array, int a, int b, double rSleep, double wSleep) {
         for (int i = a + 1; i < b; i++) {
             int current = array[i];
