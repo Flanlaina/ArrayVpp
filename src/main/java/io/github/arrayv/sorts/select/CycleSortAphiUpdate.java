@@ -33,7 +33,7 @@ final public class CycleSortAphiUpdate extends Sort {
     public CycleSortAphiUpdate(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
         
-        this.setSortListName("Cycle");
+        this.setSortListName("Cycle (aphitorite's update)");
         this.setRunAllSortsName("Cycle Sort");
         this.setRunSortName("Cyclesort");
         this.setCategory("Selection Sorts");
