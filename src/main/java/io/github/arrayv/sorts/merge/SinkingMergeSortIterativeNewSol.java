@@ -17,13 +17,13 @@ Coded for ArrayV by Flanlaina
  * @author Flanlaina
  *
  */
-public class SinkingMergeSortRecursive2 extends Sort {
-    public SinkingMergeSortRecursive2(ArrayVisualizer arrayVisualizer) {
+public class SinkingMergeSortIterativeNewSol extends Sort {
+    public SinkingMergeSortIterativeNewSol(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
 
-        this.setSortListName("Sinking Merge (Recursive II)");
-        this.setRunAllSortsName("Recursive Sinking Merge Sort");
-        this.setRunSortName("Recursive Sinking Mergesort");
+        this.setSortListName("Sinking Merge (Iterative, New Solution)");
+        this.setRunAllSortsName("Iterative Sinking Merge Sort");
+        this.setRunSortName("Iterative Sinking Mergesort");
         this.setCategory("Merge Sorts");
         this.setAuthors("Flanlaina");
         this.setBucketSort(false);
@@ -48,19 +48,10 @@ public class SinkingMergeSortRecursive2 extends Sort {
         }
     }
 
-    public void sort(int[] array, int a, int b, int depth) {
-        Writes.recordDepth(depth);
-        if (b - a < 2) return;
-        int m = a + (b - a) / 2;
-        Writes.recursion();
-        sort(array, a, m, depth + 1);
-        Writes.recursion();
-        sort(array, m, b, depth + 1);
-        bubbleMerge(array, a, m, b);
-    }
-
     public void sort(int[] array, int a, int b) {
-        sort(array, a, b, 0);
+        for (int j = 1; j < b - a; j *= 2)
+            for (int i = a; i + j < b; i += 2 * j)
+                bubbleMerge(array, i, i + j, Math.min(i + 2 * j, b));
     }
 
     @Override
