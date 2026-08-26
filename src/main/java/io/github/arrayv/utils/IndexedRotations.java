@@ -44,8 +44,17 @@ public final class IndexedRotations {
         Rotations.neon(array, start, mid - start, end - mid, pause, mark, auxwrite);
     }
 
+    public static void neon21(int[] array, int start, int mid, int end, double pause, boolean mark, boolean auxwrite) {
+        Rotations.neon21(array, start, mid - start, end - mid, pause, mark, auxwrite);
+    }
+
     public static void neon22(int[] array, int start, int mid, int end, double pause, boolean mark, boolean auxwrite) {
         Rotations.neon22(array, start, mid - start, end - mid, pause, mark, auxwrite);
+    }
+
+    // improved gries mills
+    public static void beaker(int[] array, int start, int mid, int end, double pause, boolean mark, boolean auxwrite) {
+        Rotations.beaker(array, start, mid - start, end - mid, pause, mark, auxwrite);
     }
 
     public static void bridge(int[] array, int start, int mid, int end, double pause, boolean mark, boolean auxwrite) {

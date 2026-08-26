@@ -7,7 +7,8 @@ import io.github.arrayv.sorts.templates.Sort;
  * 
 MIT License
 
-Copyright (c) 2021 aphitorite, modified in 2025 by Flanlaina
+Copyright (c) 2021 aphitorite
+Copyright (c) 2022 Flanlaina
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -29,62 +30,54 @@ SOFTWARE.
  *
  */
 
-final public class CycleSortAphiUpdate extends Sort {
-    public CycleSortAphiUpdate(ArrayVisualizer arrayVisualizer) {
+public final class SwapfulCycleSort extends Sort {
+
+    public SwapfulCycleSort(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
-        
-        this.setSortListName("Cycle (aphitorite's update)");
-        this.setRunAllSortsName("Cycle Sort");
-        this.setRunSortName("Cyclesort");
+        this.setSortListName("Swapful Cycle");
+        this.setRunAllSortsName("Swapful Cycle Sort");
+        this.setRunSortName("Swapful Cyclesort");
         this.setCategory("Selection Sorts");
-        this.setAuthors("aphitorite");
-		this.setConstant("n^2");
+        this.setAuthors("aphitorite, Flanlaina");
+        this.setConstant("n^2");
         this.setBucketSort(false);
         this.setRadixSort(false);
         this.setUnreasonablySlow(false);
         this.setUnreasonableLimit(0);
         this.setBogoSort(false);
     }
-	
-	private int countLesser(int[] array, int a, int b, int t) {
-		int r = a;
-		
-		for (int i = a+1; i < b; i++) {
-			Highlights.markArray(1, r);
-			Highlights.markArray(2, i);
-			Delays.sleep(0.01);
-			
-			r += Reads.compareValues(array[i], t) < 0 ? 1 : 0;
-		}
-		Highlights.clearMark(2);
-		return r;
-	}
-
-	public void cycleSort(int[] array, int start, int end) {
-		for(int i = start; i < end-1; i++) {
-			Highlights.markArray(3, i);
-			
-			int t = array[i];
-			int r = this.countLesser(array, i, end, t);
-			
-			if (r != i) {
-				do {
-					while (Reads.compareIndexValue(array, r, t, 0.01, true) == 0) r++;
-					
-					int t1 = array[r];
-					Writes.write(array, r, t, 0.02, false, false);
-					t = t1;
-					
-					r = this.countLesser(array, i, end, t);
-				} while(r != i);
-				
-				Writes.write(array, i, t, 0.02, false, false);
-			}
-		}
-	}
+    
+    int countLesser(int[] array, int a, int b, int idx) {
+        int r = a;
+        
+        for(int i = a+1; i < b; i++) {
+            Highlights.markArray(1, r);
+            Highlights.markArray(2, i);
+            Delays.sleep(0.01);
+            
+            r += Reads.compareValues(array[i], array[idx]) < 0 ? 1 : 0;
+        }
+        Highlights.clearMark(2);
+        return r;
+    }
+    
+    public void cycleSort(int[] array, int a, int b) {
+        for (int i = a; i < b - 1; i++) {
+            int r = countLesser(array, i, b, i);
+            if (r != i) {
+                do {
+                    while(Reads.compareIndices(array, r, i, 0.01, true) == 0) r++;
+                    Writes.swap(array, i, r, 0.02, true, false);
+                    r = countLesser(array, i, b, i);
+                } while (r != i);
+            }
+        }
+    }
 
     @Override
-    public void runSort(int[] array, int length, int bucketCount) {
-		cycleSort(array, 0, length);
+    public void runSort(int[] array, int sortLength, int bucketCount) {
+        cycleSort(array, 0, sortLength);
+
     }
+
 }

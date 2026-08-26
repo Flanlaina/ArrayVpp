@@ -45,12 +45,23 @@ public class AdaptiveStacklessRotateMergeSort extends Sort {
     }
 
     /**
-     * Tuning parameter: size of the smaller partition for rotate merging at or
-     * below which Lazy Stable merging will be used in preference to Rotate Merge
+     * Tuning parameter: size of the smaller partition for Rotate Merge merging at
+     * or below which Lazy Stable merging will be used in preference to Rotate Merge
      * merging.
      */
     private static final int SMALL_MERGE_THRESHOLD = 4;
 
+    /**
+     * Interchanges the elements in range {@code [a, m)} with those in range
+     * {@code [m, b)}, where these two ranges do not have to be the same size. Uses
+     * the Cycle Reverse (a.k.a. Conjoined Triple Reversal) rotation algorithm.
+     * 
+     * @param array the array
+     * @param a     the start of the first range, inclusive
+     * @param m     the start of the second range, inclusive. Since the ranges are
+     *              consecutive, it is also the end of the first range, exclusive.
+     * @param b     the end of the second range, exclusive
+     */
     public void rotate(int[] array, int a, int m, int b) {
         Highlights.clearAllMarks();
         IndexedRotations.cycleReverse(array, a, m, b, 1, true, false);
@@ -100,11 +111,8 @@ public class AdaptiveStacklessRotateMergeSort extends Sort {
      * @param b     the end of the second range, exclusive
      * @return An {@code int[]} with two values:
      *         <ul>
-     *         <li>{@code [0]}: the end point of the first segment after the
-     *         partition, exclusive.</li>
+     *         <li>{@code [0]}: the end point of the first segment after the partition, exclusive.</li>
      *         <li>{@code [1]}: {@code 0} if we have to continue partitioning, {@code 1} otherwise.</li>
-     *         </ul>
-     *         </li>
      *         </ul>
      */
     public int[] partitionMerge(int[] array, int a, int m, int b) {
