@@ -1,0 +1,125 @@
+package io.github.arrayv.sorts.quick;
+
+import io.github.arrayv.main.ArrayVisualizer;
+import io.github.arrayv.sorts.templates.Sort;
+
+/*
+
+Coded for ArrayV by Flanlaina
+in collaboration with PCBoy
+
++---------------------------+
+| Sorting Algorithm Scarlet |
++---------------------------+
+
+ */
+
+/**
+ * @author Flanlaina
+ * @author PCBoy
+ *
+ */
+public class TernaryBubbleQuickSort extends Sort {
+
+    public TernaryBubbleQuickSort(ArrayVisualizer arrayVisualizer) {
+        super(arrayVisualizer);
+        this.setSortListName("Ternary Bubble Quick");
+        this.setRunAllSortsName("Ternary Bubble Quick Sort");
+        this.setRunSortName("Ternary Bubble Quicksort");
+        this.setCategory("Quick Sorts");
+        this.setAuthors("Flanlaina, PCBoy");
+        this.setBucketSort(false);
+        this.setRadixSort(false);
+        this.setUnreasonablySlow(false);
+        this.setUnreasonableLimit(0);
+        this.setBogoSort(false);
+    }
+
+    protected int medOf3(int[] array, int i0, int i1, int i2) {
+        int t;
+        if (Reads.compareIndices(array, i0, i1, 1, true) > 0) {
+            t = i1;
+            i1 = i0;
+        } else t = i0;
+        if (Reads.compareIndices(array, i1, i2, 1, true) > 0) {
+            if (Reads.compareIndices(array, t, i2, 1, true) > 0) return t;
+            return i2;
+        }
+        return i1;
+    }
+
+    protected int binSearch(int[] array, int a, int b, int val, boolean left) {
+        while (a < b) {
+            int m = a + (b - a) / 2;
+            Highlights.markArray(2, m);
+            Delays.sleep(0.25);
+            int c = Reads.compareValues(val, array[m]);
+            if (c < 0 || (left && c == 0))
+                b = m;
+            else
+                a = m + 1;
+        }
+        return a;
+    }
+    
+    protected int pivCmpHelper(int v, int piv) {
+        int c = Reads.compareValues(v, piv);
+        return c > 0 ? 1 : (c < 0 ? -1 : 0);
+    }
+
+    protected int pivCmp(int[] array, int a, int b, int piv) {
+        Highlights.markArray(1, a);
+        Highlights.markArray(2, b);
+        Delays.sleep(0.125);
+        int c1 = pivCmpHelper(array[a], piv);
+        int c2 = pivCmpHelper(array[b], piv);
+        return c1 > c2 ? 1 : (c1 < c2 ? -1 : 0);
+    }
+
+    protected int[] partition(int[] array, int a, int b, int piv) {
+        for (int i = b - 1, c = 1, s, f = a; i > a; i -= c) {
+            c = 1;
+            s = Math.max(f - 1, a);
+            boolean fChange = false;
+            for (int j = s; j < i; j++) {
+                if (pivCmp(array, j, j + 1, piv) > 0) {
+                    if (!fChange) f = j;
+                    Writes.swap(array, j, j + 1, 0.125, fChange = true, false);
+                    c = 1;
+                } else c++;
+            }
+        }
+        int rIdx = binSearch(array, a, b, piv, false);
+        return new int[] { binSearch(array, a, rIdx, piv, true), rIdx };
+    }
+    
+    protected void sortHelper(int[] array, int a, int b) {
+        while (b - a > 2) {
+            int pivIdx = medOf3(array, a, a + (b - a) / 2, b - 1);
+            int[] pr = partition(array, a, b, array[pivIdx]);
+            if (pr[0] == a && pr[1] == b) return;
+            if (b - pr[1] < pr[0] - a) {
+                sortHelper(array, pr[1], b);
+                b = pr[0];
+            } else {
+                sortHelper(array, a, pr[0]);
+                a = pr[1];
+            }
+        }
+        if (b - a == 2) {
+            if (Reads.compareIndices(array, a, a + 1, 1, true) > 0)
+                Writes.swap(array, a, a + 1, 1, true, false);
+        }
+    }
+    
+    public void quickSort(int[] array, int a, int b) {
+        sortHelper(array, a, b);
+    }
+
+    @Override
+    public void runSort(int[] array, int sortLength, int bucketCount) {
+        quickSort(array, 0, sortLength);
+
+    }
+
+}
