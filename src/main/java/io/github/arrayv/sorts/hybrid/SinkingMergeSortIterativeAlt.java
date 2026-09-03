@@ -17,13 +17,13 @@ Coded for ArrayV by Flanlaina
  * @author Flanlaina
  *
  */
-public class SinkingMergeSortRecursive extends Sort {
+public class SinkingMergeSortIterativeAlt extends Sort {
 
-    public SinkingMergeSortRecursive(ArrayVisualizer arrayVisualizer) {
+    public SinkingMergeSortIterativeAlt(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
-        this.setSortListName("Sinking Merge (Recursive)");
-        this.setRunAllSortsName("Recursive Sinking Merge Sort");
-        this.setRunSortName("Recursive Sinking Mergesort");
+        this.setSortListName("Sinking Merge (Iterative, Alt)");
+        this.setRunAllSortsName("Iterative Sinking Merge Sort");
+        this.setRunSortName("Iterative Sinking Mergesort");
         this.setCategory("Hybrid Sorts");
         this.setAuthors("Flanlaina");
         this.setBucketSort(false);
@@ -46,13 +46,14 @@ public class SinkingMergeSortRecursive extends Sort {
             }
         }
     }
-
+    
     public void sort(int[] array, int start, int end, double sleep) {
-        if (end - start > 1) {
-            int mid = start + (end - start) / 2;
-            sort(array, start, mid, sleep);
-            sort(array, mid, end, sleep);
-            bubbleSort(array, start, end, sleep);
+        int i;
+        for (int j = 1; j < (end - start); j *= 2) {
+            for (i = start; i + 2 * j <= end; i += 2 * j)
+                bubbleSort(array, i, i+2*j, sleep);
+            if (i + j < end)
+                bubbleSort(array, i, end, sleep);
         }
     }
 
