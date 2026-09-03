@@ -3,28 +3,19 @@ package io.github.arrayv.sorts.hybrid;
 import io.github.arrayv.main.ArrayVisualizer;
 import io.github.arrayv.sorts.templates.Sort;
 
-/*
-
-Coded for ArrayV by Flanlaina
-
-+---------------------------+
-| Sorting Algorithm Scarlet |
-+---------------------------+
-
- */
-
 /**
  * @author Flanlaina
  *
  */
-public class SinkingMergeSortIterativeAlt extends Sort {
+public final class SinkingMergeSortIterativeLegacy extends Sort {
 
-    public SinkingMergeSortIterativeAlt(ArrayVisualizer arrayVisualizer) {
+    public SinkingMergeSortIterativeLegacy(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
-        this.setSortListName("Sinking Merge (Iterative, Alt)");
+        this.setSortListName("Sinking Merge (Iterative, Legacy)");
         this.setRunAllSortsName("Iterative Sinking Merge Sort");
         this.setRunSortName("Iterative Sinking Mergesort");
         this.setCategory("Hybrid Sorts");
+        this.setConstant("n^2");
         this.setAuthors("Flanlaina");
         this.setBucketSort(false);
         this.setRadixSort(false);
@@ -46,10 +37,15 @@ public class SinkingMergeSortIterativeAlt extends Sort {
             }
         }
     }
-    
+
     public void sort(int[] array, int start, int end, double sleep) {
+        int mRun = end - start;
+        for (; mRun >= 32; mRun = (mRun + 1) / 2);
         int i;
-        for (int j = 1; j < (end - start); j *= 2) {
+        for (i = start; i + mRun < end; i += mRun)
+            bubbleSort(array, i, i+mRun, sleep/2.0);
+        bubbleSort(array, i, end, sleep/2.0);
+        for (int j = mRun; j < (end - start); j *= 2) {
             for (i = start; i + 2 * j <= end; i += 2 * j)
                 bubbleSort(array, i, i+2*j, sleep);
             if (i + j < end)

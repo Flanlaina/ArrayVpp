@@ -3,28 +3,19 @@ package io.github.arrayv.sorts.hybrid;
 import io.github.arrayv.main.ArrayVisualizer;
 import io.github.arrayv.sorts.templates.Sort;
 
-/*
-
-Coded for ArrayV by Flanlaina
-
-+---------------------------+
-| Sorting Algorithm Scarlet |
-+---------------------------+
-
- */
-
 /**
  * @author Flanlaina
  *
  */
-public class SinkingMergeSortRecursiveAlt extends Sort {
+public final class SinkingMergeSortRecursiveLegacy extends Sort {
 
-    public SinkingMergeSortRecursiveAlt(ArrayVisualizer arrayVisualizer) {
+    public SinkingMergeSortRecursiveLegacy(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
-        this.setSortListName("Sinking Merge (Recursive, Alt)");
+        this.setSortListName("Sinking Merge (Recursive, Legacy)");
         this.setRunAllSortsName("Recursive Sinking Merge Sort");
         this.setRunSortName("Recursive Sinking Mergesort");
         this.setCategory("Hybrid Sorts");
+        this.setConstant("n^2");
         this.setAuthors("Flanlaina");
         this.setBucketSort(false);
         this.setRadixSort(false);
@@ -48,12 +39,13 @@ public class SinkingMergeSortRecursiveAlt extends Sort {
     }
 
     public void sort(int[] array, int start, int end, double sleep) {
-        if (end - start > 1) {
+        if (end - start > 16) {
             int mid = start + (end - start) / 2;
             sort(array, start, mid, sleep);
             sort(array, mid, end, sleep);
             bubbleSort(array, start, end, sleep);
-        }
+        } else
+            bubbleSort(array, start, end, sleep);
     }
 
     @Override
