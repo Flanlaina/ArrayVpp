@@ -11,7 +11,7 @@ public final class SimplisticGravitySort extends Sort {
         this.setSortListName("Simplistic Gravity");
         this.setRunAllSortsName("Simplistic Gravity Sort (By McDude_73)");
         this.setRunSortName("Simplistic Gravity Sort");
-        this.setCategory("Distributive Sorts");
+        this.setCategory("Distribution Sorts");
         this.setAuthors("McDude_73");
         this.setBucketSort(false);
         this.setRadixSort(false);
