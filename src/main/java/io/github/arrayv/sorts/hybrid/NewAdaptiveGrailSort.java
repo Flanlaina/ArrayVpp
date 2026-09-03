@@ -123,8 +123,7 @@ public class NewAdaptiveGrailSort extends Sort {
             Writes.write(array, p0++, tmp, 0.5, true, false);
         }
         if (p0 < p3) { // don't count reversals that don't do anything
-            if (p3 - p0 >= 3) Writes.reversal(array, p0, p3, 1, true, false);
-            else Writes.swap(array, p0, p3, 1, true, false);
+            Writes.reversal(array, p0, p3, 1, true, false);
             Highlights.clearMark(2);
         }
     }
@@ -155,12 +154,6 @@ public class NewAdaptiveGrailSort extends Sort {
         return binSearch(array, Math.max(a, b - i + 1), b - i / 2, val, left);
     }
 
-    // Easy patch to avoid the "reversals can be done in a single swap" notes.
-    protected void reverse(int[] array, int a, int b) {
-        if (b - a >= 3) Writes.reversal(array, a, b, 1, true, false);
-        else Writes.swap(array, a, b, 1, true, false);
-    }
-
     protected int buildUniqueRunFW(int[] array, int a, int n) {
         int nKeys = 1, i = a + 1;
         // build run at start
@@ -174,7 +167,7 @@ public class NewAdaptiveGrailSort extends Sort {
                 i++;
                 nKeys++;
             } while (nKeys < n && Reads.compareIndices(array, i - 1, i, 1, true) > 0);
-            reverse(array, a, i - 1);
+            Writes.reversal(array, a, i - 1, 1, true, false);
         }
         return nKeys;
     }
@@ -192,7 +185,7 @@ public class NewAdaptiveGrailSort extends Sort {
                 i--;
                 nKeys++;
             } while (nKeys < n && Reads.compareIndices(array, i - 1, i, 1, true) > 0);
-            reverse(array, i, b - 1);
+            Writes.reversal(array, i, b - 1, 1, true, false);
         }
         return nKeys;
     }
@@ -246,7 +239,7 @@ public class NewAdaptiveGrailSort extends Sort {
         while (i < b) {
             if (Reads.compareIndices(array, i - 1, i++, 1, true) > 0) {
                 while (i < b && Reads.compareIndices(array, i - 1, i, 1, true) > 0) i++;
-                reverse(array, j, i - 1);
+                Writes.reversal(array, j, i - 1, 1, true, false);
             } else while (i < b && Reads.compareIndices(array, i - 1, i, 1, true) <= 0) i++;
             if (i < b) {
                 noSort = false;

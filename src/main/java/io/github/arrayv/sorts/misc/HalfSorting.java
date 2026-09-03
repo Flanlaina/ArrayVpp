@@ -15,7 +15,7 @@ public final class HalfSorting extends Sort {
     public HalfSorting(ArrayVisualizer arrayVisualizer) {
         super(arrayVisualizer);
 
-        this.setSortListName("Half-access");
+        this.setSortListName("Half-access Sorting");
         this.setRunAllSortsName("Half-access Sorting");
         this.setRunSortName("Halfsorting");
         this.setCategory("Miscellaneous Sorts");
