@@ -8,7 +8,8 @@ import io.github.arrayv.sorts.templates.Sort;
     name = "Max Heap (Williams' original construction)",
     runName = "Max Heapsort (Williams' original construction)",
     showcaseName = "Max Heap Sort (Williams' original construction)",
-    category = "Selection Sorts"
+    category = "Selection Sorts",
+    authors = "John William Joseph Williams"
 )
 public class MaxHeapSortWilliams extends Sort {
     public MaxHeapSortWilliams(ArrayVisualizer arrayVisualizer) {
